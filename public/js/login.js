@@ -1,4 +1,4 @@
-import { $, $$, icon, installPressFeedback, installGlass, toast, busy, haptic } from './ui.js';
+import { $, $$, icon, installPressFeedback, installGlass, toast, busy, haptic, Spring, reducedMotion } from './ui.js';
 import { post, homeFor, registerSW } from './api.js';
 
 installPressFeedback();
@@ -32,7 +32,14 @@ form.addEventListener('submit', async (e) => {
   } catch (err) {
     busy(btn, false);
     errBox.textContent = err.message; errBox.hidden = false;
-    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) $('.group', form).animate([{ transform: 'translateX(0)' }, { transform: 'translateX(-8px)' }, { transform: 'translateX(6px)' }, { transform: 'translateX(-3px)' }, { transform: 'translateX(0)' }], { duration: 360, easing: 'ease-out' });
+    if (!reducedMotion()) {
+      const group = $('.group', form);
+      const shake = group._shake || (group._shake = new Spring({
+        value: 0, damping: 0.45, response: 0.3, precision: 0.4,
+        onUpdate: (v) => { group.style.transform = Math.abs(v) < 0.4 ? '' : `translateX(${v}px)`; },
+      }));
+      shake.value = 0; shake.velocity = -380; shake.to(0);
+    }
     haptic([20, 40, 20]);
   }
 });
