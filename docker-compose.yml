@@ -1,0 +1,13 @@
+services:
+  portaria:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - JWT_SECRET=troque-isto-por-um-segredo-longo
+      # - INSECURE_COOKIES=1   # só se não usar HTTPS (ex.: teste numa rede local)
+    volumes:
+      - portaria-data:/app/data
+    restart: unless-stopped
+volumes:
+  portaria-data:

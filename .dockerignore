@@ -1,0 +1,7 @@
+node_modules
+data/*.db*
+docs
+e2e
+tests
+.git
+*.log
