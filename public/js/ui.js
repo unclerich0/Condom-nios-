@@ -5,6 +5,8 @@
 //  • Sheet arrastável 1:1 com offset de agarre, rubber-band, projeção de momento
 //    (decelerationRate 0.998) e passagem de velocidade para a mola.
 //  • Banner de notificação que entra e sai pelo mesmo caminho (topo).
+//  • Toque: encolhe no pointer-down e regressa com mola; o indicador dos
+//    separadores estica na direção do movimento; as listas fazem FLIP.
 //  • Feedback no pointer-down, haptics só em momentos de commit.
 //  • Liquid Glass: lente SVG (Chromium), tinta adaptativa e realce especular
 //    que segue o dedo — installGlass().
@@ -68,23 +70,266 @@ function velocityTracker() {
 
 export const haptic = (pattern = 10) => { try { navigator.vibrate?.(pattern); } catch { /* sem suporte */ } };
 
+// ---------------------------------------------------------------- Press ----
+// Escala no pointer-down (rápida, sem salto) e regresso com mola no pointer-up.
+// Linhas grandes ficam criticamente amortecidas; botões levam um pouco de
+// velocidade para o regresso ultrapassar 1 e assentar — é o "clique" da mola.
+const PRESS_SEL = '.btn, .gbtn, .tab, .tab-solo, .cell.tap, .stepper button, .segmented button, .search-cancel';
+const pressSprings = new WeakMap();
 
-// ------------------------------------------------- Feedback no pointer-down -
+function pressDepth(el) {
+  if (el.matches('.cell.tap')) return 0.975;
+  if (el.matches('.gbtn, .tab-solo')) return 0.9;
+  if (el.matches('.tab, .segmented button, .stepper button, .search-cancel')) return 0.94;
+  return 0.96;
+}
+function releaseOpts(el) {
+  if (el.matches('.cell.tap, .segmented button, .stepper button, .tab')) return { damping: 1, response: 0.3, velocity: 0 };
+  if (el.matches('.gbtn, .tab-solo')) return { damping: 0.6, response: 0.4, velocity: 2.2 };
+  return { damping: 0.62, response: 0.42, velocity: 2.4 };
+}
+function pressOf(el) {
+  let s = pressSprings.get(el);
+  if (s) return s;
+  s = new Spring({
+    value: 1, damping: 1, response: 0.28, precision: 0.0015,
+    onUpdate: (v) => { el.style.transform = Math.abs(v - 1) < 0.0015 ? '' : `scale(${v})`; },
+  });
+  pressSprings.set(el, s);
+  return s;
+}
+function scalePress(el, down) {
+  if (!el || reducedMotion()) return;
+  const s = pressOf(el);
+  if (down) s.to(pressDepth(el), { damping: 1, response: 0.13, velocity: 0 });
+  else s.to(1, releaseOpts(el));
+}
+
 export function installPressFeedback() {
-  const SEL = '.btn, .gbtn, .tab, .tab-solo, .chip';
+  if (document.documentElement.dataset.motion) return;
+  document.documentElement.dataset.motion = '1';
   let pressed = null;
-  const release = () => { pressed?.classList.remove('is-pressed'); pressed = null; };
+  const release = () => {
+    if (!pressed) return;
+    pressed.classList.remove('is-pressed');
+    scalePress(pressed, false);
+    pressed = null;
+  };
   document.addEventListener('pointerdown', (e) => {
-    const el = e.target.closest(SEL); if (!el || el.disabled) return;
-    pressed = el; el.classList.add('is-pressed');
+    const el = e.target.closest(PRESS_SEL);
+    if (!el || el.disabled || el.getAttribute('aria-disabled') === 'true') return;
+    if (pressed && pressed !== el) { pressed.classList.remove('is-pressed'); scalePress(pressed, false); }
+    pressed = el;
+    el.classList.add('is-pressed');
+    scalePress(el, true);
   }, { passive: true });
   document.addEventListener('pointerup', release, { passive: true });
   document.addEventListener('pointercancel', release, { passive: true });
-  document.addEventListener('pointermove', (e) => {           // cancelar arrastando para fora (histerese ~10px)
-    if (!pressed) return; const r = pressed.getBoundingClientRect(); const pad = 10;
+  document.addEventListener('pointermove', (e) => {
+    if (!pressed) return;
+    const r = pressed.getBoundingClientRect(); const pad = 10;
     const inside = e.clientX > r.left - pad && e.clientX < r.right + pad && e.clientY > r.top - pad && e.clientY < r.bottom + pad;
+    if (inside === pressed.classList.contains('is-pressed')) return;
     pressed.classList.toggle('is-pressed', inside);
+    scalePress(pressed, inside);
   }, { passive: true });
+  observeControls();
+}
+
+// ------------------------------------------------ Interruptor (mola) ------
+function bindSwitch(sw) {
+  if (sw.dataset.sprung) return;
+  const input = $('input', sw); const thumb = $('.thumb', sw);
+  if (!input || !thumb) return;
+  sw.dataset.sprung = '1';
+  thumb.style.transformOrigin = 'center';
+  let sx = 1;
+  const x = new Spring({
+    value: input.checked ? 1 : 0, damping: 0.55, response: 0.34, precision: 0.001,
+    onUpdate: (p) => { thumb.style.transform = `translate3d(${(p * 0.88).toFixed(4)}rem,0,0) scaleX(${sx.toFixed(4)})`; },
+  });
+  x.set(input.checked ? 1 : 0);
+  const widen = new Spring({
+    value: 1, damping: 1, response: 0.18, precision: 0.001,
+    onUpdate: (v) => { sx = v; x.onUpdate(x.value); },
+  });
+  input.addEventListener('change', () => x.to(input.checked ? 1 : 0, { damping: 0.55, response: 0.34 }));
+  input.addEventListener('pointerdown', (e) => {
+    if (reducedMotion()) return;
+    input.setPointerCapture?.(e.pointerId);
+    widen.to(1.22, { damping: 1, response: 0.16, velocity: 0 });
+  });
+  const up = () => widen.to(1, { damping: 0.72, response: 0.28 });
+  input.addEventListener('pointerup', up);
+  input.addEventListener('pointercancel', up);
+}
+
+// --------------------------------------- Pesquisa: expandir + Cancelar ----
+const searchSprings = new WeakMap();
+export function expandSearch(field) {
+  if (!field || reducedMotion()) return;
+  let s = searchSprings.get(field);
+  if (!s) {
+    s = new Spring({
+      value: 1, damping: 1, response: 0.4, precision: 0.002,
+      onUpdate: (v) => {
+        if (v >= 0.999) { field.style.transform = ''; field.style.opacity = ''; return; }
+        field.style.transformOrigin = 'left center';
+        field.style.transform = `scale(${v})`;
+        field.style.opacity = String(Math.min(1, 0.65 + 0.35 * v));
+      },
+    });
+    searchSprings.set(field, s);
+  }
+  const now = performance.now();
+  if (s._raf && now - (field._expandAt || 0) < 380) return;
+  field._expandAt = now;
+  s.value = 0.92;
+  s.velocity = 0.4;
+  s.onUpdate(s.value);
+  s.to(1);
+}
+
+function bindSearch(field) {
+  if (field.dataset.search) return;
+  const input = $('input', field);
+  if (!input) return;
+  field.dataset.search = '1';
+  const cancel = h('<button type="button" class="search-cancel">Cancelar</button>');
+  field.append(cancel);
+  const open = new Spring({
+    value: 0, damping: 1, response: 0.32, precision: 0.01,
+    onUpdate: (p) => {
+      const c = Math.max(0, Math.min(1, p));
+      cancel.style.opacity = String(c);
+      cancel.style.transform = `translate3d(${(1 - c) * 12}px,-50%,0)`;
+      cancel.style.pointerEvents = c > 0.65 ? 'auto' : 'none';
+      field.classList.toggle('is-open', c > 0.2);
+    },
+  });
+  const show = (on) => {
+    if (reducedMotion()) {
+      cancel.animate([{ opacity: on ? 0 : 1 }, { opacity: on ? 1 : 0 }], { duration: 180 });
+      cancel.style.opacity = on ? '1' : '0';
+      cancel.style.pointerEvents = on ? 'auto' : 'none';
+      cancel.style.transform = 'translate3d(0,-50%,0)';
+      field.classList.toggle('is-open', on);
+      open.set(on ? 1 : 0);
+      return;
+    }
+    open.to(on ? 1 : 0);
+  };
+  input.addEventListener('focus', () => { expandSearch(field); show(true); });
+  input.addEventListener('blur', () => show(false));
+  cancel.addEventListener('pointerdown', (e) => e.preventDefault());
+  cancel.addEventListener('click', () => {
+    input.value = '';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    show(false);
+    input.blur();
+  });
+}
+
+function observeControls() {
+  const scan = () => {
+    $$('.switch').forEach(bindSwitch);
+    $$('.searchfield').forEach(bindSearch);
+  };
+  scan();
+  new MutationObserver(scan).observe(document.body, { childList: true, subtree: true });
+}
+
+// ----------------------------------------- Indicador que estica com a mola
+// A largura de repouso fica no layout; durante o movimento só há transform
+// (translate + scale). A velocidade alonga o bordo da frente — o "stretch".
+export function makeSlider(el, axis) {
+  let base = 0, targetPos = 0, targetSize = 0, animating = false;
+  const pos = new Spring({ value: 0, damping: 1, response: 0.42, precision: 0.35, onUpdate: () => render(), onRest: () => settle() });
+  const scale = new Spring({ value: 1, damping: 1, response: 0.42, precision: 0.002, onUpdate: () => render(), onRest: () => settle() });
+  el.style.transformOrigin = axis === 'x' ? 'left center' : 'center top';
+
+  function applySize(px) {
+    if (!px) return;
+    if (axis === 'x') el.style.width = `${px}px`;
+    else el.style.height = `${px}px`;
+  }
+  function render() {
+    const speed = animating ? pos.velocity : 0;
+    const extra = Math.min(Math.abs(speed) / 850, 0.16);
+    const main = (animating ? scale.value : 1) + extra;
+    const cross = 1 - extra * 0.28;
+    const basePx = base || targetSize || 1;
+    const shift = speed < 0 ? -(extra * basePx) : 0;
+    if (axis === 'x') el.style.transform = `translate3d(${pos.value + shift}px,0,0) scale(${main}, ${cross})`;
+    else el.style.transform = `translate3d(0,${pos.value + shift}px,0) scale(${cross}, ${main})`;
+  }
+  function settle() {
+    if (!animating || !base) return;
+    const ratio = targetSize / base;
+    if (Math.abs(pos.value - targetPos) > 0.8 || Math.abs(scale.value - ratio) > 0.02) return;
+    if (Math.abs(pos.velocity) > 14) return;
+    animating = false;
+    base = targetSize;
+    applySize(targetSize);
+    scale.set(1);
+    pos.set(targetPos);
+  }
+  return {
+    el,
+    to(p, s, animate) {
+      if (!s) return;
+      targetPos = p;
+      targetSize = s;
+      if (!animate || reducedMotion() || !base) {
+        animating = false;
+        base = s;
+        applySize(s);
+        pos.set(p);
+        scale.set(1);
+        return;
+      }
+      animating = true;
+      pos.to(p, { damping: 1, response: 0.42 });
+      scale.to(s / base, { damping: 1, response: 0.42 });
+    },
+  };
+}
+
+/** Chegada: o botão dá um salto curto e o visto desenha-se. Resolve quando assenta. */
+export function confirmChegada(btn) {
+  return new Promise((resolve) => {
+    let done = false;
+    const finish = () => { if (done) return; done = true; resolve(); };
+    if (reducedMotion() || !btn?.isConnected) { finish(); return; }
+    btn.classList.add('is-confirmed');
+    btn.disabled = true;
+    btn.innerHTML = `<span class="confirm-check">${icon.check}</span>`;
+    const check = $('.confirm-check', btn);
+    const path = $('path', check || btn);
+    if (path) {
+      let len = 32;
+      try { len = path.getTotalLength() || 32; } catch { /* ainda sem métrica */ }
+      path.style.strokeDasharray = `${len}`;
+      path.style.strokeDashoffset = `${len}`;
+      new Spring({
+        value: len, damping: 1, response: 0.36, precision: 0.2,
+        onUpdate: (v) => { path.style.strokeDashoffset = `${Math.max(0, v)}`; },
+      }).to(0);
+    }
+    if (check) {
+      new Spring({
+        value: 0.45, damping: 0.62, response: 0.4, precision: 0.01,
+        onUpdate: (v) => { check.style.transform = `scale(${v})`; check.style.opacity = String(Math.min(1, v)); },
+      }).to(1, { velocity: 1.1 });
+    }
+    const s = pressOf(btn);
+    const prev = s.onRest;
+    s.onRest = () => { s.onRest = prev; finish(); };
+    s.value = Math.min(s.value || 1, 0.9);
+    s.onUpdate(s.value);
+    s.to(1, { velocity: 3.2, damping: 0.56, response: 0.46 });
+    setTimeout(finish, 560);
+  });
 }
 
 // =========================================================== Liquid Glass ===
@@ -229,14 +474,17 @@ let toastEl, toastSpring, toastTimer;
 export function toast(message, { error = false, duration = 2600 } = {}) {
   if (!toastEl) {
     toastEl = h('<div class="toast glass" role="status" aria-live="polite" data-adapt></div>'); document.body.append(toastEl);
-    toastSpring = new Spring({ value: 0, damping: 1, response: 0.35, precision: 0.002, onUpdate: (p) => {
-      toastEl.style.opacity = Math.max(0, Math.min(1, p));
-      toastEl.style.transform = `translateX(-50%) translateY(${(1 - p) * 14}px) scale(${0.96 + 0.04 * p})`;
+    toastSpring = new Spring({ value: 0, damping: 0.78, response: 0.38, precision: 0.002, onUpdate: (p) => {
+      const c = Math.max(0, Math.min(1, p));
+      toastEl.style.opacity = String(c);
+      toastEl.style.transform = `translateX(-50%) translateY(${(1 - p) * 16}px) scale(${0.94 + 0.06 * p})`;
     } });
   }
   toastEl.textContent = message; toastEl.classList.toggle('error', error);
-  toastSpring.to(1); clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toastSpring.to(0), duration);
+  toastSpring.value = Math.min(toastSpring.value, 0.15);
+  toastSpring.to(1, { velocity: 1.2, damping: 0.78, response: 0.38 });
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastSpring.to(0, { damping: 1, response: 0.28, velocity: 0 }), duration);
 }
 
 // ------------------------------------------------------------------ Banner -
@@ -247,27 +495,31 @@ export function banner({ title, body = '', onClick, duration = 6000 }) {
   const el = h(`<div class="banner glass glass-thick lens-bar" role="alert"><img src="/icons/icon-192.png" alt=""><div class="meta"><span>Portaria</span><span>agora</span></div><div><div class="tt">${esc(title)}</div>${body ? `<div class="bd">${esc(body)}</div>` : ''}</div></div>`);
   bannerHost.prepend(el);
   const height = 140;
-  const y = new Spring({ value: -height, damping: 1, response: 0.42, onUpdate: (v) => {
-    el.style.transform = `translateY(${v}px)`;
-    el.style.opacity = reducedMotion() ? 1 : Math.max(0, Math.min(1, 1 + v / height * 1.4));
+  const y = new Spring({ value: -height, damping: 0.66, response: 0.46, precision: 0.4, onUpdate: (v) => {
+    const stretch = Math.min(Math.abs(y.velocity) / 2600, 0.07);
+    el.style.transform = `translate3d(0,${v}px,0) scale(${1 - stretch * 0.55}, ${1 + stretch})`;
+    el.style.opacity = reducedMotion() ? '1' : String(Math.max(0, Math.min(1, 1 + v / height * 1.2)));
   } });
-  if (reducedMotion()) { el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200 }); y.set(0); } else y.to(0);
+  if (reducedMotion()) { el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200 }); y.set(0); }
+  else y.to(0, { velocity: 180, damping: 0.66, response: 0.46 });
   let timer = setTimeout(dismiss, duration); let gone = false;
   function dismiss(velocity = 0) {
     if (gone) return; gone = true; clearTimeout(timer);
     if (reducedMotion()) { el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 200 }).onfinish = () => el.remove(); return; }
-    y.onRest = () => el.remove(); y.to(-height, { velocity: Math.min(velocity, -400) });   // sai por onde entrou
+    y.onRest = () => el.remove();
+    y.to(-height, { velocity: Math.min(velocity, -400), damping: 1, response: 0.32 });   // sai por onde entrou, sem voltar
   }
   const vt = velocityTracker(); let startY = 0, dragging = false, moved = false;
   el.addEventListener('pointerdown', (e) => { el.setPointerCapture(e.pointerId); y.stop(); startY = e.clientY - y.value; dragging = true; moved = false; vt.reset(); vt.add(e.clientY); clearTimeout(timer); });
   el.addEventListener('pointermove', (e) => {
     if (!dragging) return; let d = e.clientY - startY; if (Math.abs(d - y.value) > 3) moved = true;
-    if (d > 0) d = rubberband(d, 80); y.value = d; y.onUpdate(d); vt.add(e.clientY);
+    if (d > 0) d = rubberband(d, 80);
+    vt.add(e.clientY); y.velocity = vt.velocity(); y.value = d; y.onUpdate(d);
   });
   const end = () => {
     if (!dragging) return; dragging = false; const v = vt.velocity();
     if (!moved) { dismiss(); onClick?.(); return; }
-    if (y.value + project(v) < -40) dismiss(v); else { y.to(0, { velocity: v, damping: 0.8, response: 0.35 }); timer = setTimeout(dismiss, duration); }
+    if (y.value + project(v) < -40) dismiss(v); else { y.to(0, { velocity: v, damping: Math.abs(v) > 200 ? 0.75 : 1, response: 0.34 }); timer = setTimeout(dismiss, duration); }
   };
   el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
   return { dismiss };
@@ -297,20 +549,32 @@ export function openSheet({ title, content, onClose, origin } = {}) {
 
   let spring;
   if (desktop) {
-    if (origin) { const r = origin.getBoundingClientRect(); const s = sheet.getBoundingClientRect(); sheet.style.transformOrigin = `${r.left + r.width / 2 - s.left}px ${r.top + r.height / 2 - s.top}px`; }
-    spring = new Spring({ value: 0, damping: 1, response: 0.32, precision: 0.002, onUpdate: (p) => {
+    if (origin) {
+      sheet.style.transform = 'translateY(-50%)';
+      const r = origin.getBoundingClientRect(); const s = sheet.getBoundingClientRect();
+      sheet.style.transformOrigin = `${r.left + r.width / 2 - s.left}px ${r.top + r.height / 2 - s.top}px`;
+    }
+    spring = new Spring({ value: 0, damping: 0.8, response: 0.4, precision: 0.002, onUpdate: (p) => {
       const c = Math.max(0, Math.min(1, p));
-      sheet.style.transform = `translateY(-50%) scale(${0.92 + 0.08 * p})`; sheet.style.opacity = c;
-      scrim.style.opacity = c;
+      sheet.style.transform = `translateY(-50%) scale(${0.8 + 0.2 * p})`;
+      sheet.style.opacity = String(c);
+      scrim.style.opacity = String(c);
     } });
   } else {
-    spring = new Spring({ value: H(), damping: 1, response: 0.38, onUpdate: (y) => {
-      sheet.style.transform = `translateY(${y}px)`;
-      scrim.style.opacity = Math.max(0, Math.min(1, 1 - y / H()));
+    spring = new Spring({ value: H(), damping: 0.8, response: 0.34, precision: 0.4, onUpdate: (y) => {
+      const stretch = Math.min(Math.abs(spring.velocity) / 4200, 0.04);
+      sheet.style.transform = `translate3d(0,${y}px,0) scale(${1 - stretch * 0.4}, ${1 + stretch})`;
+      scrim.style.opacity = String(Math.max(0, Math.min(1, 1 - y / H())));
     } });
   }
-  spring.onUpdate(spring.value);
-  requestAnimationFrame(() => spring.to(desktop ? 1 : 0));
+  if (reducedMotion()) {
+    spring.set(desktop ? 1 : 0);
+    scrim.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200 });
+    sheet.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200 });
+  } else {
+    spring.onUpdate(spring.value);
+    requestAnimationFrame(() => spring.to(desktop ? 1 : 0, { damping: 0.8, response: desktop ? 0.4 : 0.34 }));
+  }
 
   let closed = false;
   function close({ velocity = 0 } = {}) {
@@ -318,8 +582,18 @@ export function openSheet({ title, content, onClose, origin } = {}) {
     root.classList.remove('is-open');
     document.documentElement.style.overflow = '';
     removeEventListener('keydown', onKey);
-    spring.onRest = () => { root.remove(); onClose?.(); prevFocus?.focus?.(); };
-    if (desktop) spring.to(0, { response: 0.25 }); else spring.to(H() + 60, { velocity: Math.max(velocity, 0), damping: 1, response: 0.3 });
+    let finished = false;
+    const done = () => { if (finished) return; finished = true; root.remove(); onClose?.(); prevFocus?.focus?.(); };
+    if (reducedMotion()) {
+      const fade = root.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 180 });
+      fade.onfinish = done;
+      setTimeout(done, 240);
+      return;
+    }
+    spring.onRest = done;
+    // Fechar sem salto para trás: amortecimento crítico. O abrir e o flick usam 0.8.
+    if (desktop) spring.to(0, { damping: 1, response: 0.26, velocity: 0 });
+    else spring.to(H() + 60, { velocity: Math.max(velocity, 0), damping: 1, response: 0.3 });
   }
   scrim.addEventListener('click', () => close());
   $('[data-close]', root).addEventListener('click', () => close());
@@ -344,14 +618,16 @@ export function openSheet({ title, content, onClose, origin } = {}) {
       }
       let y = startY + d;
       if (y < 0) y = rubberband(y, H());
-      spring.value = y; spring.onUpdate(y); vt.add(e.clientY);
+      vt.add(e.clientY);
+      spring.velocity = vt.velocity();
+      spring.value = y; spring.onUpdate(y);
     };
     const up = () => {
       if (grabY === null) return; grabY = null;
-      if (intent !== 'drag') { if (spring.value !== 0) spring.to(0); return; }
+      if (intent !== 'drag') { if (spring.value !== 0) spring.to(0, { damping: 1, response: 0.3 }); return; }
       const v = vt.velocity(); const projected = spring.value + project(v);
       if (projected > H() * 0.5) close({ velocity: v });
-      else spring.to(0, { velocity: v, damping: Math.abs(v) > 300 ? 0.8 : 1, response: 0.3 });
+      else spring.to(0, { velocity: v, damping: Math.abs(v) > 280 ? 0.75 : 1, response: 0.32 });
     };
     for (const zone of [$('.grabber', root), $('.sheet-head', root), body]) {
       zone.addEventListener('pointerdown', down); zone.addEventListener('pointermove', move);
@@ -365,13 +641,11 @@ export function openSheet({ title, content, onClose, origin } = {}) {
 // --------------------------------------------------------- Segmented control
 export function segmented(el, onChange) {
   const ind = h('<span class="indicator" aria-hidden="true"></span>'); el.prepend(ind);
-  const x = new Spring({ value: 0, damping: 1, response: 0.3, onUpdate: (v) => { ind.style.transform = `translateX(${v}px)`; } });
-  const w = new Spring({ value: 0, damping: 1, response: 0.3, onUpdate: (v) => { ind.style.width = `${v}px`; } });
-  const btns = () => $$('button', el);
+  const slider = makeSlider(ind, 'x');
+  const btns = () => $$('button', el).filter((b) => !b.classList.contains('indicator') && b.getAttribute('aria-hidden') !== 'true');
   function select(btn, animate = true) {
     btns().forEach((b) => b.setAttribute('aria-selected', String(b === btn)));
-    const left = btn.offsetLeft, width = btn.offsetWidth;
-    if (animate) { x.to(left); w.to(width); } else { x.set(left); w.set(width); }
+    slider.to(btn.offsetLeft, btn.offsetWidth, animate);
   }
   el.setAttribute('role', 'tablist');
   btns().forEach((b) => { b.setAttribute('role', 'tab'); b.type = 'button'; });
@@ -383,28 +657,107 @@ export function segmented(el, onChange) {
 }
 
 
-/** Anima a entrada de um elemento novo numa lista (mola criticamente amortecida, sem overshoot). */
-export function enter(el, { delay = 0 } = {}) {
-  if (reducedMotion()) { el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 180, delay }); return; }
-  el.style.opacity = 0;
-  const s = new Spring({ value: 0, damping: 1, response: 0.4, precision: 0.002, onUpdate: (p) => {
-    el.style.opacity = Math.min(1, p * 1.2);
-    el.style.transform = p >= 1 ? '' : `translateY(${(1 - p) * 14}px) scale(${0.98 + 0.02 * p})`;
-  } });
-  setTimeout(() => s.to(1), delay);
+// ------------------------------------------- Movimento de linhas (FLIP) ---
+// x e y são molas independentes: o que fica na lista desliza até ao sítio novo
+// quando uma visita entra ou sai. Só transform e opacidade.
+const rowMotion = new WeakMap();
+function rowOf(el) {
+  let m = rowMotion.get(el);
+  if (m) return m;
+  const apply = () => {
+    const x = m.x.value, y = m.y.value, s = m.s.value, o = m.o.value;
+    const still = Math.abs(x) < 0.35 && Math.abs(y) < 0.35 && Math.abs(s - 1) < 0.004;
+    el.style.opacity = (o >= 0.999 && still) ? '' : String(Math.max(0, Math.min(1, o)));
+    el.style.transform = still ? '' : `translate3d(${x}px,${y}px,0) scale(${s})`;
+  };
+  m = {
+    x: new Spring({ value: 0, damping: 1, response: 0.45, precision: 0.3, onUpdate: apply }),
+    y: new Spring({ value: 0, damping: 1, response: 0.45, precision: 0.3, onUpdate: apply }),
+    s: new Spring({ value: 1, damping: 0.72, response: 0.4, precision: 0.002, onUpdate: apply }),
+    o: new Spring({ value: 1, damping: 1, response: 0.28, precision: 0.01, onUpdate: apply }),
+  };
+  rowMotion.set(el, m);
+  return m;
 }
-/** Remove com fade + encolher, depois tira do DOM. */
+function resetRow(el) {
+  const m = rowMotion.get(el);
+  if (!m) return;
+  m.x.set(0); m.y.set(0); m.s.set(1); m.o.set(1);
+}
+
+/** Uma linha nova entra de baixo, com um leve salto na escala. A posição não ultrapassa o lugar. */
+export function enter(el, { delay = 0 } = {}) {
+  if (!el) return;
+  if (reducedMotion()) { el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 180, delay }); return; }
+  const m = rowOf(el);
+  m.y.set(18);
+  m.s.set(0.96);
+  m.o.set(0);
+  const go = () => {
+    if (!el.isConnected) return;
+    m.y.to(0, { damping: 1, response: 0.4 });
+    m.s.to(1, { damping: 0.72, response: 0.42, velocity: 0.7 });
+    m.o.to(1, { damping: 1, response: 0.26 });
+  };
+  if (delay) setTimeout(go, delay); else go();
+}
+/** Sai por onde está: encolhe e esbate, sem animar height (o buraco fecha pela mola dos vizinhos). */
 export function leave(el) {
   return new Promise((resolve) => {
+    if (!el?.isConnected) { resolve(); return; }
     if (reducedMotion()) { el.remove(); resolve(); return; }
-    const hgt = el.offsetHeight;
-    el.style.overflow = 'hidden';
-    const s = new Spring({ value: 1, damping: 1, response: 0.32, precision: 0.002, onUpdate: (p) => {
-      el.style.opacity = Math.max(0, p); el.style.transform = `scale(${0.96 + 0.04 * p})`;
-      el.style.height = `${Math.max(0, hgt * p)}px`; el.style.marginBottom = `${(p - 1) * 12}px`;
-    }, onRest: () => { el.remove(); resolve(); } });
-    s.to(0);
+    const m = rowOf(el);
+    let done = false;
+    const finish = () => { if (done) return; done = true; el.remove(); resolve(); };
+    m.o.onRest = finish;
+    m.o.to(0, { damping: 1, response: 0.24 });
+    m.s.to(0.94, { damping: 1, response: 0.3, velocity: 0 });
+    m.y.to(m.y.value - 12, { damping: 1, response: 0.32 });
+    setTimeout(finish, 480);
   });
+}
+
+function snapshotRows(container) {
+  const map = new Map();
+  if (!container || container.getClientRects().length === 0) return map;
+  for (const el of $$(':scope > [data-key]', container)) {
+    if (el.dataset.leaving) continue;
+    map.set(el.dataset.key, el.getBoundingClientRect());
+  }
+  return map;
+}
+function parkRow(el, container, rect) {
+  el.dataset.leaving = '1';
+  if (reducedMotion() || !rect || rect.width < 1) { el.remove(); return; }
+  if (getComputedStyle(container).position === 'static') container.style.position = 'relative';
+  resetRow(el);
+  const c = container.getBoundingClientRect();
+  el.style.position = 'absolute';
+  el.style.left = `${rect.left - c.left}px`;
+  el.style.top = `${rect.top - c.top}px`;
+  el.style.width = `${rect.width}px`;
+  el.style.margin = '0';
+  el.style.zIndex = '2';
+  el.style.pointerEvents = 'none';
+}
+function playFlip(container, first) {
+  if (reducedMotion() || !first.size) return;
+  const els = $$(':scope > [data-key]', container).filter((el) => !el.dataset.leaving);
+  for (const el of els) el.style.transform = 'none';
+  const next = new Map(els.map((el) => [el, el.getBoundingClientRect()]));
+  for (const el of els) {
+    const prev = first.get(el.dataset.key);
+    if (!prev) continue;
+    const b = next.get(el);
+    const dx = prev.left - b.left;
+    const dy = prev.top - b.top;
+    const m = rowOf(el);
+    if (Math.abs(dx) < 0.6 && Math.abs(dy) < 0.6) { m.x.set(0); m.y.set(0); continue; }
+    m.x.set(dx);
+    m.y.set(dy);
+    m.x.to(0, { damping: 1, response: 0.46 });
+    m.y.to(0, { damping: 1, response: 0.46 });
+  }
 }
 
 
@@ -414,7 +767,13 @@ export function setFieldError(input, message) {
   holder.classList.toggle('has-error', !!message);
   const group = input.closest('.group'); const after = group || holder;
   let hint = after.nextElementSibling?.matches('.field-error') ? after.nextElementSibling : null;
-  if (message) { if (!hint) { hint = h('<p class="field-error" role="alert"></p>'); after.after(hint); } hint.textContent = message; input.setAttribute('aria-invalid', 'true'); }
+  if (message) {
+    const created = !hint;
+    if (!hint) { hint = h('<p class="field-error" role="alert"></p>'); after.after(hint); }
+    hint.textContent = message;
+    if (created) enter(hint);
+    input.setAttribute('aria-invalid', 'true');
+  }
   else { hint?.remove(); input.removeAttribute('aria-invalid'); }
 }
 
@@ -436,28 +795,42 @@ export function plural(n, one, other) { return `${n} ${pr.select(n) === 'one' ? 
  * e os que saem (leave). Mantém a lista estável enquanto chegam eventos em tempo real.
  */
 export function reconcile(container, items, { key, sig, render, empty = '', animateNew = true }) {
-  const existing = new Map($$(':scope > [data-key]', container).map((el) => [el.dataset.key, el]));
+  const existing = new Map($$(':scope > [data-key]', container).filter((el) => !el.dataset.leaving).map((el) => [el.dataset.key, el]));
   const emptyEl = $(':scope > .empty', container);
+  const first = snapshotRows(container);
   if (!items.length) {
-    existing.forEach((el) => leave(el));
+    const els = [...existing.values()];
+    for (const el of els) parkRow(el, container, first.get(el.dataset.key));
     if (!emptyEl && empty) { const e = h(empty); container.append(e); enter(e); }
+    els.forEach((el) => { if (el.isConnected) leave(el); });
     return;
   }
   emptyEl?.remove();
-  const seen = new Set(); let prev = null;
+  const seen = new Set();
+  const born = [];
+  let prev = null;
+  let index = 0;
   for (const item of items) {
     const k = String(key(item)); const s = String(sig(item)); seen.add(k);
     let el = existing.get(k);
+    const isNew = !el;
     if (!el || el.dataset.sig !== s) {
       const fresh = render(item); fresh.dataset.key = k; fresh.dataset.sig = s;
-      if (el) { el.replaceWith(fresh); } else if (animateNew) { requestAnimationFrame(() => enter(fresh)); }
+      if (el) el.replaceWith(fresh);
       el = fresh;
+      if (isNew) born.push([fresh, index]);
     }
     const want = prev ? prev.nextElementSibling : container.firstElementChild;
     if (want !== el) { if (prev) prev.after(el); else container.prepend(el); }
     prev = el;
+    index++;
   }
-  existing.forEach((el, k) => { if (!seen.has(k)) leave(el); });
+  const removed = [];
+  existing.forEach((el, k) => { if (!seen.has(k)) removed.push(el); });
+  for (const el of removed) parkRow(el, container, first.get(el.dataset.key));
+  playFlip(container, first);
+  if (animateNew) born.forEach(([el, i]) => enter(el, { delay: Math.min(i, 6) * 22 }));
+  removed.forEach((el) => { if (el.isConnected) leave(el); });
 }
 
 /** Substitui <span data-icon="nome"> pelo SVG correspondente. */

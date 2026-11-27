@@ -1,4 +1,4 @@
-import { $, $$, h, esc, icon, toast, openSheet, segmented, hydrateIcons, busy, fmtDateTime, initials, emptyState, setFieldError, haptic, ROLE } from './ui.js';
+import { $, $$, h, esc, icon, toast, openSheet, segmented, hydrateIcons, busy, fmtDateTime, initials, emptyState, setFieldError, haptic, ROLE, enter } from './ui.js';
 import { get, post, patch, requireSession, registerSW } from './api.js';
 import { historyPanel } from './history.js';
 import { mountShell } from './shell.js';
@@ -59,7 +59,12 @@ function userSheet(u, origin) {
   $$('#f-role button', form).forEach((b) => b.setAttribute('aria-selected', String(b.dataset.value === r)));
   const unit = $('#f-unit', form); unit.hidden = r !== 'morador';
   const sheet = openSheet({ title: creating ? 'Nova conta' : 'Editar conta', content: form, origin });
-  segmented($('#f-role', form), (v) => { r = v; unit.hidden = v !== 'morador'; });
+  segmented($('#f-role', form), (v) => {
+    r = v;
+    const show = v === 'morador';
+    if (show && unit.hidden) { unit.hidden = false; enter(unit); }
+    else unit.hidden = !show;
+  });
   $$('input', form).forEach((i) => i.addEventListener('input', () => setFieldError(i, '')));
   form.addEventListener('submit', async (e) => {
     e.preventDefault();

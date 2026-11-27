@@ -1,7 +1,7 @@
 // shell.js — estrutura nativa: barra de navegação com título grande que colapsa,
 // separadores de vidro flutuantes (iPhone) / barra lateral flutuante (iPad),
 // folha da conta. As páginas só declaram separadores e ecrãs.
-import { $, $$, h, esc, icon, Spring, hydrateIcons, installPressFeedback, installGlass, openSheet, toast, busy, setFieldError, haptic, initials, ROLE } from './ui.js';
+import { $, $$, h, esc, icon, Spring, hydrateIcons, installPressFeedback, installGlass, openSheet, toast, busy, setFieldError, haptic, initials, ROLE, makeSlider, expandSearch, reducedMotion } from './ui.js';
 import { post, logout, enableNotifications, notificationsSupported, notificationsGranted } from './api.js';
 
 export function mountShell({ me, tabs, actions = [], defaultTab, unitLine = '', onChange }) {
@@ -30,8 +30,8 @@ export function mountShell({ me, tabs, actions = [], defaultTab, unitLine = '', 
     <nav class="sb-tabs" aria-label="Secções">${tabs.map(tabHtml).join('')}<span class="sb-ind"></span></nav></aside>`);
   document.body.append(tabbar, sidebar);
 
-  // indicadores deslizantes (molas interrompíveis)
-  const pillInd = new Slider($('.tab-ind', tabbar), 'x'), sideInd = new Slider($('.sb-ind', sidebar), 'y');
+  // indicadores deslizantes: mola na posição e esticão na direção do movimento
+  const pillInd = makeSlider($('.tab-ind', tabbar), 'x'), sideInd = makeSlider($('.sb-ind', sidebar), 'y');
   const allTabs = () => $$('[data-tab]', document);
   const place = (animate) => {
     const id = state.tab;
@@ -41,11 +41,42 @@ export function mountShell({ me, tabs, actions = [], defaultTab, unitLine = '', 
   };
 
   const state = { tab: null };
-  let io;
+  let io, titleCollapsed = false;
+  const nbTitle = () => $('#nb-title');
+  const titleSpring = new Spring({
+    value: 0, damping: 1, response: 0.32, precision: 0.01,
+    onUpdate: (p) => {
+      const t = nbTitle(); if (!t) return;
+      t.style.opacity = String(Math.max(0, Math.min(1, p)));
+      t.style.transform = p >= 0.999 ? 'none' : `translateY(${(1 - p) * 6}px)`;
+    },
+  });
+  function springScreen(screen) {
+    if (reducedMotion()) { screen.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 180 }); return; }
+    screen._spring?.stop();
+    const s = new Spring({
+      value: 0, damping: 1, response: 0.36, precision: 0.002,
+      onUpdate: (p) => {
+        if (screen._spring !== s) return;
+        screen.style.opacity = String(Math.min(1, Math.max(0, p)));
+        screen.style.transform = p >= 0.999 ? '' : `translateY(${(1 - p) * 12}px)`;
+      },
+      onRest: () => {
+        if (screen._spring !== s) return;
+        screen.style.opacity = ''; screen.style.transform = '';
+      },
+    });
+    screen._spring = s;
+    s.to(1);
+  }
   function observeTitle(screen) {
-    io?.disconnect(); navbar.classList.remove('is-collapsed');
+    io?.disconnect(); navbar.classList.remove('is-collapsed'); titleCollapsed = false; titleSpring.set(0);
     const lt = $('.large-title', screen); if (!lt) return;
-    io = new IntersectionObserver(([e]) => navbar.classList.toggle('is-collapsed', !e.isIntersecting && e.boundingClientRect.top < 40), { rootMargin: '-52px 0px 0px 0px', threshold: 0 });
+    io = new IntersectionObserver(([e]) => {
+      const next = !e.isIntersecting && e.boundingClientRect.top < 40;
+      navbar.classList.toggle('is-collapsed', next);
+      if (next !== titleCollapsed) { titleCollapsed = next; titleSpring.to(next ? 1 : 0); }
+    }, { rootMargin: '-52px 0px 0px 0px', threshold: 0 });
     io.observe(lt);
   }
   function go(id, { animate = true, push = true } = {}) {
@@ -59,7 +90,7 @@ export function mountShell({ me, tabs, actions = [], defaultTab, unitLine = '', 
     document.title = `${screen.dataset.title} — Portaria`;
     if (changed) {
       window.scrollTo(0, 0);
-      if (animate) screen.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 220, easing: 'cubic-bezier(.2,.8,.2,1)' });
+      if (animate) { springScreen(screen); $$('.searchfield', screen).forEach((f) => expandSearch(f)); }
       if (push) history.replaceState(null, '', `#${id}`);
     }
     place(animate && changed); observeTitle(screen);
@@ -76,18 +107,6 @@ export function mountShell({ me, tabs, actions = [], defaultTab, unitLine = '', 
     setBadge(id, n) { $$(`[data-tab="${id}"] .tbadge`).forEach((b) => { b.hidden = !n; b.textContent = n > 9 ? '9+' : n; }); },
     setActionBadge(id, n) { const b = $(`[data-action="${id}"] .tbadge`); if (b) { b.hidden = !n; b.textContent = n; } },
   };
-}
-
-class Slider {
-  constructor(el, axis) {
-    this.el = el; this.axis = axis; this.initial = true;
-    this.pos = new Spring({ value: 0, damping: 1, response: 0.32, onUpdate: (v) => { el.style.transform = axis === 'x' ? `translateX(${v}px)` : `translateY(${v}px)`; } });
-    this.size = new Spring({ value: 0, damping: 1, response: 0.32, onUpdate: (v) => { el.style[axis === 'x' ? 'width' : 'height'] = `${v}px`; } });
-  }
-  to(p, s, animate) {
-    if (animate && !this.initial) { this.pos.to(p); this.size.to(s); } else { this.pos.set(p); this.size.set(s); }
-    this.initial = false;
-  }
 }
 
 // ------------------------------------------------------------ Conta --------

@@ -1,4 +1,4 @@
-import { $, $$, h, esc, icon, toast, banner, openSheet, reconcile, hydrateIcons, busy, haptic,
+import { $, $$, h, esc, icon, toast, banner, openSheet, reconcile, hydrateIcons, busy, haptic, confirmChegada,
   fmtTime, fmtDay, relTime, todayLocal, emptyState, initials, plural, STATUS, PURPOSE, setFieldError } from './ui.js';
 import { get, post, requireSession, connectLive, registerSW, systemNotify, notificationsSupported } from './api.js';
 import { historyPanel } from './history.js';
@@ -66,7 +66,10 @@ function insideCard(v) {
     <div class="cell action"><button class="btn btn-tinted btn-block" data-leave="${v.id}">Registar saída</button></div>
   </article>`);
 }
+let pauseRender = false;
 function render() {
+  if (pauseRender) { render.dirty = true; return; }
+  render.dirty = false;
   const pend = [...state.pending.values()].sort((a, b) => (a.status === 'aguardando' ? -1 : 1) - (b.status === 'aguardando' ? -1 : 1) || a.id - b.id);
   const ins = [...state.inside.values()].sort((a, b) => b.arrived_at.localeCompare(a.arrived_at));
   reconcile($('#pending'), pend, { key: (v) => v.id, sig: (v) => v.status, render: pendingCard, empty: emptyState('check', 'Tudo em dia', 'As novas visitas aparecem aqui assim que o morador as envia.') });
@@ -108,15 +111,26 @@ function upsert(v) {
   if (['pendente', 'aguardando'].includes(v.status) && v.visit_date === todayLocal()) state.pending.set(v.id, v);
   if (v.status === 'chegou') state.inside.set(v.id, v);
 }
-async function act(btn, url, okMsg) {
+async function act(btn, url, okMsg, { confirm = false } = {}) {
   busy(btn, true);
-  try { const v = await post(url); upsert(v); render(); loadStats(); haptic(15); toast(okMsg(v)); return v; }
-  catch (err) { busy(btn, false); toast(err.message, { error: true }); loadLists(); }
+  if (confirm) pauseRender = true;
+  try {
+    const v = await post(url);
+    haptic(15);
+    toast(okMsg(v));
+    if (confirm) await confirmChegada(btn);
+    pauseRender = false;
+    upsert(v); render(); loadStats();
+    return v;
+  } catch (err) {
+    pauseRender = false;
+    busy(btn, false); toast(err.message, { error: true }); loadLists();
+  }
 }
 let codeSheet = null;
 document.addEventListener('click', (e) => {
   const a = e.target.closest('[data-arrive]'); const l = e.target.closest('[data-leave]'); const c = e.target.closest('[data-cancel]'); const r = e.target.closest('[data-resident]');
-  if (a) act(a, `/api/visits/${a.dataset.arrive}/arrive`, (v) => `Chegada registada · ${v.resident_name.split(' ')[0]} foi avisado(a)`).then(() => codeSheet?.close());
+  if (a) act(a, `/api/visits/${a.dataset.arrive}/arrive`, (v) => `Chegada registada · ${v.resident_name.split(' ')[0]} foi avisado(a)`, { confirm: true }).then(() => codeSheet?.close());
   if (l) act(l, `/api/visits/${l.dataset.leave}/leave`, (v) => `Saída de ${v.visitor_name} registada`).then(() => codeSheet?.close());
   if (c) act(c, `/api/visits/${c.dataset.cancel}/cancel`, () => 'Pedido cancelado');
   if (r) residentSheet(residents.get(Number(r.dataset.resident)), r);

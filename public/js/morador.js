@@ -1,4 +1,4 @@
-import { $, $$, h, esc, icon, toast, banner, segmented, reconcile, hydrateIcons, setFieldError, busy, haptic,
+import { $, $$, h, esc, icon, toast, banner, segmented, reconcile, hydrateIcons, setFieldError, busy, haptic, enter,
   fmtTime, fmtDay, fmtDateTime, relTime, todayLocal, emptyState, plural, STATUS, PURPOSE } from './ui.js';
 import { get, post, requireSession, connectLive, registerSW, enableNotifications, notificationsSupported, systemNotify } from './api.js';
 import { mountShell } from './shell.js';
@@ -70,12 +70,19 @@ const form = $('#visit-form');
 hydrateIcons(form);
 let when = 'hoje', companions = 1;
 form.accompanied.addEventListener('change', () => {
-  const box = $('#companions'); box.hidden = !form.accompanied.checked;
-  if (!box.hidden) box.animate([{ opacity: 0, transform: 'translateY(-6px)' }, { opacity: 1, transform: 'none' }], { duration: 220, easing: 'cubic-bezier(.2,.8,.2,1)' });
+  const box = $('#companions');
+  const show = form.accompanied.checked;
+  if (show && box.hidden) { box.hidden = false; enter(box); } else box.hidden = !show;
 });
 $$('.stepper button', form).forEach((b) => b.addEventListener('click', () => { companions = Math.max(1, Math.min(30, companions + Number(b.dataset.step))); $('#cc-out').textContent = companions; }));
 const dateInput = $('#visit-date'); dateInput.min = todayLocal();
-segmented($('#when'), (v) => { when = v; $('#date-cell').hidden = v !== 'outra'; if (v === 'outra') dateInput.value ||= todayLocal(); });
+segmented($('#when'), (v) => {
+  when = v;
+  const cell = $('#date-cell');
+  const show = v === 'outra';
+  if (show && cell.hidden) { cell.hidden = false; enter(cell); if (!dateInput.value) dateInput.value = todayLocal(); }
+  else cell.hidden = !show;
+});
 form.visitor_name.addEventListener('input', () => setFieldError(form.visitor_name, ''));
 form.visitor_name.addEventListener('blur', () => { if (form.visitor_name.value && form.visitor_name.value.trim().length < 2) setFieldError(form.visitor_name, 'Escreva o nome completo do visitante.'); });
 
