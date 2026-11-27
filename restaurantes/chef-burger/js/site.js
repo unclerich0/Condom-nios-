@@ -1,4 +1,4 @@
-/* Chef Burger — reserva, horário e movimento. Sem servidor: pedidos e reservas saem pelo WhatsApp. */
+/* Chef Burger — pedido, reserva, horário e movimento. Sem servidor: tudo sai pelo WhatsApp. */
 (function () {
   "use strict";
 
@@ -6,12 +6,16 @@
   var OPEN = 8 * 60;
   var BREAKFAST_END = 14 * 60;
   var BOOK_LAST = 21 * 60 + 30;
+  var STORE = "chefburger-pedido-v3";
   var rq = window.matchMedia("(prefers-reduced-motion: reduce)");
+  var wideQ = window.matchMedia("(min-width: 960px)");
   var reduced = function () { return rq.matches; };
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
   var clamp = function (v, a, b) { return Math.min(b, Math.max(a, v)); };
 
+  function kz(n) { return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " Kz"; }
+  function norm(s) { return String(s || "").normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/ı/g, "i"); }
 
   /* ---------- Mola (Apple: amortecimento + resposta) ---------- */
   // Interrompível: um novo alvo parte do valor e da velocidade atuais.
@@ -265,6 +269,34 @@
   }
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { moveThumb(true); });
 
+  /* ---------- Pesquisa (página «Toda a ementa») ---------- */
+  var search = $("[data-search]");
+  var empty = $("[data-empty]");
+  var cats = $$("[data-cat]");
+  function filter() {
+    var q = norm(search.value.trim());
+    var shown = 0;
+    cats.forEach(function (cat) {
+      var any = 0;
+      $$("[data-dish]", cat).forEach(function (d) { var ok = !q || d.dataset.search.indexOf(q) !== -1; d.hidden = !ok; if (ok) any++; });
+      cat.hidden = !any; shown += any;
+    });
+    empty.hidden = !(q && !shown);
+    if (q && !shown) empty.textContent = "Nada na ementa com «" + search.value.trim() + "». Experimente «burger», «frango» ou «sumo».";
+  }
+  if (search) {
+    var form = search.form;
+    var q0 = new URLSearchParams(location.search).get("q");
+    if (q0) { search.value = q0; filter(); }
+    search.addEventListener("input", function () {
+      filter();
+      var u = new URL(location.href);
+      if (search.value.trim()) u.searchParams.set("q", search.value.trim()); else u.searchParams.delete("q");
+      history.replaceState(null, "", u.pathname.split("/").pop() + u.search);
+    });
+    if (form) form.addEventListener("submit", function (e) { e.preventDefault(); search.blur(); });
+  }
+
   /* ---------- Vídeo: só a tocar quando se vê ---------- */
   // Sem vídeo com movimento reduzido, Poupança de dados ou ligação lenta: fica a imagem fixa.
   var conn = navigator.connection || {};
@@ -293,10 +325,18 @@
     rq.addEventListener("change", function () { if (rq.matches) { v.pause(); v.dataset.playing = "false"; } });
   });
 
-  /* ---------- Ajudas para a reserva (WhatsApp) ---------- */
-  // Sem preços na ementa não há carrinho: o pedido faz-se direto no WhatsApp (botão na barra de baixo).
+  /* ---------- Pedido ---------- */
+  var cart = [];
+  try {
+    var saved = JSON.parse(localStorage.getItem(STORE) || "[]");
+    if (Array.isArray(saved)) cart = saved.filter(function (i) { return i && i.key && i.qty > 0 && i.kz > 0; });
+  } catch (e) { cart = []; }
   var live = $("[data-live]");
-  function say(msg) { if (!live) return; live.textContent = ""; setTimeout(function () { live.textContent = msg; }, 30); }
+  function save() { try { localStorage.setItem(STORE, JSON.stringify(cart)); } catch (e) {} }
+  function find(key) { for (var i = 0; i < cart.length; i++) if (cart[i].key === key) return cart[i]; return null; }
+  function totals() { return cart.reduce(function (a, i) { a.n += i.qty; a.kz += i.qty * i.kz; return a; }, { n: 0, kz: 0 }); }
+  function say(msg) { live.textContent = ""; setTimeout(function () { live.textContent = msg; }, 30); }
+
   function pop(el, amount) {
     if (!el || reduced() || !el.animate) return;
     // Mola amostrada para keyframes: pequeno ressalto, porque o toque foi o impulso.
@@ -305,12 +345,117 @@
     frames.push({ transform: "scale(1)" });
     el.animate(frames, { duration: 480, easing: "linear" });
   }
+
+  var addBtns = $$("[data-add]");
+  function paintButtons() {
+    addBtns.forEach(function (b) {
+      var item = find(b.dataset.key);
+      var q = item ? item.qty : 0;
+      b.dataset.in = q ? "true" : "false";
+      b.querySelector("[data-qty]").textContent = q ? String(q) : "";
+    });
+  }
+  function paintCounts() {
+    var t = totals();
+    $$("[data-count]").forEach(function (el) { el.textContent = String(t.n); el.hidden = t.n === 0; });
+    $$("[data-open-cart]").forEach(function (b) { b.setAttribute("aria-label", t.n ? "Abrir o pedido, " + t.n + (t.n === 1 ? " prato" : " pratos") + ", " + kz(t.kz) : "Abrir o pedido, vazio"); });
+    var dockText = $("[data-dock-text]");
+    var dockCart = $("[data-dock-cart]");
+    dockText.textContent = t.n ? kz(t.kz) : "Pedido";
+    dockCart.dataset.has = t.n ? "true" : "false";
+  }
+  function add(btn) {
+    var key = btn.dataset.key;
+    var item = find(key);
+    if (item) item.qty += 1;
+    else cart.push({ key: key, name: btn.dataset.name, variant: btn.dataset.variant || "", kz: Number(btn.dataset.kz), cat: btn.dataset.cat, qty: 1 });
+    save(); paintButtons(); paintCounts(); renderCart();
+    pop(btn.querySelector(".add__icon"), 1);
+    $$("[data-count]").forEach(function (c) { if (!c.hidden) pop(c, 0.8); });
+    var t = totals();
+    say(btn.dataset.name + (btn.dataset.variant ? ", " + btn.dataset.variant : "") + " juntou-se ao pedido. " + t.n + (t.n === 1 ? " prato, " : " pratos, ") + kz(t.kz) + ".");
+  }
+  addBtns.forEach(function (b) { b.addEventListener("click", function () { add(b); }); });
+
+  function changeQty(key, d) {
+    var item = find(key);
+    if (!item) return;
+    item.qty += d;
+    var row = list.querySelector('[data-key="' + CSS.escape(key) + '"]');
+    if (item.qty <= 0) {
+      cart = cart.filter(function (i) { return i.key !== key; });
+      save(); paintButtons(); paintCounts();
+      if (row && !reduced()) {
+        row.dataset.leaving = "true";
+        setTimeout(renderCart, 300);
+      } else renderCart();
+      say(item.name + " saiu do pedido.");
+      return;
+    }
+    save(); paintButtons(); paintCounts(); renderCart();
+  }
+
+  var sheet = $("[data-sheet]");
+  var panel = $("[data-panel]");
+  var scrim = $("[data-scrim]");
+  var list = $("[data-cart-list]");
+  var order = $("[data-order]");
+  var preview = $("[data-preview]");
+  var totalEl = $("[data-total]");
+
+  function renderCart() {
+    var t = totals();
+    sheet.dataset.empty = t.n ? "false" : "true";
+    list.innerHTML = "";
+    cart.forEach(function (i) {
+      var li = document.createElement("li");
+      li.className = "cart__item"; li.dataset.key = i.key;
+      li.innerHTML =
+        '<div class="cart__row"><p class="cart__name"></p><div class="qty" role="group"><button type="button" data-d="-1"><svg class="ic" aria-hidden="true"><use href="#i-minus"/></svg></button><output></output><button type="button" data-d="1"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg></button></div><p class="cart__sum"></p></div>';
+      var name = li.querySelector(".cart__name");
+      name.textContent = i.name;
+      if (i.variant) { var sm = document.createElement("small"); sm.textContent = i.variant; name.appendChild(sm); }
+      li.querySelector("output").textContent = String(i.qty);
+      li.querySelector(".cart__sum").textContent = i.qty + " × " + kz(i.kz) + " = " + kz(i.qty * i.kz);
+      li.querySelector(".qty").setAttribute("aria-label", "Quantidade de " + i.name);
+      li.querySelector('[data-d="-1"]').setAttribute("aria-label", i.qty === 1 ? "Tirar " + i.name + " do pedido" : "Menos um " + i.name);
+      li.querySelector('[data-d="1"]').setAttribute("aria-label", "Mais um " + i.name);
+      li.querySelectorAll("[data-d]").forEach(function (b) { b.addEventListener("click", function () { changeQty(i.key, Number(b.dataset.d)); }); });
+      list.appendChild(li);
+    });
+    totalEl.textContent = kz(t.kz);
+    updatePreview();
+  }
+
+  var seg = $("[data-seg]");
+  var addressField = $("[data-address]");
+  function mode() { var r = order.querySelector('input[name="modo"]:checked'); return r ? r.value : "entrega"; }
+  function paintMode() { seg.dataset.value = mode(); addressField.hidden = mode() !== "entrega"; updatePreview(); }
+  $$('input[name="modo"]', order).forEach(function (r) { r.addEventListener("change", paintMode); });
+
+  function orderMessage() {
+    var f = order.elements;
+    var lines = ["Olá, Chef Burger. Quero fazer um pedido.", ""];
+    cart.forEach(function (i) { lines.push(i.qty + "× " + i.name + (i.variant ? " (" + i.variant + ")" : "") + " — " + kz(i.qty * i.kz)); });
+    lines.push("", "Total: " + kz(totals().kz));
+    if (cart.some(function (i) { return i.cat === "pizzas"; })) lines.push("As pizzas levam o preço escolhido na carta; confirmem o tamanho, por favor.");
+    lines.push("");
+    if (mode() === "entrega") lines.push("Entrega em: " + (f.morada.value.trim() || "…"));
+    else lines.push("Vou levantar no Quarteirão W17.");
+    if (f.nome.value.trim()) lines.push("Nome: " + f.nome.value.trim());
+    if (f.telefone.value.trim()) lines.push("Telefone: " + f.telefone.value.trim());
+    if (f.nota.value.trim()) lines.push("Nota: " + f.nota.value.trim());
+    return lines.join("\n");
+  }
+  function updatePreview() { if (preview) preview.textContent = cart.length ? orderMessage() : ""; }
+  order.addEventListener("input", updatePreview);
+
   function setErr(form, name, msg) {
     var input = form.elements[name];
     var out = form.querySelector('[data-err="' + name + '"]');
     if (input) { if (msg) input.setAttribute("aria-invalid", "true"); else input.removeAttribute("aria-invalid"); }
     if (out) out.textContent = msg || "";
-    if (input && out) { if (!out.id) out.id = "err-r-" + name; input.setAttribute("aria-describedby", out.id); }
+    if (input && out) { if (!out.id) out.id = (form.hasAttribute("data-reserva") ? "err-r-" : "err-o-") + name; input.setAttribute("aria-describedby", out.id); }
     return !msg;
   }
   function phoneOk(v) { return v.replace(/\D/g, "").length >= 9; }
@@ -319,6 +464,128 @@
     var w = window.open(url, "_blank", "noopener");
     if (!w) window.location.href = url;
   }
+
+  order.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var f = order.elements, ok = true, first = null;
+    function check(name, msg) { var good = setErr(order, name, msg); if (!good) { ok = false; first = first || f[name]; } }
+    check("morada", mode() === "entrega" && !f.morada.value.trim() ? "Escreva a morada de entrega." : "");
+    check("nome", !f.nome.value.trim() ? "Escreva o seu nome." : "");
+    check("telefone", !phoneOk(f.telefone.value) ? "Escreva um telefone com pelo menos 9 algarismos." : "");
+    if (!ok) { first.focus(); return; }
+    sendWA(orderMessage());
+    say("Abrimos o WhatsApp com o pedido. Só fica confirmado quando a equipa responder.");
+  });
+
+  /* ---------- Folha: abrir, fechar, arrastar ---------- */
+  var sheetOpen = false;
+  var lastFocus = null;
+  var travel = function () { return wideQ.matches ? panel.offsetWidth + 24 : panel.offsetHeight; };
+  // p: 0 aberto, 1 fechado
+  var sheetP = new Spring(1, function (p) {
+    var d = p * travel();
+    panel.style.transform = wideQ.matches ? "translateX(" + d + "px)" : "translateY(" + d + "px)";
+    scrim.style.opacity = String(clamp(1 - p, 0, 1));
+  });
+  function openSheet() {
+    if (sheetOpen) return;
+    sheetOpen = true;
+    lastFocus = document.activeElement;
+    renderCart();
+    sheet.hidden = false;
+    document.documentElement.style.overflow = "hidden";
+    sheetP.set(1);
+    requestAnimationFrame(function () {
+      sheetP.to(0, { damping: 1, response: 0.42 });
+      panel.focus({ preventScroll: true });
+    });
+  }
+  function closeSheet(velocity) {
+    if (!sheetOpen) return;
+    sheetOpen = false;
+    var opts = velocity != null ? { damping: 1, response: 0.32, velocity: velocity } : { damping: 1, response: 0.36 };
+    opts.done = function () { if (!sheetOpen) { sheet.hidden = true; document.documentElement.style.overflow = ""; if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true }); } };
+    sheetP.to(1, opts);
+  }
+  $$("[data-open-cart]").forEach(function (b) { b.addEventListener("click", openSheet); });
+  sheet.addEventListener("click", function (e) {
+    var c = e.target.closest("[data-close]");
+    if (!c) return;
+    if (c.tagName === "A") { closeSheet(); return; }
+    closeSheet();
+  });
+  document.addEventListener("keydown", function (e) {
+    if (!sheetOpen) return;
+    if (e.key === "Escape") { e.preventDefault(); closeSheet(); return; }
+    if (e.key === "Tab") {
+      var f = $$('button, [href], input, select, textarea, summary, [tabindex]:not([tabindex="-1"])', panel).filter(function (el) { return !el.disabled && el.offsetParent !== null; });
+      if (!f.length) return;
+      if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f[f.length - 1].focus(); }
+      else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { e.preventDefault(); f[0].focus(); }
+    }
+  });
+
+  // Arrasto 1:1, elástico na borda, projeção de momento e velocidade passada à mola.
+  function rubberband(over, dim) { var c = 0.55; return (over * dim * c) / (dim + c * Math.abs(over)); }
+  function project(v, d) { d = d || 0.998; return (v / 1000) * d / (1 - d); }
+  var body = $("[data-sheet-body]");
+  var drag = null;
+  panel.addEventListener("pointerdown", function (e) {
+    if (wideQ.matches || !sheetOpen || drag) return;
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    var inBody = body.contains(e.target);
+    if (e.target.closest("input, select, textarea, button, a, summary, label")) return;
+    if (inBody && body.scrollTop > 0) return;
+    drag = { id: e.pointerId, y0: e.clientY, start: sheetP.x * travel(), last: [{ y: e.clientY, t: e.timeStamp }], moved: false, inBody: inBody };
+  });
+  panel.addEventListener("pointermove", function (e) {
+    if (!drag || e.pointerId !== drag.id) return;
+    var dy = e.clientY - drag.y0;
+    if (!drag.moved) {
+      if (Math.abs(dy) < 8) return;
+      if (drag.inBody && dy < 0) { drag = null; return; }
+      drag.moved = true;
+      try { panel.setPointerCapture(e.pointerId); } catch (err) {}
+      cancelAnimationFrame(sheetP.raf); sheetP.raf = 0;
+    }
+    var h = travel();
+    var y = drag.start + dy;
+    if (y < 0) y = rubberband(y, h);
+    sheetP.x = y / h; sheetP.v = 0; sheetP.onUpdate(sheetP.x);
+    drag.last.push({ y: e.clientY, t: e.timeStamp });
+    if (drag.last.length > 6) drag.last.shift();
+    if (e.cancelable) e.preventDefault();
+  });
+  function endDrag(e) {
+    if (!drag || e.pointerId !== drag.id) return;
+    var d = drag; drag = null;
+    if (!d.moved) return;
+    var a = d.last[0], b = d.last[d.last.length - 1];
+    var dt = Math.max(1, b.t - a.t);
+    var v = ((b.y - a.y) / dt) * 1000; // px/s
+    var h = travel();
+    var y = sheetP.x * h;
+    var projected = y + project(v);
+    var flick = v / 1000 > 0.4 && y > 24;
+    if (projected > h * 0.45 || flick) closeSheet(v / h);
+    else sheetP.to(0, { damping: 0.8, response: 0.3, velocity: v / h });
+  }
+  panel.addEventListener("pointerup", endDrag);
+  panel.addEventListener("pointercancel", endDrag);
+  wideQ.addEventListener("change", function () { sheetP.set(sheetOpen ? 0 : 1); });
+
+  paintButtons(); paintCounts(); renderCart(); paintMode();
+
+  // O pedido é o mesmo em todas as páginas: volta a ler-se ao regressar (bfcache) ou se mudar noutro separador.
+  function reloadCart() {
+    try {
+      var s2 = JSON.parse(localStorage.getItem(STORE) || "[]");
+      cart = Array.isArray(s2) ? s2.filter(function (i) { return i && i.key && i.qty > 0 && i.kz > 0; }) : [];
+    } catch (e) { cart = []; }
+    paintButtons(); paintCounts(); renderCart();
+  }
+  window.addEventListener("pageshow", function (e) { if (e.persisted) reloadCart(); });
+  window.addEventListener("storage", function (e) { if (e.key === STORE) reloadCart(); });
 
   /* ---------- Reserva ---------- */
   var reserva = $("[data-reserva]");

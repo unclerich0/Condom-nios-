@@ -4,7 +4,7 @@
 //
 // Páginas (a ordem decide a direção da transição: maior = desliza da direita):
 //   index.html            início (-1)
-//   ementa.html           a ementa em livro, que se folheia com o dedo (0)
+//   ementa.html           a ementa em livro, abre logo (0)
 //   <categoria>.html      só reencaminham para ementa.html#livro-<categoria> (links antigos)
 import fs from 'node:fs';
 import path from 'node:path';
@@ -17,11 +17,15 @@ const base = fs.readFileSync(path.join(here, 'base.html'), 'utf8');
 const part = (n) => fs.readFileSync(path.join(here, 'partes', n + '.html'), 'utf8');
 
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const kz = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' Kz';
+const slug = (s) => s.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().replace(/ı/g, 'i').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const norm = (s) => s.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().replace(/ı/g, 'i');
 const pratos = (n) => n + (n === 1 ? ' prato' : ' pratos');
 
 const total = menu.reduce((n, c) => n + c.dishes.length, 0);
 const file = (c) => `${c.id}.html`;
 const bookHref = (c) => `ementa.html#livro-${c.id}`;
+const minKz = (c) => Math.min(...c.dishes.flatMap((d) => d.prices.map((p) => p.kz)));
 
 /* ---------- Peças partilhadas ---------- */
 // Nomes curtos na barra de vidro, para caber numa linha no computador. O título da página fica completo.
@@ -30,12 +34,26 @@ function catbar(activeIdx) {
   const items = [{ href: 'ementa.html', title: 'Tudo', idx: 0 }, ...menu.map((c, i) => ({ href: bookHref(c), title: SHORT[c.id] || c.title, idx: i + 1 }))];
   const chips = items.map((it) => `<a class="chip" href="${it.href}" data-idx="${it.idx}"${it.idx === activeIdx ? ' aria-current="page"' : ''}>${esc(it.title)}</a>`).join('\n          ');
   return `      <div class="catbar" data-catbar>
-        <nav class="wrap catbar__in glass" aria-label="Capítulos da ementa" data-catnav>
+        <nav class="wrap catbar__in glass" aria-label="Páginas da ementa" data-catnav>
           <span class="catbar__thumb" data-thumb aria-hidden="true"></span>
           ${chips}
         </nav>
       </div>
       <script>(function(){var n=document.querySelector("[data-catnav]");if(!n)return;var a=n.querySelector('[aria-current="page"]'),t=n.querySelector("[data-thumb]"),s=window.__cbNav;if(s&&typeof s.sl==="number")n.scrollLeft=s.sl;else if(a)n.scrollLeft=a.offsetLeft-(n.clientWidth-a.offsetWidth)/2;if(a&&t){t.style.width=a.offsetWidth+"px";t.style.transform="translateX("+a.offsetLeft+"px)";t.dataset.on="true";}})();</script>`;
+}
+
+function dishLi(c, d, h = 'h3') {
+  const id = slug(d.name);
+  const search = norm([c.title, d.name, d.desc, ...d.prices.map((p) => p.v)].join(' '));
+  const buttons = d.prices.map((p, pi) => {
+    const key = `${c.id}:${id}:${pi}`;
+    const label = p.v ? `, ${p.v}` : '';
+    return `<button type="button" class="add" data-add data-key="${key}" data-name="${esc(d.name)}" data-variant="${esc(p.v)}" data-kz="${p.kz}" data-cat="${c.id}" aria-label="Juntar ${esc(d.name)}${esc(label)}, ${kz(p.kz)}, ao pedido">${p.v ? `<span class="add__label">${esc(p.v)}</span>` : ''}<span class="add__price">${kz(p.kz)}</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button>`;
+  }).join('');
+  return `<li class="dish" data-dish data-search="${esc(search)}">
+              <div class="dish__text"><${h} class="dish__t">${esc(d.name)}</${h}>${d.desc ? `<p>${esc(d.desc)}</p>` : ''}</div>
+              <div class="dish__buy${d.prices.length > 1 ? ' dish__buy--two' : ''}">${buttons}</div>
+            </li>`;
 }
 
 const navLinks = (page) => [
@@ -46,7 +64,10 @@ const navLinks = (page) => [
 ].map(([k, href, t, idx]) => `        <a href="${href}" data-idx="${idx}"${(k === 'ementa' && page !== 'inicio') ? ' aria-current="page"' : ''}>${t}</a>`).join('\n');
 
 const restaurantLd = `<script type="application/ld+json">{"@context":"https://schema.org","@type":"Restaurant","name":"Chef Burger","alternateName":["Chef Hüseyin İstanbul Burger","Chef Huseyin Burger & Pizza"],"servesCuisine":["Turca","Hambúrgueres","Pizza","Grelhados","Halal"],"telephone":"+244925918468","image":"https://chef-burger-kilamba.onrender.com/img/og.jpg","address":{"@type":"PostalAddress","streetAddress":"Quarteirão W17, Centralidade do Kilamba","addressLocality":"Kilamba","addressRegion":"Luanda","addressCountry":"AO"},"hasMap":"https://www.google.com/maps?cid=15845525897477371517","acceptsReservations":true,"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday"],"opens":"08:00","closes":"22:30"},{"@type":"OpeningHoursSpecification","dayOfWeek":["Friday","Saturday","Sunday"],"opens":"08:00","closes":"23:30"}],"sameAs":["https://www.instagram.com/chefburgerao/","https://www.facebook.com/profile.php?id=100083841722074","https://www.tiktok.com/@chefburgerao"],"hasMenu":"https://chef-burger-kilamba.onrender.com/ementa.html"}</script>`;
-const sectionLd = (c) => ({ '@type': 'MenuSection', name: c.title, hasMenuItem: c.dishes.map((d) => ({ '@type': 'MenuItem', name: d.name, suitableForDiet: 'https://schema.org/HalalDiet' })) });
+const sectionLd = (c) => ({ '@type': 'MenuSection', name: c.title, hasMenuItem: c.dishes.map((d) => ({
+  '@type': 'MenuItem', name: d.name, ...(d.desc ? { description: d.desc } : {}), suitableForDiet: 'https://schema.org/HalalDiet',
+  offers: d.prices.map((p) => ({ '@type': 'Offer', price: p.kz, priceCurrency: 'AOA', ...(p.v ? { name: p.v } : {}) })),
+})) });
 const menuLd = { '@context': 'https://schema.org', '@type': 'Menu', name: 'Ementa do Chef Burger', inLanguage: 'pt-AO', hasMenuSection: menu.map(sectionLd) };
 
 function page({ name, idx, title, desc, preload = '', ld = '', main, scripts = '' }) {
@@ -60,6 +81,7 @@ function page({ name, idx, title, desc, preload = '', ld = '', main, scripts = '
     .replace('{{NAVLINKS}}', navLinks(name))
     .replace('{{MAIN}}', main.trimEnd())
     .replace('{{RODAPE}}', part('rodape'))
+    .replace('{{PEDIDO}}', part('pedido'))
     .replace('{{SCRIPTS}}', scripts)
     .replace('{{DOCK_EMENTA_CUR}}', name === 'ementa' ? ' aria-current="page"' : '')
     .replaceAll('{{EMENTA}}', ementa).replaceAll('{{H}}', H);
@@ -67,35 +89,53 @@ function page({ name, idx, title, desc, preload = '', ld = '', main, scripts = '
 
 
 /* ---------- Ementa em livro (StPageFlip) ---------- */
-// Só os nomes dos pratos, em letra grande. Aqui sai um capítulo por página (é o que se vê sem JavaScript
-// ou com movimento reduzido: uma lista de nomes). js/livro.js mede o ecrã e reparte cada capítulo
-// pelas folhas que forem precisas, com o título repetido no topo das seguintes.
+// Cada categoria abre numa página com fotografia; os pratos seguem em páginas de papel.
+// O peso de cada prato decide quantos cabem numa página (dois preços e descrição longa pesam mais).
 function livro() {
+  const weight = (d) => 1 + (d.prices.length > 1 ? 0.45 : 0) + (d.desc && d.desc.length > 60 ? 0.3 : 0);
   const pages = [];
   pages.push(`<div class="page page--cover" data-density="hard"><div class="page__in">
           <p class="cover__brand"><span class="brand__chef">Chef</span><span class="brand__burger">Burger</span></p>
           <p class="cover__t">Ementa</p>
           <p class="cover__s">${total} pratos turcos, 100% halal · Quarteirão W17, Kilamba</p>
+          <p class="cover__hint" aria-hidden="true">Arraste a página <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></p>
         </div></div>`);
   menu.forEach((c, ci) => {
-    pages.push(`<div class="page" data-cat-id="${c.id}" data-cat-start="${ci + 1}" data-cat-title="${esc(c.title)}"><div class="page__in">
-          <figure class="page__pic"><img src="${c.img}" alt="" width="800" height="800" loading="lazy" decoding="async"></figure><h2 class="page__t">${esc(c.title)}</h2>
+    const chunks = []; let cur = [], w = 0, cap = 3.3;
+    c.dishes.forEach((d) => { const dw = weight(d); if (cur.length && w + dw > cap) { chunks.push(cur); cur = []; w = 0; cap = 5.6; } cur.push(d); w += dw; });
+    if (cur.length) chunks.push(cur);
+    chunks.forEach((ch, k) => {
+      const head = k === 0
+        ? `<figure class="page__pic"><img src="${c.img}" alt="" width="800" height="800" loading="lazy" decoding="async"></figure><h3 class="page__t">${esc(c.title)}</h3>${c.intro ? `<p class="page__intro">${esc(c.intro)}</p>` : ''}`
+        : `<p class="page__run">${esc(c.title)} <span>${k + 1}/${chunks.length}</span></p>`;
+      pages.push(`<div class="page" data-cat-id="${c.id}"${k === 0 ? ` data-cat-start="${ci + 1}"` : ''}><div class="page__in">
+          ${head}
           <ul class="page__dishes" role="list">
-            ${c.dishes.map((d) => `<li>${esc(d.name)}</li>`).join('\n            ')}
+            ${ch.map((d) => dishLi(c, d, 'h4')).join('\n            ')}
           </ul>
+          <p class="page__no" aria-hidden="true"></p>
         </div></div>`);
+    });
   });
-  pages.push(`<div class="page page--note"><div class="page__in"><p class="page__t">Bom apetite.</p><p class="page__intro">Pedidos pelo WhatsApp, +244 925 918 468. Para levantar no W17 ou para entrega em casa.</p></div></div>`);
+  if (pages.length % 2) pages.push(`<div class="page page--note"><div class="page__in"><p class="page__t">Bom apetite.</p><p class="page__intro">Toque no preço para juntar ao pedido. O pedido segue pelo WhatsApp e a equipa responde a confirmar.</p></div></div>`);
   pages.push(`<div class="page page--cover page--back" data-density="hard"><div class="page__in">
           <p class="cover__brand"><span class="brand__chef">Chef</span><span class="brand__burger">Burger</span></p>
           <p class="cover__s">Quarteirão W17, Centralidade do Kilamba · +244 925 918 468 · @chefburgerao</p>
         </div></div>`);
   return `    <section class="book-sec" id="livro" aria-labelledby="livro-t" data-book-sec>
-      <h1 class="sr" id="livro-t">Ementa do Chef Burger</h1>
+      <div class="wrap book-sec__head">
+        <h2 id="livro-t">Folhear a ementa</h2>
+        <p>Arraste a página com o dedo, ou toque na borda dela ou nas setas. O preço junta o prato ao pedido.</p>
+      </div>
       <div class="book-stage" data-book-stage>
         <div class="flipbook" data-book>
         ${pages.join('\n        ')}
         </div>
+      </div>
+      <div class="wrap book-ctl">
+        <button type="button" class="book-ctl__b" data-book-prev aria-label="Página anterior"><svg class="ic ic--back" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+        <p class="book-ctl__where" data-book-where aria-live="polite">Capa</p>
+        <button type="button" class="book-ctl__b" data-book-next aria-label="Página seguinte"><svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></button>
       </div>
     </section>
 `;
@@ -107,7 +147,7 @@ const out = {};
 const cards = menu.map((c, i) => `        <li class="card"><a href="${bookHref(c)}" data-idx="0">
           <figure class="card__pic"><img src="${c.img}" alt="${esc(c.alt)}" width="800" height="800" loading="lazy" decoding="async"></figure>
           <span class="card__t">${esc(c.title)}</span>
-          <span class="card__m">${pratos(c.dishes.length)}</span>
+          <span class="card__m">${pratos(c.dishes.length)} · desde ${kz(minKz(c))}</span>
         </a></li>`).join('\n');
 out['index.html'] = page({
   name: 'inicio', idx: -1,
@@ -120,11 +160,11 @@ out['index.html'] = page({
     + part('frase') + part('reservar'),
 });
 
-/* ---------- A ementa: só o livro ---------- */
+/* ---------- A ementa: o livro, aberto logo ---------- */
 out['ementa.html'] = page({
   name: 'ementa', idx: 0,
   title: 'Ementa · Chef Burger, Kilamba',
-  desc: `Os ${total} pratos do Chef Burger num livro que se folheia com o dedo: hambúrgueres, pizzas, grelhados turcos, faita, meze, matabicho, sobremesas e bebidas. Pedido pelo WhatsApp.`,
+  desc: `Os ${total} pratos do Chef Burger com o preço da carta em kwanzas: hambúrgueres, pizzas, grelhados turcos, faita, meze, matabicho, sobremesas e bebidas. Pedido pelo WhatsApp.`,
   ld: `  <script type="application/ld+json">${JSON.stringify(menuLd)}</script>`,
   scripts: '  <script src="js/vendor/page-flip.browser.js" defer></script>\n  <script src="js/livro.js" defer></script>\n',
   main: `${catbar(0)}

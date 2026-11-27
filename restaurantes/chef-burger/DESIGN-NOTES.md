@@ -107,3 +107,14 @@ O pedido abre numa folha (sheet) que sobe de baixo no telemóvel e entra pela di
 ### Nota sobre o Voltar no Safari (v5)
 
 No vídeo do iPhone, o Voltar a partir de Meze foi parar ao início em vez de Esparguete. O código não usa `location.replace`, `pushState` nem a Navigation API entre páginas: os links "Seguinte" eram links normais. A causa provável é a regra do Safari que esconde do botão Voltar entradas do histórico que considera "sem interação do utilizador" (ver WebKit PR 78587 e hotwired/turbo#810), juntamente com a transição entre documentos. Não foi possível reproduzir num navegador sem ecrã, porque o `history.back()` nunca salta entradas. A v6 resolve isto pela estrutura: já não há páginas de categoria para encadear, o livro não cria entradas e o Safari não tem transição entre documentos.
+
+## v7 — o livro da v5, com a navegação da v6
+
+- As folhas do livro voltam a ser as da v5: preços em botão (+), descrições, setas com "Categoria · página n de m", contador k/n e texto de ajuda. O carrinho, a folha do pedido (WhatsApp com o pedido), o botão Pedido e os dados estruturados com preços também voltam.
+- Fica da v6:
+  - sem as dez páginas de categoria, sem a lista completa nem a pesquisa; os links antigos reencaminham para o capítulo no livro;
+  - `ementa.html` abre logo no livro; no telemóvel desce até ele, se não couber por baixo do título;
+  - a barra de vidro vira o livro até ao capítulo e mantém o livro à vista;
+  - o endereço `#livro-<capítulo>` muda com `replaceState`;
+  - todos os botões e links da ementa abrem o livro;
+  - o Safari fica sem transição entre documentos.

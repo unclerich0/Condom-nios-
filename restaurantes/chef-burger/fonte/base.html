@@ -23,11 +23,12 @@
 {{PRELOAD}}
   <link rel="stylesheet" href="css/site.css">
   <script>
-    /* Transição entre páginas: a direção sai da ordem das páginas (início -1, ementa 0). No Safari (iPhone, iPad, Mac) não há transição entre documentos: o Voltar do Safari salta entradas do histórico com ela, e não queremos arriscar. */
+    /* Transição entre páginas: a direção sai da ordem das páginas (início -1, ementa 0, categorias 1…10). */
     (function () {
       var d = document.documentElement, K = "cb-nav";
       d.classList.add("js");
       var to = Number(d.dataset.idx);
+      /* Safari (iPhone, iPad, Mac): sem transição entre documentos; o Voltar do Safari salta entradas com ela. */
       var ua = navigator.userAgent, webkit = /iPhone|iPad|iPod/.test(ua) || (/AppleWebKit/.test(ua) && !/Chrome|Chromium|Edg|Android/.test(ua));
       function read() {
         var from = null, sl = null;
@@ -87,10 +88,11 @@
       </nav>
       <div class="nav__end">
         <p class="status" data-status><span class="status__dot" aria-hidden="true"></span><span data-status-short>Aberto</span></p>
-        <a class="nav__bag glass" href="https://wa.me/244925918468?text=Ol%C3%A1%2C%20Chef%20Burger.%20Quero%20fazer%20um%20pedido." target="_blank" rel="noopener" aria-label="Pedir no WhatsApp">
-          <svg class="ic ic--brand" aria-hidden="true"><use href="#i-wa"/></svg>
-          <span class="nav__bag-text">Pedir no WhatsApp</span>
-        </a>
+        <button type="button" class="nav__bag glass" data-open-cart aria-label="Abrir o pedido, vazio">
+          <svg class="ic" aria-hidden="true"><use href="#i-bag"/></svg>
+          <span class="nav__bag-text">Pedido</span>
+          <span class="count" data-count hidden>0</span>
+        </button>
       </div>
     </div>
   </header>
@@ -104,10 +106,16 @@
     <a class="dock__b" href="{{EMENTA}}"{{DOCK_EMENTA_CUR}}><svg class="ic" aria-hidden="true"><use href="#i-menu"/></svg><span>Ementa</span></a>
     <a class="dock__b" href="{{H}}#reservar"><svg class="ic" aria-hidden="true"><use href="#i-cal"/></svg><span>Reservar</span></a>
     <a class="dock__b" href="tel:+244925918468"><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg><span>Ligar</span></a>
-    <a class="dock__cart" href="https://wa.me/244925918468?text=Ol%C3%A1%2C%20Chef%20Burger.%20Quero%20fazer%20um%20pedido." target="_blank" rel="noopener"><svg class="ic ic--brand" aria-hidden="true"><use href="#i-wa"/></svg><span class="dock__cart-text">Pedir no WhatsApp</span></a>
+    <button type="button" class="dock__cart" data-open-cart data-dock-cart aria-label="Abrir o pedido">
+      <svg class="ic" aria-hidden="true"><use href="#i-bag"/></svg>
+      <span class="dock__cart-text" data-dock-text>Pedido</span>
+      <span class="count count--dock" data-count hidden>0</span>
+    </button>
   </nav>
 
+{{PEDIDO}}
   <p class="sr" data-live aria-live="polite"></p>
+  <noscript><p class="noscript">Para montar o pedido neste site é preciso JavaScript. Pode escrever na mesma para o WhatsApp +244 925 918 468.</p></noscript>
 {{SCRIPTS}}  <script src="js/site.js" defer></script>
 </body>
 </html>
