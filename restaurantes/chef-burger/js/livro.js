@@ -1,126 +1,188 @@
-/* Chef Burger — a ementa em livro. Virar com o dedo (StPageFlip, em js/vendor), setas, ou a barra de vidro. */
+/* Chef Burger — a ementa é um livro. Vira-se com o dedo (arrastar ou um gesto rápido), tocando na borda
+   da página, com as setas do teclado, ou pela barra de vidro, que abre o livro no capítulo.
+   Motor: StPageFlip (js/vendor, com as correções de toque descritas lá).
+   Endereço: #livro-<capítulo> acompanha a página com history.replaceState, sem criar entradas novas.
+   Assim o Voltar sai do livro para onde se estava (o início), em vez de recuar página a página. */
 (function () {
   "use strict";
   var el = document.querySelector("[data-book]");
   if (!el) return;
   var stage = document.querySelector("[data-book-stage]");
-  var where = document.querySelector("[data-book-where]");
-  var prev = document.querySelector("[data-book-prev]");
-  var next = document.querySelector("[data-book-next]");
-  var pages = Array.prototype.slice.call(el.querySelectorAll(".page"));
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var total = pages.length;
+  var pages = [], total = 0;
+  function collect() { pages = Array.prototype.slice.call(el.querySelectorAll(":scope > .page")); total = pages.length; }
+  collect();
+  function whenReady(fn) { if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fn); else fn(); }
 
-  pages.forEach(function (p, i) { var n = p.querySelector(".page__no"); if (n) n.textContent = String(i); });
+  // Reparte cada capítulo pelas folhas que forem precisas para o tamanho de página deste ecrã.
+  function paginate(w, h) {
+    var probe = document.createElement("div");
+    probe.className = "flipbook";
+    probe.style.cssText = "position:fixed;left:-9999px;top:0;visibility:hidden;";
+    document.body.appendChild(probe);
+    var out = [];
+    pages.forEach(function (src) {
+      if (!src.dataset.catStart) { out.push(src); return; }
+      var names = Array.prototype.slice.call(src.querySelectorAll(".page__dishes li"));
+      var first = true, page, inn, ul;
+      function open() {
+        page = document.createElement("div");
+        page.className = "page";
+        page.dataset.catId = src.dataset.catId;
+        page.style.cssText = "position:relative;width:" + w + "px;height:" + h + "px;";
+        inn = document.createElement("div");
+        inn.className = "page__in";
+        if (first) {
+          page.dataset.catStart = src.dataset.catStart;
+          inn.appendChild(src.querySelector(".page__pic").cloneNode(true));
+          inn.appendChild(src.querySelector(".page__t").cloneNode(true));
+        } else {
+          var run = document.createElement("p");
+          run.className = "page__run";
+          run.textContent = src.dataset.catTitle;
+          inn.appendChild(run);
+        }
+        ul = document.createElement("ul");
+        ul.className = "page__dishes";
+        ul.setAttribute("role", "list");
+        inn.appendChild(ul);
+        page.appendChild(inn);
+        probe.appendChild(page);
+        first = false;
+      }
+      open();
+      names.forEach(function (li) {
+        var n = li.cloneNode(true);
+        ul.appendChild(n);
+        if (inn.scrollHeight > inn.clientHeight + 1 && ul.children.length > 1) {
+          ul.removeChild(n);
+          out.push(page);
+          open();
+          ul.appendChild(n);
+        }
+      });
+      out.push(page);
+    });
+    out.forEach(function (p) { p.style.cssText = ""; });
+    // Capa + folhas + contracapa: número par, para a contracapa fechar o livro. A folha "Bom apetite" só entra se faltar uma.
+    var note = out.filter(function (p) { return p.classList.contains("page--note"); })[0];
+    if (note && out.length % 2 === 1) out.splice(out.indexOf(note), 1);
+    el.textContent = "";
+    out.forEach(function (p) { el.appendChild(p); });
+    probe.remove();
+    collect();
+  }
 
-  function label(i) {
-    var p = pages[i];
-    if (!p) return "";
-    if (i === 0) return "Capa";
-    if (i === total - 1) return "Contracapa";
-    var cat = p.dataset.catId ? p.querySelector(".page__t, .page__run") : null;
-    var name = cat ? cat.childNodes[0].textContent.trim() : "";
-    if (window.matchMedia("(max-width: 959px)").matches) return (name ? name + " · " : "") + i + "/" + (total - 2);
-    return (name ? name + " · " : "") + "página " + i + " de " + (total - 2);
+  function catIdxOf(i) {
+    for (var k = Math.min(i, total - 1); k >= 0; k--) { var s = pages[k].dataset.catStart; if (s) return Number(s); }
+    return 0;
   }
-  function catName(i) {
-    var p = pages[i];
-    var t = p && p.dataset.catId ? p.querySelector(".page__t, .page__run") : null;
-    return t ? t.childNodes[0].textContent.trim() : "";
+  function pageFromHash() {
+    var m = /^#livro-([a-z0-9-]+)$/.exec(location.hash);
+    if (!m) return 0;
+    // Sem id nas páginas, de propósito: um id faria o navegador rolar até à folha e esconder o topo do livro.
+    var p = el.querySelector('[data-cat-start][data-cat-id="' + m[1] + '"]');
+    return p ? pages.indexOf(p) : 0;
   }
-  function paint(i) {
-    var spread = book ? book.getOrientation && book.getOrientation() === "landscape" : window.matchMedia("(min-width: 900px)").matches;
-    if (spread && i > 0 && i < total - 1) {
-      var a = i % 2 ? i : i - 1, b = Math.min(a + 1, total - 2);
-      var na = catName(a), nb = catName(b);
-      var names = na && nb && na !== nb ? na + " · " + nb : (nb || na);
-      where.textContent = (names ? names + " · " : "") + "páginas " + a + "–" + b + " de " + (total - 2);
-    } else where.textContent = label(i);
-    prev.disabled = i <= 0;
-    next.disabled = i >= total - 1;
+  function startOf(idx) {
+    var p = el.querySelector('[data-cat-start="' + idx + '"]');
+    return p ? pages.indexOf(p) : 0;
+  }
+  function sync(i) {
+    var idx = catIdxOf(i);
+    if (window.cbCatnav) window.cbCatnav(idx);
+    var id = idx ? pages[startOf(idx)].dataset.catId : "";
+    var want = id ? "#livro-" + id : "";
+    if (location.hash !== want && !(want === "" && location.hash === "#livro")) {
+      try { history.replaceState(history.state, "", location.pathname + location.search + want); } catch (e) {}
+    }
   }
 
-  var book = null, cur = 0;
+  var go = function () {}, next = go, prev = go;
 
   if (reduced || !window.St || !window.St.PageFlip) {
-    // Movimento reduzido (ou sem a biblioteca): uma página de cada vez, troca por esbatimento.
-    el.classList.add("flipbook--static");
-    var step = function () { return window.matchMedia("(min-width: 900px)").matches && cur > 0 ? 2 : 1; };
-    var show = function (i) {
-      cur = Math.max(0, Math.min(total - 1, i));
-      var wide = window.matchMedia("(min-width: 900px)").matches;
-      if (wide && cur > 0 && cur % 2 === 0) cur -= 1; // abre em pares: 1-2, 3-4…
-      pages.forEach(function (p, k) { p.hidden = !(k === cur || (wide && cur > 0 && k === cur + 1 && k < total - 1)); });
-      paint(cur);
+    // Movimento reduzido (ou sem a biblioteca): a ementa fica uma lista simples de nomes, por capítulos.
+    el.classList.add("flipbook--list");
+    go = function (i) {
+      var p = pages[i];
+      if (p) p.scrollIntoView({ block: "start" });
     };
-    window.cbBook = { go: show };
-    prev.addEventListener("click", function () { show(cur - step()); });
-    next.addEventListener("click", function () { show(cur + step()); });
-    show(0);
+    next = prev = function () {};
+    var first = pageFromHash();
+    if (first) requestAnimationFrame(function () { go(first); });
+    whenReady(function () { if (window.cbCatnav) window.cbCatnav(catIdxOf(first)); });
   } else {
+    // Mede depois de a letra (Archivo) carregar, para as folhas saírem certas.
+    var fontsReady = document.fonts && document.fonts.ready ? Promise.race([document.fonts.ready, new Promise(function (r) { setTimeout(r, 1500); })]) : Promise.resolve();
+    fontsReady.then(function () { whenReady(initFlip); });
+  }
+
+  function initFlip() {
     var phone = window.matchMedia("(max-width: 899px)").matches;
-    var w = phone ? Math.min(stage.clientWidth - 24, 440) : 450;
-    var h = phone ? Math.max(Math.round(w * 1.56), Math.round(190000 / w)) : Math.round(w * 1.38); // telemóveis estreitos: a página cresce em altura, não corta pratos
-    book = new window.St.PageFlip(el, {
+    var top = stage.getBoundingClientRect().top + window.scrollY;
+    var avail = window.innerHeight - top - (phone ? 96 : 0) - 16;
+    var w, h;
+    if (phone) {
+      w = Math.min(stage.clientWidth - 24, 440);
+      h = Math.round(Math.max(380, Math.min(avail, w * 1.6)));
+    } else {
+      h = Math.round(Math.max(520, Math.min(avail, 680)));
+      w = Math.round(h / 1.36);
+    }
+    paginate(w, h);
+    var book = new window.St.PageFlip(el, {
       width: w, height: h, size: "fixed",
       showCover: true, usePortrait: true, drawShadow: true, maxShadowOpacity: 0.55,
       flippingTime: 720, mobileScrollSupport: true, swipeDistance: 24,
       clickEventForward: true, showPageCorners: !phone, disableFlipByClick: false, startZIndex: 1
     });
     book.loadFromHTML(pages);
+    var start = pageFromHash();
+    if (start) book.turnToPage(start);
+    sync(start);
+
     var lastTurn = 0;
     book.on("changeState", function (e) { if (e.data !== "read") lastTurn = Date.now(); });
-    book.on("flip", function (e) { cur = e.data; paint(cur); });
-    // Tocar na borda da página também vira (o resto da página fica livre para ler e tocar nos preços).
+    book.on("flip", function (e) { sync(e.data); });
+    next = function () { book.flipNext("bottom"); };
+    prev = function () { book.flipPrev("bottom"); };
+    go = function (i) {
+      if (i === book.getCurrentPageIndex()) return;
+      book.flip(i, "top");
+    };
+    // Tocar na borda da página vira; o meio fica livre para ler.
     el.addEventListener("click", function (e) {
       if (e.target.closest("a, button, input, select, label, [data-noflip]")) return;
       if (Date.now() - lastTurn < 500 || book.getState() !== "read") return;
       var r = el.getBoundingClientRect();
       var f = (e.clientX - r.left) / r.width;
       var edge = book.getOrientation() === "portrait" ? 0.3 : 0.18;
-      if (f > 1 - edge) book.flipNext(e.clientY - r.top > r.height / 2 ? "bottom" : "top");
-      else if (f < edge) book.flipPrev(e.clientY - r.top > r.height / 2 ? "bottom" : "top");
+      var corner = e.clientY - r.top > r.height / 2 ? "bottom" : "top";
+      if (f > 1 - edge) book.flipNext(corner);
+      else if (f < edge) book.flipPrev(corner);
     });
-    book.on("changeOrientation", function () { paint(book.getCurrentPageIndex()); });
-    prev.addEventListener("click", function () { book.flipPrev("bottom"); });
-    next.addEventListener("click", function () { book.flipNext("bottom"); });
-    window.cbBook = { go: function (i) { book.flip(i, "top"); }, pf: book };
-    paint(0);
+    window.cbBook = { go: function (i) { go(i); }, pf: book };
+    el.classList.add("is-ready");
   }
-
-  // Ao chegar por #livro (botão "Folhear a ementa"), o livro fica logo à vista, por baixo da barra de vidro.
-  function toBook() {
-    if (location.hash !== "#livro") return;
-    var sec = document.querySelector("[data-book-sec]");
-    var off = parseFloat(getComputedStyle(sec).scrollMarginTop) || 0;
-    window.scrollTo(0, Math.max(0, stage.getBoundingClientRect().top + window.scrollY - off));
-  }
-  if (document.readyState === "complete") requestAnimationFrame(toBook);
-  else window.addEventListener("load", function () { requestAnimationFrame(toBook); });
 
   document.addEventListener("keydown", function (e) {
-    if (e.target.closest && e.target.closest("input, textarea, select, [data-sheet]:not([hidden])")) return;
-    var r = stage.getBoundingClientRect();
-    if (r.bottom < 0 || r.top > innerHeight) return;
-    if (e.key === "ArrowRight") next.click();
-    if (e.key === "ArrowLeft") prev.click();
+    if (e.target.closest && e.target.closest("input, textarea, select")) return;
+    if (e.key === "ArrowRight") { e.preventDefault(); next(); }
+    if (e.key === "ArrowLeft") { e.preventDefault(); prev(); }
   });
 
-  // A barra de vidro, nesta página, abre o livro na primeira página da categoria.
+  // Mudar o capítulo no endereço (ex.: link de outra página para #livro-pizzas) abre o livro lá.
+  window.addEventListener("hashchange", function () { go(pageFromHash()); });
+
+  // A barra de vidro, nesta página, vira o livro até ao capítulo (sem trocar de página).
   document.querySelectorAll("[data-catnav] .chip").forEach(function (chip) {
     var idx = Number(chip.dataset.idx);
-    if (!idx) return;
-    var start = el.querySelector('[data-cat-start="' + idx + '"]');
-    if (!start) return;
     chip.addEventListener("click", function (e) {
       if (e.metaKey || e.ctrlKey || e.shiftKey) return;
       e.preventDefault();
       e.stopImmediatePropagation();
-      var to = pages.indexOf(start);
-      var sec = document.querySelector("[data-book-sec]");
-      var r = sec.getBoundingClientRect();
-      if (r.top < 0 || r.top > innerHeight * 0.5) sec.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
-      window.cbBook.go(to);
+      go(idx ? startOf(idx) : 0);
+      if (window.cbCatnav) window.cbCatnav(idx);
     }, true);
   });
 })();

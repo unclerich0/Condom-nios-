@@ -8,24 +8,24 @@ O site que está no ar em [https://chef-burger-demo.vercel.app/](https://chef-bu
 
 Direção visual: **«Touro vermelho em osso»** (ver [DESIGN-NOTES.md](DESIGN-NOTES.md)). Fundo osso, tinta quase preta e o vermelho da caveira de touro do logótipo; tipo Archivo largo e pesado; a comida em fotografia grande, sem nada por cima.
 
-- **Páginas:** início (`index.html`), toda a ementa (`ementa.html`): um livro que se folheia com o dedo (StPageFlip, em `js/vendor/`) e a lista completa com pesquisa e uma página por categoria (`hamburgueres.html`, `pizzas.html`, `grelhados.html`, `faita.html`, `esparguete.html`, `meze.html`, `matabicho.html`, `sobremesas.html`, `bebidas-quentes.html`, `bebidas-frias.html`).
-- **Barra de vidro** = navegação da ementa: fica no topo, desliza na horizontal no telemóvel, e o indicador escuro passa de item em item com uma mola.
-- **Esfolhar** entre páginas (View Transitions entre documentos): a página atual vira como a folha de uma carta, pela lombada à esquerda, e mostra a seguinte; para trás, a folha volta da esquerda. Sem suporte, meia volta curta ao abrir; com movimento reduzido, só um esbater.
-- **Vídeo** no primeiro ecrã e no topo de hambúrgueres, pizzas e grelhados (ver [video/README.md](video/README.md)).
-- Hero com vídeo a toda a largura, estado aberto/fechado no fuso de Luanda (`Africa/Luanda`), **Pedir da ementa** e **Reservar mesa**.
+- **Páginas:** início (`index.html`, com o vídeo) e a ementa (`ementa.html`), que **é um livro**: abre logo, vira-se com o dedo (arrastar ou gesto rápido), tocando na borda da página ou com as setas do teclado (StPageFlip, em `js/vendor/`). As páginas do livro só têm o título do capítulo e os nomes dos pratos.
+- **Barra de vidro** = capítulos do livro: tocar num capítulo vira o livro até lá; ao folhear, o indicador acompanha o capítulo aberto. O endereço acompanha (`ementa.html#livro-pizzas`) sem criar entradas no histórico: o Voltar sai do livro para onde se estava.
+- **Links antigos:** `hamburgueres.html`, `pizzas.html`, `faita.html`, etc. já não são páginas; reencaminham (`location.replace`, sem ficar no histórico) para `ementa.html#livro-<capítulo>`.
+- **Vídeo** no primeiro ecrã (ver [video/README.md](video/README.md)).
+- Hero com vídeo a toda a largura, estado aberto/fechado no fuso de Luanda (`Africa/Luanda`), **Folhear a ementa** e **Reservar mesa**.
 - «Onde estamos»: W17 em grande, horário com o dia de hoje marcado, telefones, mapa e WhatsApp.
 - «A casa»: quatro capítulos com foto (hambúrgueres, grelhados, pizzas, matabicho e çay).
-- Ementa: 94 pratos em 10 categorias, barra de categorias fixa, pesquisa (sem acentos: «cay» encontra Çay), preço em Kz como botão que junta ao pedido.
-- Pedido numa folha que se arrasta: quantidades, entrega ou levantamento no W17, nota, pré-visualização e envio para o WhatsApp **+244 925 918 468**.
+- Sem preços no site e sem carrinho: o pedido é no WhatsApp **+244 925 918 468** (botão «Pedir no WhatsApp» na barra de baixo e no topo).
 - Reserva: pessoas, dia (7 dias), hora dentro do horário publicado (08h00–21h30, com 1 hora de antecedência no próprio dia), até 12 pessoas, por WhatsApp.
-- Barra inferior em vidro no telemóvel (Ementa, Reservar, Ligar, Pedido).
+- Barra inferior em vidro no telemóvel (Ementa, Reservar, Ligar, Pedir no WhatsApp).
+- Movimento reduzido ou sem JavaScript: a ementa é uma lista simples de nomes, por capítulos.
 
-Nada fica num servidor. O pedido vive no telemóvel (`localStorage`) até a pessoa o enviar.
+Nada fica num servidor.
 
 ## Como editar
 
-- **Pratos e preços:** `fonte/menu.json`. Depois: `node fonte/gerar.mjs` (gera as 12 páginas `.html` a partir de `fonte/base.html` e `fonte/partes/`). Não editar os `.html` da raiz à mão.
-- **Textos:** `fonte/partes/*.html` (secções do início, rodapé, pedido) e `fonte/gerar.mjs` (páginas da ementa), e voltar a correr o gerador.
+- **Pratos:** `fonte/menu.json`. Depois: `node fonte/gerar.mjs` (gera `index.html`, `ementa.html` e as 10 páginas de reencaminhamento a partir de `fonte/base.html` e `fonte/partes/`). Não editar os `.html` da raiz à mão.
+- **Textos:** `fonte/partes/*.html` (secções do início e rodapé) e `fonte/gerar.mjs` (o livro da ementa), e voltar a correr o gerador.
 - **Estilos e interação:** `css/site.css` e `js/site.js` (sem build).
 - **Fotos:** ver [img/README.md](img/README.md).
 

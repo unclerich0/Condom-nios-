@@ -91,3 +91,19 @@ O pedido abre numa folha (sheet) que sobe de baixo no telemóvel e entra pela di
 - Tocar na borda da página (30% de cada lado no telemóvel, 18% no computador) vira; o meio da página não.
 - No telemóvel, as setas e o "Categoria · n/29" ficam colados por cima da barra de baixo enquanto o livro está no ecrã.
 - Ao chegar por `#livro`, a página desce até o livro ficar logo por baixo da barra de vidro.
+
+## v6 — A ementa é o livro
+
+- Saem as dez páginas de categoria, a lista "A ementa toda" e a pesquisa. `ementa.html` é só o livro e abre logo, sem `#livro`. As antigas `<categoria>.html` são páginas mínimas que fazem `location.replace` para `ementa.html#livro-<categoria>` (com `meta refresh` e um link, para quem não tem JavaScript), `noindex`. Assim, os links antigos não dão 404 e a página antiga não fica no histórico.
+- As folhas só têm o título do capítulo e os nomes dos pratos. Saem os preços, os botões +, as descrições, as setas, o rótulo "página n de m", o contador 3/3 e o texto a explicar o gesto. A letra dos nomes é Archivo 650, 19 px no telemóvel e 21 px no computador, com fio fino entre nomes. O capítulo abre com fotografia e título (900, largo) com um traço vermelho; nas folhas seguintes, o título repete-se no topo em versaletes.
+- A paginação faz-se no navegador (`js/livro.js`): o livro mede a página que cabe neste ecrã (entre a barra de vidro e a barra de baixo) e reparte cada capítulo pelas folhas que forem precisas. Isto dá 18 folhas num Pixel 7 ou num computador, 24 num iPhone 13 e 26 num iPhone SE. A folha "Bom apetite" só entra quando faz falta para a contracapa fechar o livro.
+- Para virar: arrastar, gesto rápido, tocar na borda da página, ou as setas ← → do teclado. As correções de toque da v5 em `js/vendor/` mantêm-se.
+- Barra de vidro: tocar num capítulo vira o livro até lá. Ao folhear, o indicador passa para o capítulo aberto (`window.cbCatnav`, em `js/site.js`).
+- Histórico: virar a página só troca o endereço (`history.replaceState`, `#livro-<capítulo>`) e não cria entradas. O Voltar sai do livro para onde se estava, normalmente o início, em vez de recuar folha a folha.
+- Safari: sem transição entre documentos. O `pageswap`/`pagereveal` salta a View Transition em iPhone, iPad e Safari no Mac. Com páginas a menos e sem a transição, o Voltar do Safari deixa de ter entradas para saltar. Ver a nota sobre o Voltar abaixo.
+- Sem preços não há carrinho. Saem a folha do pedido, os botões e o JavaScript do carrinho. "Pedir no WhatsApp" (wa.me/244925918468 com "Olá, Chef Burger. Quero fazer um pedido.") fica na barra de baixo, em vermelho, e no topo.
+- Movimento reduzido, ou sem JavaScript: o livro vira uma lista simples de nomes por capítulos, com a fotografia de cada um.
+
+### Nota sobre o Voltar no Safari (v5)
+
+No vídeo do iPhone, o Voltar a partir de Meze foi parar ao início em vez de Esparguete. O código não usa `location.replace`, `pushState` nem a Navigation API entre páginas: os links "Seguinte" eram links normais. A causa provável é a regra do Safari que esconde do botão Voltar entradas do histórico que considera "sem interação do utilizador" (ver WebKit PR 78587 e hotwired/turbo#810), juntamente com a transição entre documentos. Não foi possível reproduzir num navegador sem ecrã, porque o `history.back()` nunca salta entradas. A v6 resolve isto pela estrutura: já não há páginas de categoria para encadear, o livro não cria entradas e o Safari não tem transição entre documentos.

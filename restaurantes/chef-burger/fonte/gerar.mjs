@@ -4,8 +4,8 @@
 //
 // Páginas (a ordem decide a direção da transição: maior = desliza da direita):
 //   index.html            início (-1)
-//   ementa.html           toda a ementa com pesquisa (0)
-//   <categoria>.html      uma página por categoria (1…10)
+//   ementa.html           a ementa em livro, que se folheia com o dedo (0)
+//   <categoria>.html      só reencaminham para ementa.html#livro-<categoria> (links antigos)
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -17,30 +17,20 @@ const base = fs.readFileSync(path.join(here, 'base.html'), 'utf8');
 const part = (n) => fs.readFileSync(path.join(here, 'partes', n + '.html'), 'utf8');
 
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const kz = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' Kz';
-const slug = (s) => s.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().replace(/ı/g, 'i').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-const norm = (s) => s.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().replace(/ı/g, 'i');
 const pratos = (n) => n + (n === 1 ? ' prato' : ' pratos');
 
 const total = menu.reduce((n, c) => n + c.dishes.length, 0);
 const file = (c) => `${c.id}.html`;
-const minKz = (c) => Math.min(...c.dishes.flatMap((d) => d.prices.map((p) => p.kz)));
-
-// Vídeos curtos (Pexels) no topo de algumas categorias. As outras usam fotografia.
-const VIDEOS = {
-  hamburgueres: { src: 'video/hamburgueres.mp4', phone: 'video/hamburgueres-phone.mp4', poster: 'video/hamburgueres.webp', posterPhone: 'video/hamburgueres-phone.webp', alt: 'Fatias de queijo a derreter sobre hambúrgueres na grelha' },
-  pizzas: { src: 'video/pizzas.mp4', phone: 'video/pizzas-phone.mp4', poster: 'video/pizzas.webp', posterPhone: 'video/pizzas-phone.webp', alt: 'Forno a lenha aceso, com massa à espera junto à boca do forno' },
-  grelhados: { src: 'video/grelhados.mp4', phone: 'video/grelhados-phone.mp4', poster: 'video/grelhados.webp', posterPhone: 'video/grelhados-phone.webp', alt: 'Espetadas de frango e pimento sobre brasas vermelhas' },
-};
+const bookHref = (c) => `ementa.html#livro-${c.id}`;
 
 /* ---------- Peças partilhadas ---------- */
 // Nomes curtos na barra de vidro, para caber numa linha no computador. O título da página fica completo.
 const SHORT = { grelhados: 'Grelhados', meze: 'Meze', 'bebidas-quentes': 'Cafés e chá', 'bebidas-frias': 'Bebidas frias' };
 function catbar(activeIdx) {
-  const items = [{ href: 'ementa.html', title: 'Tudo', idx: 0 }, ...menu.map((c, i) => ({ href: file(c), title: SHORT[c.id] || c.title, idx: i + 1 }))];
+  const items = [{ href: 'ementa.html', title: 'Tudo', idx: 0 }, ...menu.map((c, i) => ({ href: bookHref(c), title: SHORT[c.id] || c.title, idx: i + 1 }))];
   const chips = items.map((it) => `<a class="chip" href="${it.href}" data-idx="${it.idx}"${it.idx === activeIdx ? ' aria-current="page"' : ''}>${esc(it.title)}</a>`).join('\n          ');
   return `      <div class="catbar" data-catbar>
-        <nav class="wrap catbar__in glass" aria-label="Páginas da ementa" data-catnav>
+        <nav class="wrap catbar__in glass" aria-label="Capítulos da ementa" data-catnav>
           <span class="catbar__thumb" data-thumb aria-hidden="true"></span>
           ${chips}
         </nav>
@@ -48,45 +38,20 @@ function catbar(activeIdx) {
       <script>(function(){var n=document.querySelector("[data-catnav]");if(!n)return;var a=n.querySelector('[aria-current="page"]'),t=n.querySelector("[data-thumb]"),s=window.__cbNav;if(s&&typeof s.sl==="number")n.scrollLeft=s.sl;else if(a)n.scrollLeft=a.offsetLeft-(n.clientWidth-a.offsetWidth)/2;if(a&&t){t.style.width=a.offsetWidth+"px";t.style.transform="translateX("+a.offsetLeft+"px)";t.dataset.on="true";}})();</script>`;
 }
 
-function procura(live) {
-  return `        <form class="search" action="ementa.html" method="get" role="search"${live ? ' data-search-form' : ''}>
-          <label class="sr" for="q">Procurar na ementa</label>
-          <svg class="ic" aria-hidden="true"><use href="#i-search"/></svg>
-          <input id="q" name="q" type="search" placeholder="Procurar: köfte, pizza, milkshake…" autocomplete="off" enterkeyhint="search"${live ? ' data-search' : ''}>
-        </form>`;
-}
-
-function dishLi(c, d, h = 'h3') {
-  const id = slug(d.name);
-  const search = norm([c.title, d.name, d.desc, ...d.prices.map((p) => p.v)].join(' '));
-  const buttons = d.prices.map((p, pi) => {
-    const key = `${c.id}:${id}:${pi}`;
-    const label = p.v ? `, ${p.v}` : '';
-    return `<button type="button" class="add" data-add data-key="${key}" data-name="${esc(d.name)}" data-variant="${esc(p.v)}" data-kz="${p.kz}" data-cat="${c.id}" aria-label="Juntar ${esc(d.name)}${esc(label)}, ${kz(p.kz)}, ao pedido">${p.v ? `<span class="add__label">${esc(p.v)}</span>` : ''}<span class="add__price">${kz(p.kz)}</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button>`;
-  }).join('');
-  return `<li class="dish" data-dish data-search="${esc(search)}">
-              <div class="dish__text"><${h} class="dish__t">${esc(d.name)}</${h}>${d.desc ? `<p>${esc(d.desc)}</p>` : ''}</div>
-              <div class="dish__buy${d.prices.length > 1 ? ' dish__buy--two' : ''}">${buttons}</div>
-            </li>`;
-}
-
 const navLinks = (page) => [
-  ['ementa', page === 'inicio' ? '#ementa' : 'ementa.html', 'Ementa', 0],
+  ['ementa', 'ementa.html', 'Ementa', 0],
   ['casa', page === 'inicio' ? '#casa' : './#casa', 'A casa', -1],
   ['reservar', page === 'inicio' ? '#reservar' : './#reservar', 'Reservar', -1],
   ['onde', page === 'inicio' ? '#onde' : './#onde', 'Onde estamos', -1],
 ].map(([k, href, t, idx]) => `        <a href="${href}" data-idx="${idx}"${(k === 'ementa' && page !== 'inicio') ? ' aria-current="page"' : ''}>${t}</a>`).join('\n');
 
 const restaurantLd = `<script type="application/ld+json">{"@context":"https://schema.org","@type":"Restaurant","name":"Chef Burger","alternateName":["Chef Hüseyin İstanbul Burger","Chef Huseyin Burger & Pizza"],"servesCuisine":["Turca","Hambúrgueres","Pizza","Grelhados","Halal"],"telephone":"+244925918468","image":"https://chef-burger-kilamba.onrender.com/img/og.jpg","address":{"@type":"PostalAddress","streetAddress":"Quarteirão W17, Centralidade do Kilamba","addressLocality":"Kilamba","addressRegion":"Luanda","addressCountry":"AO"},"hasMap":"https://www.google.com/maps?cid=15845525897477371517","acceptsReservations":true,"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday"],"opens":"08:00","closes":"22:30"},{"@type":"OpeningHoursSpecification","dayOfWeek":["Friday","Saturday","Sunday"],"opens":"08:00","closes":"23:30"}],"sameAs":["https://www.instagram.com/chefburgerao/","https://www.facebook.com/profile.php?id=100083841722074","https://www.tiktok.com/@chefburgerao"],"hasMenu":"https://chef-burger-kilamba.onrender.com/ementa.html"}</script>`;
-const sectionLd = (c) => ({ '@type': 'MenuSection', name: c.title, hasMenuItem: c.dishes.map((d) => ({
-  '@type': 'MenuItem', name: d.name, ...(d.desc ? { description: d.desc } : {}), suitableForDiet: 'https://schema.org/HalalDiet',
-  offers: d.prices.map((p) => ({ '@type': 'Offer', price: p.kz, priceCurrency: 'AOA', ...(p.v ? { name: p.v } : {}) })),
-})) });
+const sectionLd = (c) => ({ '@type': 'MenuSection', name: c.title, hasMenuItem: c.dishes.map((d) => ({ '@type': 'MenuItem', name: d.name, suitableForDiet: 'https://schema.org/HalalDiet' })) });
 const menuLd = { '@context': 'https://schema.org', '@type': 'Menu', name: 'Ementa do Chef Burger', inLanguage: 'pt-AO', hasMenuSection: menu.map(sectionLd) };
 
 function page({ name, idx, title, desc, preload = '', ld = '', main, scripts = '' }) {
   const H = name === 'inicio' ? '' : './';
-  const ementa = name === 'inicio' ? '#ementa' : 'ementa.html';
+  const ementa = 'ementa.html';
   return base
     .replaceAll('{{PAGE}}', name).replaceAll('{{IDX}}', String(idx))
     .replaceAll('{{TITLE}}', esc(title)).replaceAll('{{DESC}}', esc(desc))
@@ -95,61 +60,42 @@ function page({ name, idx, title, desc, preload = '', ld = '', main, scripts = '
     .replace('{{NAVLINKS}}', navLinks(name))
     .replace('{{MAIN}}', main.trimEnd())
     .replace('{{RODAPE}}', part('rodape'))
-    .replace('{{PEDIDO}}', part('pedido'))
     .replace('{{SCRIPTS}}', scripts)
-    .replace('{{DOCK_EMENTA_CUR}}', name !== 'inicio' ? ' aria-current="page"' : '')
+    .replace('{{DOCK_EMENTA_CUR}}', name === 'ementa' ? ' aria-current="page"' : '')
     .replaceAll('{{EMENTA}}', ementa).replaceAll('{{H}}', H);
 }
 
 
 /* ---------- Ementa em livro (StPageFlip) ---------- */
-// Cada categoria abre numa página com fotografia; os pratos seguem em páginas de papel.
-// O peso de cada prato decide quantos cabem numa página (dois preços e descrição longa pesam mais).
+// Só os nomes dos pratos, em letra grande. Aqui sai um capítulo por página (é o que se vê sem JavaScript
+// ou com movimento reduzido: uma lista de nomes). js/livro.js mede o ecrã e reparte cada capítulo
+// pelas folhas que forem precisas, com o título repetido no topo das seguintes.
 function livro() {
-  const weight = (d) => 1 + (d.prices.length > 1 ? 0.45 : 0) + (d.desc && d.desc.length > 60 ? 0.3 : 0);
   const pages = [];
   pages.push(`<div class="page page--cover" data-density="hard"><div class="page__in">
           <p class="cover__brand"><span class="brand__chef">Chef</span><span class="brand__burger">Burger</span></p>
           <p class="cover__t">Ementa</p>
           <p class="cover__s">${total} pratos turcos, 100% halal · Quarteirão W17, Kilamba</p>
-          <p class="cover__hint" aria-hidden="true">Arraste a página <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></p>
         </div></div>`);
   menu.forEach((c, ci) => {
-    const chunks = []; let cur = [], w = 0, cap = 3.3;
-    c.dishes.forEach((d) => { const dw = weight(d); if (cur.length && w + dw > cap) { chunks.push(cur); cur = []; w = 0; cap = 5.6; } cur.push(d); w += dw; });
-    if (cur.length) chunks.push(cur);
-    chunks.forEach((ch, k) => {
-      const head = k === 0
-        ? `<figure class="page__pic"><img src="${c.img}" alt="" width="800" height="800" loading="lazy" decoding="async"></figure><h3 class="page__t">${esc(c.title)}</h3>${c.intro ? `<p class="page__intro">${esc(c.intro)}</p>` : ''}`
-        : `<p class="page__run">${esc(c.title)} <span>${k + 1}/${chunks.length}</span></p>`;
-      pages.push(`<div class="page" data-cat-id="${c.id}"${k === 0 ? ` data-cat-start="${ci + 1}"` : ''}><div class="page__in">
-          ${head}
+    pages.push(`<div class="page" data-cat-id="${c.id}" data-cat-start="${ci + 1}" data-cat-title="${esc(c.title)}"><div class="page__in">
+          <figure class="page__pic"><img src="${c.img}" alt="" width="800" height="800" loading="lazy" decoding="async"></figure><h2 class="page__t">${esc(c.title)}</h2>
           <ul class="page__dishes" role="list">
-            ${ch.map((d) => dishLi(c, d, 'h4')).join('\n            ')}
+            ${c.dishes.map((d) => `<li>${esc(d.name)}</li>`).join('\n            ')}
           </ul>
-          <p class="page__no" aria-hidden="true"></p>
         </div></div>`);
-    });
   });
-  if (pages.length % 2) pages.push(`<div class="page page--note"><div class="page__in"><p class="page__t">Bom apetite.</p><p class="page__intro">Toque no preço para juntar ao pedido. O pedido segue pelo WhatsApp e a equipa responde a confirmar.</p></div></div>`);
+  pages.push(`<div class="page page--note"><div class="page__in"><p class="page__t">Bom apetite.</p><p class="page__intro">Pedidos pelo WhatsApp, +244 925 918 468. Para levantar no W17 ou para entrega em casa.</p></div></div>`);
   pages.push(`<div class="page page--cover page--back" data-density="hard"><div class="page__in">
           <p class="cover__brand"><span class="brand__chef">Chef</span><span class="brand__burger">Burger</span></p>
           <p class="cover__s">Quarteirão W17, Centralidade do Kilamba · +244 925 918 468 · @chefburgerao</p>
         </div></div>`);
   return `    <section class="book-sec" id="livro" aria-labelledby="livro-t" data-book-sec>
-      <div class="wrap book-sec__head">
-        <h2 id="livro-t">Folhear a ementa</h2>
-        <p>Arraste a página com o dedo, ou toque na borda dela ou nas setas. O preço junta o prato ao pedido.</p>
-      </div>
+      <h1 class="sr" id="livro-t">Ementa do Chef Burger</h1>
       <div class="book-stage" data-book-stage>
         <div class="flipbook" data-book>
         ${pages.join('\n        ')}
         </div>
-      </div>
-      <div class="wrap book-ctl">
-        <button type="button" class="book-ctl__b" data-book-prev aria-label="Página anterior"><svg class="ic ic--back" aria-hidden="true"><use href="#i-arrow"/></svg></button>
-        <p class="book-ctl__where" data-book-where aria-live="polite">Capa</p>
-        <button type="button" class="book-ctl__b" data-book-next aria-label="Página seguinte"><svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></button>
       </div>
     </section>
 `;
@@ -158,10 +104,10 @@ function livro() {
 const out = {};
 
 /* ---------- Início ---------- */
-const cards = menu.map((c, i) => `        <li class="card"><a href="${file(c)}" data-idx="${i + 1}">
+const cards = menu.map((c, i) => `        <li class="card"><a href="${bookHref(c)}" data-idx="0">
           <figure class="card__pic"><img src="${c.img}" alt="${esc(c.alt)}" width="800" height="800" loading="lazy" decoding="async"></figure>
           <span class="card__t">${esc(c.title)}</span>
-          <span class="card__m">${pratos(c.dishes.length)} · desde ${kz(minKz(c))}</span>
+          <span class="card__m">${pratos(c.dishes.length)}</span>
         </a></li>`).join('\n');
 out['index.html'] = page({
   name: 'inicio', idx: -1,
@@ -170,90 +116,40 @@ out['index.html'] = page({
   preload: `  <link rel="preload" href="video/hero.webp" as="image" media="(min-width: 640px)" fetchpriority="high">\n  <link rel="preload" href="video/hero-phone.webp" as="image" media="(max-width: 639px)" fetchpriority="high">`,
   ld: '  ' + restaurantLd,
   main: part('inicio-hero') + part('onde') + part('casa')
-    + part('inicio-ementa').replace('{{TOTAL}}', String(total)).replace('{{PROCURA}}', procura(false)).replace('{{CATBAR}}', catbar(null)).replace('{{CARTOES}}', cards)
+    + part('inicio-ementa').replace('{{TOTAL}}', String(total)).replace('{{CATBAR}}', catbar(null)).replace('{{CARTOES}}', cards)
     + part('frase') + part('reservar'),
 });
 
-/* ---------- Toda a ementa ---------- */
-const allCats = menu.map((c, i) => `      <section class="cat" id="cat-${c.id}" data-cat aria-labelledby="t-${c.id}">
-        <div class="cat__side">
-          <figure class="cat__photo"><img src="${c.img}" alt="${esc(c.alt)}" width="800" height="800" loading="lazy" decoding="async"></figure>
-          <div class="cat__head">
-            <h2 id="t-${c.id}"><a href="${file(c)}" data-idx="${i + 1}">${esc(c.title)}</a></h2>
-            ${c.intro ? `<p>${esc(c.intro)}</p>` : ''}
-            <a class="link-arrow" href="${file(c)}" data-idx="${i + 1}">Página de ${esc(c.title.toLowerCase())}<svg class="ic ic--arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
-          </div>
-        </div>
-        <ul class="dishes" role="list">
-            ${c.dishes.map((d) => dishLi(c, d)).join('\n            ')}
-        </ul>
-      </section>`).join('\n');
+/* ---------- A ementa: só o livro ---------- */
 out['ementa.html'] = page({
   name: 'ementa', idx: 0,
   title: 'Ementa · Chef Burger, Kilamba',
-  desc: `Os ${total} pratos do Chef Burger com o preço da carta em kwanzas: hambúrgueres, pizzas, grelhados turcos, faita, meze, matabicho, sobremesas e bebidas. Pedido pelo WhatsApp.`,
+  desc: `Os ${total} pratos do Chef Burger num livro que se folheia com o dedo: hambúrgueres, pizzas, grelhados turcos, faita, meze, matabicho, sobremesas e bebidas. Pedido pelo WhatsApp.`,
   ld: `  <script type="application/ld+json">${JSON.stringify(menuLd)}</script>`,
   scripts: '  <script src="js/vendor/page-flip.browser.js" defer></script>\n  <script src="js/livro.js" defer></script>\n',
   main: `${catbar(0)}
-    <section class="menu menu--page" aria-labelledby="ementa-t">
-      <div class="wrap menu__head">
-        <h1 id="ementa-t">Ementa</h1>
-        <p>${total} pratos com o preço da carta, em kwanzas. Toque no preço para juntar ao pedido e envie tudo pelo WhatsApp; a equipa responde a confirmar.</p>
-${procura(true)}
-      </div>
-    </section>
-${livro()}
-    <section class="menu menu--list" aria-labelledby="lista-t">
-      <div class="wrap"><h2 class="list-t" id="lista-t">A ementa toda, em lista</h2></div>
-      <div class="wrap menu__body">
-      <p class="empty" data-empty hidden>Nada na ementa com esse nome.</p>
-${allCats}
-      </div>
-    </section>
-`,
+${livro()}`,
 });
 
-/* ---------- Uma página por categoria ---------- */
-menu.forEach((c, i) => {
-  const idx = i + 1;
-  const prev = menu[i - 1], next = menu[i + 1];
-  const v = VIDEOS[c.id];
-  const media = v
-    ? `<picture><source media="(max-width: 639px)" srcset="${v.posterPhone}" width="576" height="720"><img src="${v.poster}" alt="${esc(v.alt)}" width="960" height="540" fetchpriority="high" decoding="async"></picture>
-          <video class="media__v" data-video data-src="${v.src}" data-src-phone="${v.phone}" muted loop playsinline disablepictureinpicture preload="none" aria-hidden="true" tabindex="-1"></video>`
-    : `<picture><source media="(max-width: 639px)" srcset="${c.img}" width="900" height="900"><img src="img/head-${c.id}.webp" alt="${esc(c.alt)}" width="2000" height="800" fetchpriority="high" decoding="async"></picture>`;
-  const pager = `    <nav class="wrap pager" aria-label="Outras páginas da ementa">
-      ${prev ? `<a class="pager__a pager__a--prev" href="${file(prev)}" data-idx="${idx - 1}"><small>Anterior</small><span><svg class="ic ic--back" aria-hidden="true"><use href="#i-arrow"/></svg>${esc(prev.title)}</span></a>` : `<a class="pager__a pager__a--prev" href="ementa.html" data-idx="0"><small>Anterior</small><span><svg class="ic ic--back" aria-hidden="true"><use href="#i-arrow"/></svg>Toda a ementa</span></a>`}
-      ${next ? `<a class="pager__a pager__a--next" href="${file(next)}" data-idx="${idx + 1}"><small>Seguinte</small><span>${esc(next.title)}<svg class="ic ic--arrow" aria-hidden="true"><use href="#i-arrow"/></svg></span></a>` : `<a class="pager__a pager__a--next" href="./#reservar" data-idx="-1"><small>Depois de comer</small><span>Reservar mesa<svg class="ic ic--arrow" aria-hidden="true"><use href="#i-arrow"/></svg></span></a>`}
-    </nav>`;
-  out[file(c)] = page({
-    name: c.id, idx,
-    title: `${c.title} · Ementa do Chef Burger, Kilamba`,
-    desc: `${c.title} do Chef Burger: ${pratos(c.dishes.length)}, desde ${kz(minKz(c))}. ${c.intro || ''} Pedido pelo WhatsApp, entrega ou levantamento no W17.`.replace(/\s+/g, ' ').trim(),
-    preload: v ? `  <link rel="preload" href="${v.poster}" as="image" media="(min-width: 640px)" fetchpriority="high">\n  <link rel="preload" href="${v.posterPhone}" as="image" media="(max-width: 639px)" fetchpriority="high">` : `  <link rel="preload" href="img/head-${c.id}.webp" as="image" media="(min-width: 640px)" fetchpriority="high">\n  <link rel="preload" href="${c.img}" as="image" media="(max-width: 639px)" fetchpriority="high">`,
-    ld: `  <script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', ...sectionLd(c) })}</script>`,
-    main: `${catbar(idx)}
-    <section class="catpage" aria-labelledby="t-${c.id}">
-      <figure class="cathero media">
-          ${media}
-      </figure>
-      <header class="wrap cathead">
-        <div class="cathead__t"><h1 id="t-${c.id}" style="--w: ${Math.max(...c.title.split(/\s+/).map((w) => w.length))}">${esc(c.title)}</h1></div>
-        <div class="cathead__side">
-          ${c.intro ? `<p>${esc(c.intro)}</p>` : ''}
-          <p class="cathead__meta">${pratos(c.dishes.length)} · desde ${kz(minKz(c))}</p>
-        </div>
-      </header>
-      <div class="wrap">
-        <ul class="dishes dishes--page" role="list">
-            ${c.dishes.map((d) => dishLi(c, d, 'h2')).join('\n            ')}
-        </ul>
-      </div>
-    </section>
-${pager}
-`,
-  });
-});
+/* ---------- Links antigos: as páginas de categoria reencaminham para o livro ---------- */
+// location.replace não deixa a página antiga no histórico: o Voltar sai do livro para onde se estava.
+const stub = (c) => `<!DOCTYPE html>
+<html lang="pt-AO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${esc(c.title)} · Ementa do Chef Burger</title>
+  <meta name="robots" content="noindex, follow">
+  <link rel="canonical" href="https://chef-burger-kilamba.onrender.com/${bookHref(c)}">
+  <meta http-equiv="refresh" content="0; url=${bookHref(c)}">
+  <script>location.replace(${JSON.stringify(bookHref(c))});</script>
+</head>
+<body style="font-family: system-ui, sans-serif; padding: 24px; background: #f4efe6; color: #141518;">
+  <p><a href="${bookHref(c)}">${esc(c.title)}: abrir a ementa do Chef Burger</a></p>
+</body>
+</html>
+`;
+menu.forEach((c) => { out[file(c)] = stub(c); });
 
 for (const [f, html] of Object.entries(out)) fs.writeFileSync(path.join(root, f), html);
-console.log(`${Object.keys(out).length} páginas: ${Object.keys(out).join(', ')} · ${total} pratos em ${menu.length} categorias`);
+console.log(`${Object.keys(out).length} ficheiros: ${Object.keys(out).join(', ')} · ${total} pratos em ${menu.length} categorias`);

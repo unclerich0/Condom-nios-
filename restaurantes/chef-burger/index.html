@@ -24,11 +24,12 @@
   <link rel="preload" href="video/hero-phone.webp" as="image" media="(max-width: 639px)" fetchpriority="high">
   <link rel="stylesheet" href="css/site.css">
   <script>
-    /* Transição entre páginas: a direção sai da ordem das páginas (início -1, ementa 0, categorias 1…10). */
+    /* Transição entre páginas: a direção sai da ordem das páginas (início -1, ementa 0). No Safari (iPhone, iPad, Mac) não há transição entre documentos: o Voltar do Safari salta entradas do histórico com ela, e não queremos arriscar. */
     (function () {
       var d = document.documentElement, K = "cb-nav";
       d.classList.add("js");
       var to = Number(d.dataset.idx);
+      var ua = navigator.userAgent, webkit = /iPhone|iPad|iPod/.test(ua) || (/AppleWebKit/.test(ua) && !/Chrome|Chromium|Edg|Android/.test(ua));
       function read() {
         var from = null, sl = null;
         try { var o = JSON.parse(sessionStorage.getItem(K) || "null"); if (o && Date.now() - o.t < 8000) { from = o.from; sl = o.sl; } } catch (e) {}
@@ -45,6 +46,7 @@
       window.addEventListener("pageswap", function (e) {
         remember();
         if (!e.viewTransition) return;
+        if (webkit) { e.viewTransition.ready.catch(function () {}); e.viewTransition.skipTransition(); return; }
         /* De e para o início, a barra muda de sítio: o indicador viaja dentro dela, não à parte. */
         if (to < 0 || (e.activation && e.activation.entry && isHome(e.activation.entry.url))) thumbName("none");
         /* A barra de vidro só viaja se estiver à vista; fora do ecrã voaria de longe. */
@@ -62,7 +64,7 @@
         window.addEventListener("pagereveal", function (e) {
           var n = window.__cbNav = read();
           if (!e.viewTransition) return res();
-          if (!n.dir) { e.viewTransition.skipTransition(); return res(); }
+          if (webkit || !n.dir) { e.viewTransition.ready.catch(function () {}); e.viewTransition.skipTransition(); return res(); }
           if (n.from < 0 || n.to < 0) thumbName("none");
           e.viewTransition.types.add(n.dir);
           if (n.from >= 0 && n.to >= 0) e.viewTransition.types.add("within"); /* a barra fica no sítio: o indicador pode ressaltar */
@@ -97,18 +99,17 @@
     <div class="wrap nav__in">
       <a class="brand" href="./" aria-label="Chef Burger, início" data-idx="-1"><span class="brand__chef">Chef</span><span class="brand__burger">Burger</span></a>
       <nav class="nav__links" aria-label="Páginas">
-        <a href="#ementa" data-idx="0">Ementa</a>
+        <a href="ementa.html" data-idx="0">Ementa</a>
         <a href="#casa" data-idx="-1">A casa</a>
         <a href="#reservar" data-idx="-1">Reservar</a>
         <a href="#onde" data-idx="-1">Onde estamos</a>
       </nav>
       <div class="nav__end">
         <p class="status" data-status><span class="status__dot" aria-hidden="true"></span><span data-status-short>Aberto</span></p>
-        <button type="button" class="nav__bag glass" data-open-cart aria-label="Abrir o pedido, vazio">
-          <svg class="ic" aria-hidden="true"><use href="#i-bag"/></svg>
-          <span class="nav__bag-text">Pedido</span>
-          <span class="count" data-count hidden>0</span>
-        </button>
+        <a class="nav__bag glass" href="https://wa.me/244925918468?text=Ol%C3%A1%2C%20Chef%20Burger.%20Quero%20fazer%20um%20pedido." target="_blank" rel="noopener" aria-label="Pedir no WhatsApp">
+          <svg class="ic ic--brand" aria-hidden="true"><use href="#i-wa"/></svg>
+          <span class="nav__bag-text">Pedir no WhatsApp</span>
+        </a>
       </div>
     </div>
   </header>
@@ -127,7 +128,7 @@
         <div class="hero__side" data-enter-line>
           <p class="hero__sub">Cozinha do chef Hüseyin Daştan no Quarteirão W17. <span data-status-text>Aberto todos os dias desde as 08h00.</span></p>
           <div class="hero__actions" data-hero-actions>
-            <a class="btn btn--red" href="hamburgueres.html" data-idx="1">Pedir da ementa<svg class="ic ic--arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+            <a class="btn btn--red" href="ementa.html" data-idx="0">Folhear a ementa<svg class="ic ic--arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
             <a class="link-arrow" href="#reservar">Reservar mesa<svg class="ic ic--arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
           </div>
         </div>
@@ -186,81 +187,76 @@
     <section class="menu" id="ementa" aria-labelledby="ementa-t">
       <div class="wrap menu__head">
         <h2 id="ementa-t">Ementa</h2>
-        <p>94 pratos com o preço da carta, em kwanzas, em dez páginas. Escolha uma na barra de vidro, toque no preço para juntar ao pedido e envie tudo pelo WhatsApp.</p>
-        <a class="btn btn--ink menu__book" href="ementa.html#livro" data-idx="0">Folhear a ementa<svg class="ic ic--arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
-        <form class="search" action="ementa.html" method="get" role="search">
-          <label class="sr" for="q">Procurar na ementa</label>
-          <svg class="ic" aria-hidden="true"><use href="#i-search"/></svg>
-          <input id="q" name="q" type="search" placeholder="Procurar: köfte, pizza, milkshake…" autocomplete="off" enterkeyhint="search">
-        </form>
+        <p>94 pratos em dez capítulos, num livro que se folheia com o dedo. Escolha um capítulo e o livro abre nessa página; o pedido faz-se pelo WhatsApp.</p>
+        <a class="btn btn--ink menu__book" href="ementa.html" data-idx="0">Folhear a ementa<svg class="ic ic--arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
       </div>
       <div class="catbar" data-catbar>
-        <nav class="wrap catbar__in glass" aria-label="Páginas da ementa" data-catnav>
+        <nav class="wrap catbar__in glass" aria-label="Capítulos da ementa" data-catnav>
           <span class="catbar__thumb" data-thumb aria-hidden="true"></span>
           <a class="chip" href="ementa.html" data-idx="0">Tudo</a>
-          <a class="chip" href="hamburgueres.html" data-idx="1">Hambúrgueres</a>
-          <a class="chip" href="pizzas.html" data-idx="2">Pizzas</a>
-          <a class="chip" href="grelhados.html" data-idx="3">Grelhados</a>
-          <a class="chip" href="faita.html" data-idx="4">Faita</a>
-          <a class="chip" href="esparguete.html" data-idx="5">Esparguete</a>
-          <a class="chip" href="meze.html" data-idx="6">Meze</a>
-          <a class="chip" href="matabicho.html" data-idx="7">Matabicho</a>
-          <a class="chip" href="sobremesas.html" data-idx="8">Sobremesas</a>
-          <a class="chip" href="bebidas-quentes.html" data-idx="9">Cafés e chá</a>
-          <a class="chip" href="bebidas-frias.html" data-idx="10">Bebidas frias</a>
+          <a class="chip" href="ementa.html#livro-hamburgueres" data-idx="1">Hambúrgueres</a>
+          <a class="chip" href="ementa.html#livro-pizzas" data-idx="2">Pizzas</a>
+          <a class="chip" href="ementa.html#livro-grelhados" data-idx="3">Grelhados</a>
+          <a class="chip" href="ementa.html#livro-faita" data-idx="4">Faita</a>
+          <a class="chip" href="ementa.html#livro-esparguete" data-idx="5">Esparguete</a>
+          <a class="chip" href="ementa.html#livro-meze" data-idx="6">Meze</a>
+          <a class="chip" href="ementa.html#livro-matabicho" data-idx="7">Matabicho</a>
+          <a class="chip" href="ementa.html#livro-sobremesas" data-idx="8">Sobremesas</a>
+          <a class="chip" href="ementa.html#livro-bebidas-quentes" data-idx="9">Cafés e chá</a>
+          <a class="chip" href="ementa.html#livro-bebidas-frias" data-idx="10">Bebidas frias</a>
         </nav>
       </div>
       <script>(function(){var n=document.querySelector("[data-catnav]");if(!n)return;var a=n.querySelector('[aria-current="page"]'),t=n.querySelector("[data-thumb]"),s=window.__cbNav;if(s&&typeof s.sl==="number")n.scrollLeft=s.sl;else if(a)n.scrollLeft=a.offsetLeft-(n.clientWidth-a.offsetWidth)/2;if(a&&t){t.style.width=a.offsetWidth+"px";t.style.transform="translateX("+a.offsetLeft+"px)";t.dataset.on="true";}})();</script>
       <ul class="wrap cards" role="list">
-        <li class="card"><a href="hamburgueres.html" data-idx="1">
+        <li class="card"><a href="ementa.html#livro-hamburgueres" data-idx="0">
           <figure class="card__pic"><img src="img/cat-hamburgueres.webp" alt="Hambúrguer duplo com queijo cheddar e pickles, sobre fundo escuro" width="800" height="800" loading="lazy" decoding="async"></figure>
           <span class="card__t">Hambúrgueres</span>
-          <span class="card__m">11 pratos · desde 11.500 Kz</span>
+          <span class="card__m">11 pratos</span>
         </a></li>
-        <li class="card"><a href="pizzas.html" data-idx="2">
+        <li class="card"><a href="ementa.html#livro-pizzas" data-idx="0">
           <figure class="card__pic"><img src="img/cat-pizzas.webp" alt="Pizza fatiada com tomate cereja e alecrim numa tábua" width="800" height="800" loading="lazy" decoding="async"></figure>
           <span class="card__t">Pizzas</span>
-          <span class="card__m">16 pratos · desde 13.500 Kz</span>
+          <span class="card__m">16 pratos</span>
         </a></li>
-        <li class="card"><a href="grelhados.html" data-idx="3">
+        <li class="card"><a href="ementa.html#livro-grelhados" data-idx="0">
           <figure class="card__pic"><img src="img/cat-grelhados.webp" alt="Espetadas de carne picada grelhada com molho de tomate e salada" width="800" height="800" loading="lazy" decoding="async"></figure>
           <span class="card__t">Grelhados turcos</span>
-          <span class="card__m">8 pratos · desde 15.000 Kz</span>
+          <span class="card__m">8 pratos</span>
         </a></li>
-        <li class="card"><a href="faita.html" data-idx="4">
+        <li class="card"><a href="ementa.html#livro-faita" data-idx="0">
           <figure class="card__pic"><img src="img/cat-faita.webp" alt="Wrap de carne grelhada com salada, cortado ao meio" width="800" height="800" loading="lazy" decoding="async"></figure>
           <span class="card__t">Faita</span>
-          <span class="card__m">6 pratos · desde 10.500 Kz</span>
+          <span class="card__m">6 pratos</span>
         </a></li>
-        <li class="card"><a href="esparguete.html" data-idx="5">
+        <li class="card"><a href="ementa.html#livro-esparguete" data-idx="0">
           <figure class="card__pic"><img src="img/cat-esparguete.webp" alt="Esparguete com almôndegas e molho de tomate" width="800" height="800" loading="lazy" decoding="async"></figure>
           <span class="card__t">Esparguete</span>
-          <span class="card__m">5 pratos · desde 16.500 Kz</span>
+          <span class="card__m">5 pratos</span>
         </a></li>
-        <li class="card"><a href="meze.html" data-idx="6">
+        <li class="card"><a href="ementa.html#livro-meze" data-idx="0">
           <figure class="card__pic"><img src="img/cat-meze.webp" alt="Taça de húmus com azeite e especiarias" width="800" height="800" loading="lazy" decoding="async"></figure>
           <span class="card__t">Meze turco</span>
-          <span class="card__m">3 pratos · desde 4.000 Kz</span>
+          <span class="card__m">3 pratos</span>
         </a></li>
-        <li class="card"><a href="matabicho.html" data-idx="7">
+        <li class="card"><a href="ementa.html#livro-matabicho" data-idx="0">
           <figure class="card__pic"><img src="img/cat-matabicho.webp" alt="Mesa de pequeno-almoço turco com pão, ovos e pequenos pratos" width="800" height="800" loading="lazy" decoding="async"></figure>
           <span class="card__t">Matabicho</span>
-          <span class="card__m">9 pratos · desde 6.000 Kz</span>
+          <span class="card__m">9 pratos</span>
         </a></li>
-        <li class="card"><a href="sobremesas.html" data-idx="8">
+        <li class="card"><a href="ementa.html#livro-sobremesas" data-idx="0">
           <figure class="card__pic"><img src="img/cat-sobremesas.webp" alt="Fatia de cheesecake num prato escuro" width="800" height="800" loading="lazy" decoding="async"></figure>
           <span class="card__t">Sobremesas</span>
-          <span class="card__m">5 pratos · desde 4.000 Kz</span>
+          <span class="card__m">5 pratos</span>
         </a></li>
-        <li class="card"><a href="bebidas-quentes.html" data-idx="9">
+        <li class="card"><a href="ementa.html#livro-bebidas-quentes" data-idx="0">
           <figure class="card__pic"><img src="img/cat-bebidas-quentes.webp" alt="Copo de chá turco a fumegar" width="800" height="800" loading="lazy" decoding="async"></figure>
           <span class="card__t">Cafés, chá e sumos naturais</span>
-          <span class="card__m">13 pratos · desde 3.000 Kz</span>
+          <span class="card__m">13 pratos</span>
         </a></li>
-        <li class="card"><a href="bebidas-frias.html" data-idx="10">
+        <li class="card"><a href="ementa.html#livro-bebidas-frias" data-idx="0">
           <figure class="card__pic"><img src="img/cat-bebidas-frias.webp" alt="Batido de chocolate com bolachas no topo" width="800" height="800" loading="lazy" decoding="async"></figure>
           <span class="card__t">Bebidas frias</span>
-          <span class="card__m">18 pratos · desde 1.500 Kz</span>
+          <span class="card__m">18 pratos</span>
         </a></li>
       </ul>
     </section>
@@ -322,7 +318,7 @@
       <div class="wrap band__in">
         <h2 class="band__t">Para levantar no W17 ou para entrega em casa.</h2>
         <div class="band__actions">
-          <a class="btn btn--bone" href="#ementa">Abrir a ementa<svg class="ic ic--arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          <a class="btn btn--bone" href="ementa.html">Folhear a ementa<svg class="ic ic--arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
           <a class="link-arrow" href="https://wa.me/244925918468?text=Ol%C3%A1%2C%20Chef%20Burger." target="_blank" rel="noopener"><svg class="ic ic--brand" aria-hidden="true"><use href="#i-wa"/></svg>Escrever no WhatsApp</a>
         </div>
       </div>
@@ -351,67 +347,19 @@
           <li><a href="https://wa.me/244925918468" target="_blank" rel="noopener" aria-label="WhatsApp +244 925 918 468"><svg class="ic ic--brand" aria-hidden="true"><use href="#i-wa"/></svg></a></li>
         </ul>
       </div>
-      <p class="foot__fine">Proposta de site para o Chef Burger. Preços da carta de agosto de 2026. Fotografias de referência <a class="link" href="https://unsplash.com/license" target="_blank" rel="noopener">Unsplash</a> e vídeos <a class="link" href="https://www.pexels.com/license/" target="_blank" rel="noopener">Pexels</a>, a trocar pelos da casa. Pedidos e reservas só ficam confirmados quando a equipa responder no WhatsApp.</p>
+      <p class="foot__fine">Proposta de site para o Chef Burger. Ementa da carta de agosto de 2026. Fotografias de referência <a class="link" href="https://unsplash.com/license" target="_blank" rel="noopener">Unsplash</a> e vídeos <a class="link" href="https://www.pexels.com/license/" target="_blank" rel="noopener">Pexels</a>, a trocar pelos da casa. Pedidos e reservas só ficam confirmados quando a equipa responder no WhatsApp.</p>
     </div>
   </footer>
 
 
   <nav class="dock glass" data-dock aria-label="Atalhos">
-    <a class="dock__b" href="#ementa"><svg class="ic" aria-hidden="true"><use href="#i-menu"/></svg><span>Ementa</span></a>
+    <a class="dock__b" href="ementa.html"><svg class="ic" aria-hidden="true"><use href="#i-menu"/></svg><span>Ementa</span></a>
     <a class="dock__b" href="#reservar"><svg class="ic" aria-hidden="true"><use href="#i-cal"/></svg><span>Reservar</span></a>
     <a class="dock__b" href="tel:+244925918468"><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg><span>Ligar</span></a>
-    <button type="button" class="dock__cart" data-open-cart data-dock-cart aria-label="Abrir o pedido">
-      <svg class="ic" aria-hidden="true"><use href="#i-bag"/></svg>
-      <span class="dock__cart-text" data-dock-text>Pedido</span>
-      <span class="count count--dock" data-count hidden>0</span>
-    </button>
+    <a class="dock__cart" href="https://wa.me/244925918468?text=Ol%C3%A1%2C%20Chef%20Burger.%20Quero%20fazer%20um%20pedido." target="_blank" rel="noopener"><svg class="ic ic--brand" aria-hidden="true"><use href="#i-wa"/></svg><span class="dock__cart-text">Pedir no WhatsApp</span></a>
   </nav>
 
-  <div class="sheet" data-sheet hidden>
-    <div class="sheet__scrim" data-scrim data-close></div>
-    <div class="sheet__panel" data-panel role="dialog" aria-modal="true" aria-labelledby="pedido-t" tabindex="-1">
-      <div class="sheet__grab" data-grab aria-hidden="true"><span></span></div>
-      <div class="sheet__head">
-        <h2 id="pedido-t">O seu pedido</h2>
-        <button type="button" class="sheet__x" data-close aria-label="Fechar o pedido"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button>
-      </div>
-      <form class="sheet__form" data-order novalidate>
-        <div class="sheet__body" data-sheet-body>
-          <div class="cart-empty" data-cart-empty>
-            <p class="cart-empty__t">Ainda não juntou nada.</p>
-            <p>Toque no preço de um prato da ementa e ele aparece aqui.</p>
-            <a class="btn btn--ink" href="#ementa" data-close>Ver a ementa</a>
-          </div>
-          <ul class="cart" role="list" data-cart-list></ul>
-          <div class="sheet__fields" data-cart-fields>
-            <div class="seg" role="radiogroup" aria-label="Como quer receber" data-seg>
-              <span class="seg__thumb" data-seg-thumb aria-hidden="true"></span>
-              <label class="seg__o"><input type="radio" name="modo" value="entrega" checked><span>Entrega</span></label>
-              <label class="seg__o"><input type="radio" name="modo" value="levantamento"><span>Levantar no W17</span></label>
-            </div>
-            <label class="field" data-address><span class="field__label">Morada de entrega</span><input name="morada" autocomplete="street-address" maxlength="160" placeholder="Quarteirão, prédio, apartamento"><span class="field__err" data-err="morada"></span><small class="field__hint">A equipa diz se entrega na sua zona e quanto custa.</small></label>
-            <div class="form__row">
-              <label class="field"><span class="field__label">Nome</span><input name="nome" autocomplete="name" maxlength="80"><span class="field__err" data-err="nome"></span></label>
-              <label class="field"><span class="field__label">Telefone</span><input name="telefone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20"><span class="field__err" data-err="telefone"></span></label>
-            </div>
-            <label class="field"><span class="field__label">Nota <small>(opcional)</small></span><input name="nota" maxlength="200" placeholder="Sem cebola, tocar à campainha…"></label>
-            <details class="preview">
-              <summary>Ver a mensagem que vai para o WhatsApp</summary>
-              <pre data-preview></pre>
-            </details>
-          </div>
-        </div>
-        <div class="sheet__foot" data-sheet-foot>
-          <p class="sheet__total"><span>Total</span><strong data-total>0 Kz</strong></p>
-          <button type="submit" class="btn btn--red btn--wide"><svg class="ic ic--brand" aria-hidden="true"><use href="#i-wa"/></svg>Enviar pelo WhatsApp</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-
   <p class="sr" data-live aria-live="polite"></p>
-  <noscript><p class="noscript">Para montar o pedido neste site é preciso JavaScript. Pode escrever na mesma para o WhatsApp +244 925 918 468.</p></noscript>
   <script src="js/site.js" defer></script>
 </body>
 </html>

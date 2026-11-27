@@ -23,11 +23,12 @@
 {{PRELOAD}}
   <link rel="stylesheet" href="css/site.css">
   <script>
-    /* Transição entre páginas: a direção sai da ordem das páginas (início -1, ementa 0, categorias 1…10). */
+    /* Transição entre páginas: a direção sai da ordem das páginas (início -1, ementa 0). No Safari (iPhone, iPad, Mac) não há transição entre documentos: o Voltar do Safari salta entradas do histórico com ela, e não queremos arriscar. */
     (function () {
       var d = document.documentElement, K = "cb-nav";
       d.classList.add("js");
       var to = Number(d.dataset.idx);
+      var ua = navigator.userAgent, webkit = /iPhone|iPad|iPod/.test(ua) || (/AppleWebKit/.test(ua) && !/Chrome|Chromium|Edg|Android/.test(ua));
       function read() {
         var from = null, sl = null;
         try { var o = JSON.parse(sessionStorage.getItem(K) || "null"); if (o && Date.now() - o.t < 8000) { from = o.from; sl = o.sl; } } catch (e) {}
@@ -44,6 +45,7 @@
       window.addEventListener("pageswap", function (e) {
         remember();
         if (!e.viewTransition) return;
+        if (webkit) { e.viewTransition.ready.catch(function () {}); e.viewTransition.skipTransition(); return; }
         /* De e para o início, a barra muda de sítio: o indicador viaja dentro dela, não à parte. */
         if (to < 0 || (e.activation && e.activation.entry && isHome(e.activation.entry.url))) thumbName("none");
         /* A barra de vidro só viaja se estiver à vista; fora do ecrã voaria de longe. */
@@ -61,7 +63,7 @@
         window.addEventListener("pagereveal", function (e) {
           var n = window.__cbNav = read();
           if (!e.viewTransition) return res();
-          if (!n.dir) { e.viewTransition.skipTransition(); return res(); }
+          if (webkit || !n.dir) { e.viewTransition.ready.catch(function () {}); e.viewTransition.skipTransition(); return res(); }
           if (n.from < 0 || n.to < 0) thumbName("none");
           e.viewTransition.types.add(n.dir);
           if (n.from >= 0 && n.to >= 0) e.viewTransition.types.add("within"); /* a barra fica no sítio: o indicador pode ressaltar */
@@ -85,11 +87,10 @@
       </nav>
       <div class="nav__end">
         <p class="status" data-status><span class="status__dot" aria-hidden="true"></span><span data-status-short>Aberto</span></p>
-        <button type="button" class="nav__bag glass" data-open-cart aria-label="Abrir o pedido, vazio">
-          <svg class="ic" aria-hidden="true"><use href="#i-bag"/></svg>
-          <span class="nav__bag-text">Pedido</span>
-          <span class="count" data-count hidden>0</span>
-        </button>
+        <a class="nav__bag glass" href="https://wa.me/244925918468?text=Ol%C3%A1%2C%20Chef%20Burger.%20Quero%20fazer%20um%20pedido." target="_blank" rel="noopener" aria-label="Pedir no WhatsApp">
+          <svg class="ic ic--brand" aria-hidden="true"><use href="#i-wa"/></svg>
+          <span class="nav__bag-text">Pedir no WhatsApp</span>
+        </a>
       </div>
     </div>
   </header>
@@ -103,16 +104,10 @@
     <a class="dock__b" href="{{EMENTA}}"{{DOCK_EMENTA_CUR}}><svg class="ic" aria-hidden="true"><use href="#i-menu"/></svg><span>Ementa</span></a>
     <a class="dock__b" href="{{H}}#reservar"><svg class="ic" aria-hidden="true"><use href="#i-cal"/></svg><span>Reservar</span></a>
     <a class="dock__b" href="tel:+244925918468"><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg><span>Ligar</span></a>
-    <button type="button" class="dock__cart" data-open-cart data-dock-cart aria-label="Abrir o pedido">
-      <svg class="ic" aria-hidden="true"><use href="#i-bag"/></svg>
-      <span class="dock__cart-text" data-dock-text>Pedido</span>
-      <span class="count count--dock" data-count hidden>0</span>
-    </button>
+    <a class="dock__cart" href="https://wa.me/244925918468?text=Ol%C3%A1%2C%20Chef%20Burger.%20Quero%20fazer%20um%20pedido." target="_blank" rel="noopener"><svg class="ic ic--brand" aria-hidden="true"><use href="#i-wa"/></svg><span class="dock__cart-text">Pedir no WhatsApp</span></a>
   </nav>
 
-{{PEDIDO}}
   <p class="sr" data-live aria-live="polite"></p>
-  <noscript><p class="noscript">Para montar o pedido neste site é preciso JavaScript. Pode escrever na mesma para o WhatsApp +244 925 918 468.</p></noscript>
 {{SCRIPTS}}  <script src="js/site.js" defer></script>
 </body>
 </html>
