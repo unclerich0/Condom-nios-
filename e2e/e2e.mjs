@@ -15,9 +15,14 @@ const SHOTS = path.resolve('docs/screenshots');
 fs.mkdirSync(SHOTS, { recursive: true });
 const dbFile = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'cv-e2e-')), 'e2e.db');
 
-const server = spawn(process.execPath, ['src/server.js'], { env: { ...process.env, PORT: String(PORT), DB_FILE: dbFile, DISABLE_PUSH: '1' }, stdio: ['ignore', 'pipe', 'pipe'] });
+const e2eEnv = { ...process.env, PORT: String(PORT), DB_FILE: dbFile, DISABLE_PUSH: '1', SEED: '1' };
+delete e2eEnv.DATABASE_URL;
+delete e2eEnv.DATABASE_SCHEMA;
+delete e2eEnv.SEED_DEMO;
+delete e2eEnv.ADMIN_PASSWORD;
+const server = spawn(process.execPath, ['src/server.js'], { env: e2eEnv, stdio: ['ignore', 'pipe', 'pipe'] });
 server.stderr.on('data', (d) => process.stderr.write(`[server] ${d}`));
-await new Promise((res, rej) => { server.stdout.on('data', (d) => { if (String(d).includes('a correr')) res(); }); setTimeout(() => rej(new Error('servidor não arrancou')), 10000); });
+await new Promise((res, rej) => { server.stdout.on('data', (d) => { if (String(d).includes('a correr')) res(); }); setTimeout(() => rej(new Error('servidor não arrancou')), 20000); });
 
 const results = [];
 async function step(name, fn) {

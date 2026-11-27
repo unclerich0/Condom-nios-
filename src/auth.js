@@ -2,16 +2,17 @@
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const { getSetting, setSetting } = require('./db');
+const { ensureSetting } = require('./db');
 
 const COOKIE = 'cv_session';
 const TTL_SECONDS = 60 * 60 * 12; // 12h — um turno de segurança
 
-function jwtSecret(db) {
+async function jwtSecret(db) {
   if (process.env.JWT_SECRET) return process.env.JWT_SECRET;
-  let s = getSetting(db, 'jwt_secret');
-  if (!s) { s = crypto.randomBytes(48).toString('hex'); setSetting(db, 'jwt_secret', s); }
-  return s;
+  if (db._jwtSecret) return db._jwtSecret;
+  const secret = await ensureSetting(db, 'jwt_secret', () => crypto.randomBytes(48).toString('hex'));
+  db._jwtSecret = secret;
+  return secret;
 }
 
 function hashPassword(pw) { return bcrypt.hashSync(pw, 10); }
@@ -23,23 +24,29 @@ function publicUser(u) {
   return { ...rest, active: !!rest.active };
 }
 
-function issue(res, db, user, secure) {
-  const token = jwt.sign({ sub: user.id, role: user.role }, jwtSecret(db), { expiresIn: TTL_SECONDS });
+async function issue(res, db, user, secure) {
+  const token = jwt.sign({ sub: user.id, role: user.role }, await jwtSecret(db), { expiresIn: TTL_SECONDS });
   res.cookie(COOKIE, token, { httpOnly: true, sameSite: 'lax', secure: !!secure, maxAge: TTL_SECONDS * 1000, path: '/' });
 }
 
 function authenticate(db) {
-  const findUser = db.prepare('SELECT * FROM users WHERE id = ? AND active = 1');
-  return (req, _res, next) => {
-    const token = req.cookies && req.cookies[COOKIE];
-    if (token) {
-      try {
-        const payload = jwt.verify(token, jwtSecret(db));
-        const u = findUser.get(payload.sub);
-        if (u) req.user = publicUser(u);
-      } catch { /* token inválido/expirado */ }
-    }
-    next();
+  return async (req, _res, next) => {
+    try {
+      const token = req.cookies && req.cookies[COOKIE];
+      if (token) {
+        const secret = await jwtSecret(db);
+        let payload = null;
+        try { payload = jwt.verify(token, secret); }
+        catch (err) {
+          if (!err || (err.name !== 'JsonWebTokenError' && err.name !== 'TokenExpiredError' && err.name !== 'NotBeforeError')) throw err;
+        }
+        if (payload) {
+          const u = await db.get('SELECT * FROM users WHERE id = ? AND active = 1', payload.sub);
+          if (u) req.user = publicUser(u);
+        }
+      }
+      next();
+    } catch (err) { next(err); }
   };
 }
 

@@ -12,10 +12,10 @@ const visitsRouter = require('./routes/visits');
 const { authRouter, residentsRouter, notificationsRouter, pushRouter, adminRouter } = require('./routes/other');
 const { TZ } = require('./time');
 
-function createApp({ db, secureCookies = process.env.NODE_ENV === 'production' && process.env.INSECURE_COOKIES !== '1' }) {
+async function createApp({ db, secureCookies = process.env.NODE_ENV === 'production' && process.env.INSECURE_COOKIES !== '1' }) {
   const app = express();
   const hub = new EventHub();
-  const push = setupPush(db);
+  const push = await setupPush(db);
   const svc = createServices(db, hub, push);
   const ctx = { db, hub, push, svc, secureCookies };
 
