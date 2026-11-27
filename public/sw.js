@@ -1,5 +1,5 @@
 // Service worker: shell offline + Web Push + clique na notificação
-const CACHE = 'portaria-v2';
+const CACHE = 'portaria-v3';
 const SHELL = ['/', '/morador', '/seguranca', '/admin', '/css/app.css', '/js/ui.js', '/js/api.js', '/js/shell.js', '/js/history.js', '/js/login.js', '/js/morador.js', '/js/seguranca.js', '/js/admin.js', '/icons/icon.svg', '/icons/icon-192.png', '/manifest.webmanifest'];
 
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).catch(() => {})); self.skipWaiting(); });

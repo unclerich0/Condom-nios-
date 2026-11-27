@@ -88,9 +88,17 @@ try {
     const r = await p.request.get(BASE + '/api/residents'); assert.equal(r.status(), 403);
     await p.context().close();
   });
-  await step('estrutura nativa: iPad com barra lateral de vidro, telemóvel com separadores flutuantes', async () => {
+  await step('estrutura nativa: vidro só em barras e botões; listas e a barra lateral são opacas', async () => {
     assert.ok(await res.locator('.sidebar').isVisible()); assert.ok(!(await res.locator('.tabbar').isVisible()));
-    assert.equal(await res.evaluate(() => getComputedStyle(document.querySelector('.sidebar')).backdropFilter !== 'none'), true, 'backdrop-filter ativo');
+    const mat = await res.evaluate(() => {
+      const bf = (sel) => getComputedStyle(document.querySelector(sel)).backdropFilter;
+      return { header: bf('.sb-brand'), sidebar: bf('.sidebar'), group: bf('.group'), navbar: bf('.navbar'), tab: bf('.sb-tabs .tab') };
+    });
+    assert.notEqual(mat.header, 'none', 'cabeçalho da barra lateral com vidro');
+    assert.notEqual(mat.navbar, 'none', 'barra de navegação com vidro');
+    assert.notEqual(mat.tab, 'none', 'item de separador com vidro');
+    assert.equal(mat.sidebar, 'none', 'corpo da barra lateral opaco');
+    assert.equal(mat.group, 'none', 'lista agrupada opaca');
   });
 
   // 2) Morador envia → aparece em tempo real na portaria ---------------------
@@ -245,6 +253,14 @@ try {
     await mob.evaluate(() => window.scrollTo(0, 120));
     await mob.click('#btn-account');
     await mob.waitForSelector('.sheet .group'); await settle(mob, 700);
+    const mat = await mob.evaluate(() => {
+      const bf = (sel) => getComputedStyle(document.querySelector(sel)).backdropFilter;
+      return { sheet: bf('.sheet'), pill: bf('.tab-pill'), group: bf('.group'), btn: bf('.visit .btn') };
+    });
+    assert.equal(mat.sheet, 'none', 'folha opaca');
+    assert.equal(mat.group, 'none', 'lista opaca');
+    assert.notEqual(mat.pill, 'none', 'barra de separadores com vidro');
+    assert.notEqual(mat.btn, 'none', 'botão da lista com vidro');
     await mob.screenshot({ path: `${SHOTS}/11-mobile-folha-conta.png` });
     // arrastar a folha para baixo com um gesto rápido fecha-a (projeção de momento)
     const g = await mob.locator('.sheet .grabber').boundingBox();

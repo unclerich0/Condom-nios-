@@ -213,7 +213,7 @@ Todo o desenho segue a skill **apple-design** (repositório `emilkowalski/skills
 
 | Princípio da skill | Como está aplicado |
 |---|---|
-| §12 Materiais: camada funcional translúcida, bordo brilhante, "materializar", nunca vidro sobre vidro | Vidro só na barra de separadores, botões da barra, avisos e folhas; o conteúdo é plano (listas agrupadas). Folhas e avisos materializam com escala + opacidade |
+| §12 Materiais: camada funcional translúcida, bordo brilhante, "materializar", nunca vidro sobre vidro | Vidro só em barras e botões (navegação, separadores, pesquisa, segmentos, cabeçalho lateral, botões). Listas, folhas, toasts e avisos são material opaco. Folhas e avisos materializam com escala + opacidade |
 | §12 Efeito de borda de scroll em vez de linhas de 1px | A barra de navegação ganha um véu desfocado ao fazer scroll; o título grande colapsa para um título central |
 | §12/§14 Reduzir transparência / contraste | `prefers-reduced-transparency` → superfícies sólidas; `prefers-contrast: more` → sem vidro, com contorno |
 | §1 Resposta no pointer-down; §3-§6 molas, velocidade, projeção de momento | Botões reagem ao toque; indicador dos separadores, segmentos, folhas e avisos usam molas interrompíveis; a folha fecha com o momento do gesto |
@@ -222,7 +222,7 @@ Todo o desenho segue a skill **apple-design** (repositório `emilkowalski/skills
 | mobile-native | `viewport-fit=cover` + safe-areas, `100dvh`, campos ≥16px, `touch-action`, `user-select` só em controlos, hover só com `(hover: hover)`, `theme-color` por esquema |
 | ui-cheatsheet | Datas absolutas após uma semana, plurais com `Intl.PluralRules`, `tabular-nums` |
 
-**O vidro**, camada a camada (`public/css/app.css` + `installGlass()` em `public/js/ui.js`): desfoque + saturação do fundo → preenchimento translúcido com **tinta adaptativa** (mede a cor do que está por baixo ao fazer scroll) → brilho interior e sombra de contacto → **aro especular** de 1px → brilho de superfície com **realce que segue o dedo/rato** → **lente de refração** (filtro SVG com `feDisplacementMap` no `backdrop-filter`, apenas Chromium; Safari/Firefox ficam com o vidro desfocado, sem lente).
+**O vidro** imita o `GlassView` `regular` do Expo (iOS 26), só em barras e botões (`public/css/app.css` + `installGlass()` em `public/js/ui.js`): desfoque + saturação → tinta subtil → **realce especular no topo** → **refração suave na borda** (filtro SVG com `feDisplacementMap`, escala baixa, apenas Chromium; Safari/Firefox ficam com o vidro desfocado) → **brilho ao premir**, em conjunto com a mola de escala. Listas agrupadas, folhas, toasts, avisos, campos e o fundo usam `systemGroupedBackground` / `secondarySystemGroupedBackground`, sem `backdrop-filter`. `prefers-reduced-transparency` e `prefers-contrast: more` voltam a superfícies sólidas.
 
 Estrutura nativa: no telemóvel, barra de separadores flutuante em cápsula (com o separador *Moradores* destacado, como a pesquisa do iOS 26); no tablet/computador, barra lateral flutuante. Títulos grandes que colapsam, controlos segmentados, listas *inset grouped*, folhas arrastáveis, avisos no estilo das notificações do iOS e modo escuro automático.
 
