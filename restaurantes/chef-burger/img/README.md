@@ -26,7 +26,10 @@ Formato: WebP, qualidade 80–85. Onde há versão `-phone`, é o recorte vertic
 | `cat-sobremesas.webp` | quadrada | Ementa: Sobremesas | photo-1524351199678-941a58a3df50 |
 | `cat-bebidas-quentes.webp` | quadrada | Ementa: Cafés, chá e sumos naturais | photo-1623241237041-67ece20b63de |
 | `cat-bebidas-frias.webp` | quadrada | Ementa: Bebidas frias | photo-1594488506255-a8bbfdeedbaf |
+| `head-<categoria>.webp` | 2000×800 | Topo das páginas sem vídeo (faita, esparguete, meze, matabicho, sobremesas, bebidas-quentes, bebidas-frias), computador. No telemóvel usa-se a `cat-<categoria>.webp` | Recorte largo da mesma foto Unsplash da categoria |
 
-O texto alternativo de cada foto está em `fonte/pagina.html` (hero, capítulos, casa, reservar) e em `fonte/menu.json` (campo `alt` de cada categoria). Ao trocar uma foto, atualize o `alt` e corra `node fonte/gerar.mjs`.
+O primeiro ecrã e as páginas de hambúrgueres, pizzas e grelhados usam vídeo: ver [../video/README.md](../video/README.md). O `hero.webp` antigo fica para o `og.jpg` e pode voltar ao primeiro ecrã se se tirar o vídeo.
+
+O texto alternativo de cada foto está em `fonte/partes/` (capítulos, casa, reservar), `fonte/gerar.mjs` (vídeos) e em `fonte/menu.json` (campo `alt` de cada categoria). Ao trocar uma foto, atualize o `alt` e corra `node fonte/gerar.mjs`.
 
 Não há logótipo em imagem: a marca «Chef BURGER» no cabeçalho é texto com a fonte Archivo. Se a casa enviar o logótipo (caveira de touro vermelha), pode entrar como `logo.svg` no cabeçalho.

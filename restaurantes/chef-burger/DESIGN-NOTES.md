@@ -60,3 +60,11 @@ O pedido abre numa folha (sheet) que sobe de baixo no telemóvel e entra pela di
 - Entrada do hero: uma vez, linhas a subir 14px com blur de 6px → 0, 60–80ms entre elas.
 - Fecho dismiss por distância **ou** velocidade (flick > 0.4 px/ms, depois de 24px).
 - Base móvel: `viewport-fit=cover`, `100svh` no hero, inputs a 16px, `touch-action: manipulation`, `-webkit-tap-highlight-color: transparent`, `env(safe-area-inset-bottom)` na doca, `theme-color` por esquema, sem `user-scalable=no`.
+
+## Versão 4: páginas, barra de vidro, folha e vídeo
+
+- **Páginas em vez de uma página só.** Ordem: início (-1), ementa (0), categorias (1–10). A ordem decide a direção da transição.
+- **Barra de vidro = navegação** (Liquid Glass só em barras e botões). Indicador escuro com mola (amortecimento 0,82, resposta 0,38 s); responde no toque, antes de a página seguinte chegar. No início não há item ativo: o indicador nasce no centro do item tocado.
+- **Folha** (apple-design §7, «entra e sai pelo mesmo caminho»; emil choreograph «direction-aware steps»): para a frente, a página nova entra a 100% pela direita com sombra no bordo, a antiga recua 30% e escurece; para trás, o inverso. Mola criticamente amortecida, resposta 0,36 s, amostrada em `linear()` (520 ms). Topo, doca e barra têm nome próprio na transição e não deslizam. Entre categorias o indicador viaja à parte com um ressalto pequeno (tipo `within`); de e para o início viaja dentro da barra.
+- **Sem View Transitions entre documentos:** o `main` entra 28 px de lado em 420 ms. **Movimento reduzido:** esbatimento de 180 ms, sem vídeo.
+- **Vídeo:** imagem fixa por baixo (é o LCP), vídeo por cima com `opacity` quando começa a tocar; só toca à vista.

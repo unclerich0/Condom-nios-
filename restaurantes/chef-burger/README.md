@@ -8,7 +8,11 @@ O site que está no ar em [https://chef-burger-demo.vercel.app/](https://chef-bu
 
 Direção visual: **«Touro vermelho em osso»** (ver [DESIGN-NOTES.md](DESIGN-NOTES.md)). Fundo osso, tinta quase preta e o vermelho da caveira de touro do logótipo; tipo Archivo largo e pesado; a comida em fotografia grande, sem nada por cima.
 
-- Hero com foto a toda a largura, estado aberto/fechado no fuso de Luanda (`Africa/Luanda`), **Pedir da ementa** e **Reservar mesa**.
+- **Páginas:** início (`index.html`), toda a ementa com pesquisa (`ementa.html`) e uma página por categoria (`hamburgueres.html`, `pizzas.html`, `grelhados.html`, `faita.html`, `esparguete.html`, `meze.html`, `matabicho.html`, `sobremesas.html`, `bebidas-quentes.html`, `bebidas-frias.html`).
+- **Barra de vidro** = navegação da ementa: fica no topo, desliza na horizontal no telemóvel, e o indicador escuro passa de item em item com uma mola.
+- **Transição de folha** entre páginas (View Transitions entre documentos): a página seguinte entra pela direita por cima da anterior; a anterior volta pela esquerda. Sem suporte, a página entra de lado, curta; com movimento reduzido, só um esbater.
+- **Vídeo** no primeiro ecrã e no topo de hambúrgueres, pizzas e grelhados (ver [video/README.md](video/README.md)).
+- Hero com vídeo a toda a largura, estado aberto/fechado no fuso de Luanda (`Africa/Luanda`), **Pedir da ementa** e **Reservar mesa**.
 - «Onde estamos»: W17 em grande, horário com o dia de hoje marcado, telefones, mapa e WhatsApp.
 - «A casa»: quatro capítulos com foto (hambúrgueres, grelhados, pizzas, matabicho e çay).
 - Ementa: 94 pratos em 10 categorias, barra de categorias fixa, pesquisa (sem acentos: «cay» encontra Çay), preço em Kz como botão que junta ao pedido.
@@ -20,8 +24,8 @@ Nada fica num servidor. O pedido vive no telemóvel (`localStorage`) até a pess
 
 ## Como editar
 
-- **Pratos e preços:** `fonte/menu.json`. Depois: `node fonte/gerar.mjs` (gera `index.html` a partir de `fonte/pagina.html`). Não editar `index.html` à mão.
-- **Textos da página:** `fonte/pagina.html`, e voltar a correr o gerador.
+- **Pratos e preços:** `fonte/menu.json`. Depois: `node fonte/gerar.mjs` (gera as 12 páginas `.html` a partir de `fonte/base.html` e `fonte/partes/`). Não editar os `.html` da raiz à mão.
+- **Textos:** `fonte/partes/*.html` (secções do início, rodapé, pedido) e `fonte/gerar.mjs` (páginas da ementa), e voltar a correr o gerador.
 - **Estilos e interação:** `css/site.css` e `js/site.js` (sem build).
 - **Fotos:** ver [img/README.md](img/README.md).
 
@@ -70,12 +74,13 @@ Criar um **serviço novo**. Não usar o serviço da aplicação do condomínio e
 3. **Publish directory:** `restaurantes/chef-burger`
 4. Variável de ambiente: `SKIP_INSTALL_DEPS` = `true`  
    Sem isto, o Render instala as dependências do `package.json` da raiz (a app do condomínio) e gasta minutos de build à toa.
-5. Não é preciso rewrite para `index.html`. A única página é `index.html` na raiz da pasta publicada.
+5. Não é preciso rewrite: cada página é um `.html` na raiz da pasta publicada.
 6. Cabeçalhos úteis (Settings → Headers), opcionais:
 
    | Path | Header | Value |
    | --- | --- | --- |
    | `/img/*` | `Cache-Control` | `public, max-age=86400` |
+   | `/video/*` | `Cache-Control` | `public, max-age=86400` |
    | `/fonts/*` | `Cache-Control` | `public, max-age=31536000, immutable` |
    | `/*` | `X-Content-Type-Options` | `nosniff` |
 

@@ -37,6 +37,9 @@
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  /* Molas amostradas (amortecimento 1 e 0,78; resposta 0,36 s) para a View Transition entre páginas. */
+  --spring: linear(0, 0.0484, 0.1552, 0.2816, 0.4069, 0.5207, 0.6189, 0.7009, 0.7676, 0.821, 0.8631, 0.8959, 0.9213, 0.9408, 0.9556, 0.9668, 0.9753, 0.9816, 0.9864, 0.9899, 0.9926, 0.9945, 0.996, 0.9971, 0.9978, 0.9984, 1);
+  --spring-bounce: linear(0, 0.0507, 0.1684, 0.3141, 0.4623, 0.5984, 0.7146, 0.8086, 0.8809, 0.934, 0.9709, 0.995, 1.0094, 1.017, 1.0197, 1.0195, 1.0176, 1.0148, 1.0118, 1.009, 1.0065, 1.0045, 1.0029, 1.0017, 1.0008, 1.0003, 0.9999, 0.9997, 1);
 
   --glass-bg: rgba(248, 244, 237, 0.64);
   --glass-edge: rgba(255, 255, 255, 0.75);
@@ -299,7 +302,7 @@ p { text-wrap: pretty; }
 /* ---------- Ementa ---------- */
 .menu { padding: clamp(72px, 10vw, 140px) 0 clamp(48px, 6vw, 96px); }
 .menu__head { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
-.menu__head h2 { font-size: clamp(3.25rem, 1.5rem + 11vw, 10rem); line-height: 0.82; letter-spacing: -0.04em; font-stretch: 125%; font-weight: 900; }
+.menu__head h1, .menu__head h2 { font-size: clamp(3.25rem, 1.5rem + 11vw, 10rem); line-height: 0.82; letter-spacing: -0.04em; font-stretch: 125%; font-weight: 900; }
 .menu__head p { color: var(--muted); font-size: 1.0625rem; max-width: 48ch; }
 .search { position: relative; display: block; max-width: 520px; }
 .search .ic { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
@@ -313,7 +316,7 @@ p { text-wrap: pretty; }
 .search input:focus { border-color: var(--ink); box-shadow: 0 0 0 4px rgba(196, 30, 42, 0.16); }
 @media (min-width: 900px) {
   .menu__head { grid-template-columns: max-content minmax(0, 30rem); justify-content: space-between; column-gap: 48px; align-items: end; }
-  .menu__head h2 { grid-row: span 2; }
+  .menu__head h1, .menu__head h2 { grid-row: span 2; }
 }
 
 .catbar { position: sticky; top: calc(var(--nav-h) + 10px); z-index: 30; margin: 32px 0 8px; pointer-events: none; }
@@ -330,11 +333,11 @@ p { text-wrap: pretty; }
   transition: color 200ms ease, transform 160ms var(--ease-out); scroll-snap-align: center;
 }
 .chip:active { transform: scale(0.96); }
-.chip[aria-current="true"] { color: var(--bg); }
+.chip[aria-current] { color: var(--bg); }
 .chip[hidden] { display: none; }
 .catbar__thumb { position: absolute; z-index: 0; left: 0; top: 5px; height: calc(100% - 10px); width: 0; border-radius: 999px; background: var(--ink); transform: translateX(0); will-change: transform, width; opacity: 0; transition: opacity 200ms ease; }
 .catbar__thumb[data-on="true"] { opacity: 1; }
-@media (hover: hover) and (pointer: fine) { .chip:not([aria-current="true"]):hover { color: var(--red); } }
+@media (hover: hover) and (pointer: fine) { .chip:not([aria-current]):hover { color: var(--red); } }
 
 .menu__body { padding-top: 8px; }
 .empty { padding: 48px 0; font-size: 1.25rem; font-weight: 600; }
@@ -343,12 +346,12 @@ p { text-wrap: pretty; }
 .cat__side { display: grid; gap: 18px; align-content: start; }
 .cat__photo { overflow: hidden; background: #1b1714; }
 .cat__photo img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; transition: transform 600ms var(--ease-out); }
-.cat__head h3 { font-size: clamp(1.75rem, 1.2rem + 1.8vw, 2.5rem); }
+.cat__head h2 { font-size: clamp(1.75rem, 1.2rem + 1.8vw, 2.5rem); }
 .cat__head p { margin-top: 8px; color: var(--muted); max-width: 42ch; }
 .dishes { border-top: 1px solid var(--line); }
 .dish { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 16px; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--line); }
 .dish[hidden] { display: none; }
-.dish__text h4 { font-size: 1.0625rem; font-weight: 650; font-stretch: 102%; letter-spacing: -0.01em; line-height: 1.25; }
+.dish__t { font-size: 1.0625rem; font-weight: 650; font-stretch: 102%; letter-spacing: -0.01em; line-height: 1.25; }
 .dish__text p { margin-top: 3px; font-size: 0.9375rem; line-height: 1.45; color: var(--muted); }
 .dish__buy { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 .dish__buy--two { grid-column: 1 / -1; justify-content: flex-start; }
@@ -575,3 +578,137 @@ p { text-wrap: pretty; }
   :root { --line: rgba(20, 21, 24, 0.4); --line-strong: rgba(20, 21, 24, 0.7); --muted: #3e3a34; }
   .glass, .nav { background: var(--bg); border-color: var(--ink); }
 }
+
+/* =====================================================================
+   Páginas (v2): vídeo, barra de vidro como navegação, páginas da ementa
+   ===================================================================== */
+
+/* ---------- Vídeo por cima da imagem fixa ---------- */
+.media { position: relative; overflow: hidden; background: #17120f; }
+.media img { width: 100%; height: 100%; object-fit: cover; }
+.media__v {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  opacity: 0; transition: opacity 700ms ease; pointer-events: none;
+}
+.media__v[data-playing="true"] { opacity: 1; }
+.hero__photo .media__v { object-position: 50% 50%; }
+[data-arrived] .hero__photo img, [data-arrived] [data-enter-line] { animation: none; }
+
+/* ---------- Início: cartões das páginas da ementa ---------- */
+.menu .catbar { margin: 36px 0 0; }
+.cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 12px; padding: 28px 0 0; list-style: none; }
+@media (min-width: 640px) { .cards { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 36px 16px; } }
+@media (min-width: 1100px) { .cards { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 44px 18px; padding-top: 40px; } }
+.card a { display: grid; gap: 10px; text-decoration: none; color: var(--ink); transition: transform 160ms var(--ease-out); }
+.card a:active { transform: scale(0.98); }
+.card__pic { position: relative; overflow: hidden; background: #1b1714; }
+.card__pic img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; transition: transform 600ms var(--ease-out); }
+.card__pic::after { content: ""; position: absolute; inset: 0; background: rgba(20, 21, 24, 0); transition: background-color 260ms ease; }
+.card__t { font-size: clamp(1.0625rem, 0.95rem + 0.45vw, 1.375rem); font-weight: 800; font-stretch: 112%; letter-spacing: -0.02em; line-height: 1.08; text-wrap: balance; }
+.card__m { margin-top: -4px; font-size: 0.875rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+@media (hover: hover) and (pointer: fine) {
+  .card a:hover .card__pic img { transform: scale(1.04); }
+  .card a:hover .card__pic::after { background: rgba(20, 21, 24, 0.12); }
+  .card a:hover .card__t { color: var(--red); }
+}
+
+/* ---------- Barra de vidro no topo das páginas da ementa ---------- */
+[data-page]:not([data-page="inicio"]) main { padding-top: var(--nav-h); }
+[data-page]:not([data-page="inicio"]) .catbar { margin: 10px 0 calc(-1 * (var(--catbar-h) + 10px)); }
+[data-page="ementa"]:not([data-page="inicio"]) .catbar { margin-bottom: 0; }
+.catbar__in { max-width: max-content; }
+@media (max-width: 1239px) { .catbar__in { max-width: none; } }
+
+/* ---------- Página de categoria ---------- */
+.cathero { height: clamp(320px, 58svh, 560px); }
+.cathero img { object-position: 50% 50%; }
+@media (min-width: 960px) { .cathero { height: clamp(420px, 64vh, 660px); } }
+.cathead { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; padding: 28px 0 8px; }
+/* O título ocupa a coluna sem a romper: o tamanho sai da palavra mais comprida (--w) e da largura da coluna. */
+.cathead__t { container-type: inline-size; min-width: 0; }
+.cathead h1 { font-size: min(7.5rem, calc(100cqi / (var(--w, 8) * 0.8))); line-height: 0.86; letter-spacing: -0.04em; font-stretch: 125%; font-weight: 900; }
+.cathead__side { display: grid; gap: 8px; align-content: end; }
+.cathead__side p { color: var(--muted); font-size: 1.0625rem; max-width: 46ch; }
+.cathead__side .cathead__meta { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+@media (min-width: 900px) {
+  .cathead { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); column-gap: 48px; align-items: end; padding: 48px 0 16px; }
+  .cathead__side { padding-bottom: 10px; }
+}
+.dishes--page { margin-top: 20px; }
+@media (min-width: 1000px) {
+  .dishes--page { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 56px; border-top: 0; margin-top: 28px; }
+  .dishes--page .dish { border-top: 1px solid var(--line); border-bottom: 0; }
+  .dishes--page .dish:nth-last-child(-n+2) { border-bottom: 1px solid var(--line); }
+}
+.catpage { padding-bottom: 24px; }
+
+/* Anterior / seguinte: a página é uma folha, e estas são as folhas ao lado */
+.pager { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; padding: 32px 0 clamp(56px, 8vw, 104px); }
+.pager__a {
+  display: grid; gap: 6px; align-content: start; min-height: 96px; padding: 18px 0;
+  border-top: 2px solid var(--ink); text-decoration: none; color: var(--ink);
+  transition: transform 160ms var(--ease-out), color 200ms ease;
+}
+.pager__a:active { transform: scale(0.98); }
+.pager__a small { font-size: 0.8125rem; font-weight: 500; color: var(--muted); }
+.pager__a span { display: inline-flex; align-items: center; gap: 10px; font-size: clamp(1.25rem, 0.9rem + 1.6vw, 2.5rem); font-weight: 800; font-stretch: 116%; letter-spacing: -0.03em; line-height: 1.02; }
+.pager__a--next { text-align: right; justify-items: end; }
+.pager__a--next span { justify-content: flex-end; }
+.ic--back { transform: scaleX(-1); transition: transform 200ms var(--ease-out); }
+.pager__a .ic { width: 0.9em; height: 0.9em; }
+@media (hover: hover) and (pointer: fine) {
+  .pager__a:hover { color: var(--red); }
+  .pager__a--next:hover .ic--arrow { transform: translateX(4px); }
+  .pager__a--prev:hover .ic--back { transform: scaleX(-1) translateX(4px); }
+}
+
+/* «Toda a ementa» */
+.menu--page { padding-top: clamp(40px, 6vw, 72px); }
+.cat__head h2 a { text-decoration: none; color: inherit; }
+.cat__head .link-arrow { margin-top: 6px; }
+@media (hover: hover) and (pointer: fine) { .cat__head h2 a:hover { color: var(--red); } }
+
+/* ---------- Transição entre páginas: folha que desliza ---------- */
+/* A página nova entra por cima, como uma folha; a antiga recua um terço e escurece.
+   Para trás, ao contrário: a folha de cima sai pela direita. Topo, barra de vidro e doca ficam. */
+@view-transition { navigation: auto; }
+.nav { view-transition-name: nav; }
+.dock { view-transition-name: dock; }
+.catbar { view-transition-name: catbar; }
+.catbar__thumb { view-transition-name: catthumb; }
+
+::view-transition-group(*) { animation-duration: 520ms; animation-timing-function: var(--spring); }
+/* O indicador viaja com a mesma mola da barra: se a barra muda de sítio, os dois chegam juntos. */
+::view-transition-group(catthumb) { animation-duration: 520ms; animation-timing-function: var(--spring); }
+html:active-view-transition-type(within)::view-transition-group(catthumb) { animation-duration: 560ms; animation-timing-function: var(--spring-bounce); }
+::view-transition-old(nav), ::view-transition-old(dock) { display: none; }
+::view-transition-new(nav), ::view-transition-new(dock) { animation: none; }
+::view-transition-old(root), ::view-transition-new(root) { mix-blend-mode: normal; animation-duration: 520ms; animation-timing-function: var(--spring); animation-fill-mode: both; }
+
+html:active-view-transition-type(forward)::view-transition-new(root) { animation-name: sheet-in; box-shadow: -24px 0 48px -16px rgba(20, 21, 24, 0.4); }
+html:active-view-transition-type(forward)::view-transition-old(root) { animation-name: sheet-under; }
+html:active-view-transition-type(back)::view-transition-old(root) { z-index: 2; animation-name: sheet-out; box-shadow: -24px 0 48px -16px rgba(20, 21, 24, 0.4); }
+html:active-view-transition-type(back)::view-transition-new(root) { animation-name: sheet-from-under; }
+
+@keyframes sheet-in { from { transform: translateX(100%); } to { transform: none; } }
+@keyframes sheet-under { from { transform: none; filter: brightness(1); } to { transform: translateX(-30%); filter: brightness(0.78); } }
+@keyframes sheet-out { from { transform: none; } to { transform: translateX(100%); } }
+@keyframes sheet-from-under { from { transform: translateX(-30%); filter: brightness(0.78); } to { transform: none; filter: brightness(1); } }
+
+/* Sem View Transitions entre documentos: a página só entra de lado, curta. */
+html[data-enter="forward"] main { animation: enter-from-right 420ms var(--ease-out) both; }
+html[data-enter="back"] main { animation: enter-from-left 420ms var(--ease-out) both; }
+@keyframes enter-from-right { from { opacity: 0; transform: translateX(28px); } }
+@keyframes enter-from-left { from { opacity: 0; transform: translateX(-28px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*) { animation-duration: 1ms; }
+  html:active-view-transition-type(forward, back)::view-transition-old(root) { animation: vt-fade-out 180ms ease both; box-shadow: none; }
+  html:active-view-transition-type(forward, back)::view-transition-new(root) { animation: vt-fade-in 180ms ease both; box-shadow: none; }
+  html[data-enter] main { animation: none; }
+  .media__v { display: none; }
+}
+@keyframes vt-fade-out { to { opacity: 0; } }
+@keyframes vt-fade-in { from { opacity: 0; } }
+.media picture { position: absolute; inset: 0; }
+.media picture img { position: absolute; inset: 0; }

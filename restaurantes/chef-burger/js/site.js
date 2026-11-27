@@ -101,11 +101,11 @@
     dock.style.opacity = String(clamp(1 - p * 1.4, 0, 1));
   });
   var dockShown = false;
-  function showDock(on) {
+  function showDock(on, instant) {
     if (on === dockShown) return;
     dockShown = on;
     if (on) dock.dataset.shown = "true";
-    dockY.to(on ? 0 : 1, { damping: on ? 0.86 : 1, response: 0.42, done: function () { if (!dockShown) dock.dataset.shown = "false"; } });
+    dockY.to(on ? 0 : 1, { damping: on ? 0.86 : 1, response: 0.42, instant: instant, done: function () { if (!dockShown) dock.dataset.shown = "false"; } });
   }
   var heroActions = $("[data-hero-actions]");
   if ("IntersectionObserver" in window && heroActions) {
@@ -113,7 +113,7 @@
       var e = es[0];
       showDock(!e.isIntersecting && e.boundingClientRect.top < 0);
     }).observe(heroActions);
-  } else { showDock(true); }
+  } else { showDock(true, true); }
 
   function onScrollNav() { nav.dataset.scrolled = window.scrollY > 8 ? "true" : "false"; }
   onScrollNav();
@@ -193,81 +193,130 @@
   function onScroll() {
     if (ticking) return;
     ticking = true;
-    requestAnimationFrame(function () { ticking = false; onScrollNav(); paintChapters(); paintWords(); syncCat(); });
+    requestAnimationFrame(function () { ticking = false; onScrollNav(); paintChapters(); paintWords(); });
   }
   window.addEventListener("scroll", onScroll, { passive: true });
   window.addEventListener("resize", function () { setupChapters(); onScroll(); moveThumb(true); });
   setupChapters();
   paintWords();
 
-  /* ---------- Ementa: pesquisa e categorias ---------- */
-  var search = $("[data-search]");
-  var empty = $("[data-empty]");
-  var cats = $$("[data-cat]");
-  var chips = $$("[data-chip]");
-  var catbar = $(".catbar__in");
-  var thumb = $("[data-thumb]");
-  var thumbX = new Spring(0, function (x) { thumb.style.transform = "translateX(" + x + "px)"; });
-  var thumbW = new Spring(0, function (w) { thumb.style.width = Math.max(0, w) + "px"; });
-  var current = "";
+  var navInfo = window.__cbNav || { from: null, dir: "" };
+  var revealed = window.__cbReveal || Promise.resolve();
+  var vtCross = "CSSViewTransitionRule" in window;
 
-  function moveThumb(instant) {
-    var chip = chips.filter(function (c) { return c.dataset.chip === current; })[0];
-    if (!chip || chip.hidden) { thumb.dataset.on = "false"; return; }
-    var first = thumb.dataset.on !== "true";
+  /* ---------- Barra de vidro: as páginas da ementa ---------- */
+  // O indicador escuro é uma mola. Entre páginas, a View Transition leva-o do item antigo ao novo;
+  // sem View Transitions, parte do item de onde se veio e assenta no novo com a mesma mola.
+  var catnav = $("[data-catnav]");
+  var thumb = catnav && $("[data-thumb]", catnav);
+  var chips = catnav ? $$(".chip", catnav) : [];
+  var active = chips.filter(function (c) { return c.getAttribute("aria-current") === "page"; })[0] || null;
+  var thumbX = thumb && new Spring(active ? active.offsetLeft : 0, function (x) { thumb.style.transform = "translateX(" + x.toFixed(2) + "px)"; });
+  var thumbW = thumb && new Spring(active ? active.offsetWidth : 0, function (w) { thumb.style.width = Math.max(0, w).toFixed(2) + "px"; });
+  var thumbOn = null;
+
+  function moveThumb(instant, to) {
+    if (!thumb) return;
+    var chip = to || active;
+    if (!chip) { thumb.dataset.on = "false"; return; }
     thumb.dataset.on = "true";
-    var o = { damping: 1, response: 0.36, instant: instant || first };
+    var o = { damping: 0.82, response: 0.38, instant: instant };
     thumbX.to(chip.offsetLeft, o);
     thumbW.to(chip.offsetWidth, o);
   }
-  function setCurrent(id) {
-    if (id === current) return;
-    current = id;
-    chips.forEach(function (c) { if (c.dataset.chip === id) c.setAttribute("aria-current", "true"); else c.removeAttribute("aria-current"); });
-    moveThumb(false);
-    var chip = chips.filter(function (c) { return c.dataset.chip === id; })[0];
-    if (chip) {
-      var left = chip.offsetLeft - (catbar.clientWidth - chip.offsetWidth) / 2;
-      catbar.scrollTo({ left: Math.max(0, left), behavior: reduced() ? "auto" : "smooth" });
-    }
+  function revealChip(chip, smooth) {
+    if (!catnav || !chip) return;
+    var l = catnav.scrollLeft, w = catnav.clientWidth, pad = 24;
+    var x = chip.offsetLeft, cw = chip.offsetWidth;
+    if (x >= l + pad && x + cw <= l + w - pad) return;
+    catnav.scrollTo({ left: Math.max(0, x - (w - cw) / 2), behavior: smooth && !reduced() ? "smooth" : "auto" });
   }
-  function syncCat() {
-    var line = (wideQ.matches ? 72 : 64) + 56 + 60;
-    var id = "";
-    for (var i = 0; i < cats.length; i++) {
-      if (cats[i].hidden) continue;
-      if (cats[i].getBoundingClientRect().top <= line) id = cats[i].id;
-    }
-    if (!id) { var firstShown = cats.filter(function (c) { return !c.hidden; })[0]; id = firstShown ? firstShown.id : ""; }
-    setCurrent(id);
-  }
-  chips.forEach(function (chip) {
-    chip.addEventListener("click", function (e) {
-      var target = document.getElementById(chip.dataset.chip);
-      if (!target) return;
-      e.preventDefault();
-      target.scrollIntoView({ behavior: reduced() ? "auto" : "smooth", block: "start" });
-      history.replaceState(null, "", "#" + chip.dataset.chip);
-    });
-  });
-  if (search) {
-    search.addEventListener("input", function () {
-      var q = norm(search.value.trim());
-      var shown = 0;
-      cats.forEach(function (cat) {
-        var any = 0;
-        $$("[data-dish]", cat).forEach(function (d) { var ok = !q || d.dataset.search.indexOf(q) !== -1; d.hidden = !ok; if (ok) any++; });
-        cat.hidden = !any; shown += any;
-        var chip = chips.filter(function (c) { return c.dataset.chip === cat.id; })[0];
-        if (chip) chip.hidden = !any;
+  if (thumb) {
+    var fromChip = navInfo.from != null ? chips.filter(function (c) { return Number(c.dataset.idx) === navInfo.from; })[0] : null;
+    if (!vtCross && fromChip && active && fromChip !== active && !reduced()) {
+      thumbX.set(fromChip.offsetLeft); thumbW.set(fromChip.offsetWidth); thumb.dataset.on = "true";
+      requestAnimationFrame(function () { moveThumb(false); });
+    } else moveThumb(true);
+    revealed.then(function () { revealChip(active, true); });
+    // Resposta no toque: o indicador vai já para o item escolhido, antes de a página seguinte chegar.
+    chips.forEach(function (chip) {
+      chip.addEventListener("click", function (e) {
+        if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
+        if (chip === active) { e.preventDefault(); window.scrollTo({ top: 0, behavior: reduced() ? "auto" : "smooth" }); return; }
+        chips.forEach(function (c) { c.removeAttribute("aria-current"); });
+        chip.setAttribute("aria-current", "page");
+        if (!active) {
+          // No início não há item ativo: o indicador nasce no centro do item tocado.
+          thumbX.set(chip.offsetLeft + chip.offsetWidth / 2); thumbW.set(0);
+          thumb.dataset.on = "true";
+          var o = { damping: 0.82, response: 0.3 };
+          thumbX.to(chip.offsetLeft, o); thumbW.to(chip.offsetWidth, o);
+        } else moveThumb(false, chip);
       });
-      empty.hidden = !(q && !shown);
-      if (q && !shown) empty.textContent = "Nada na ementa com «" + search.value.trim() + "». Experimente «burger», «frango» ou «sumo».";
-      current = ""; syncCat(); moveThumb(true);
+    });
+    window.addEventListener("pageshow", function (e) {
+      if (!e.persisted) return;
+      chips.forEach(function (c) { if (c === active) c.setAttribute("aria-current", "page"); else c.removeAttribute("aria-current"); });
+      moveThumb(true);
     });
   }
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { syncCat(); moveThumb(true); });
-  syncCat();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { moveThumb(true); });
+
+  /* ---------- Pesquisa (página «Toda a ementa») ---------- */
+  var search = $("[data-search]");
+  var empty = $("[data-empty]");
+  var cats = $$("[data-cat]");
+  function filter() {
+    var q = norm(search.value.trim());
+    var shown = 0;
+    cats.forEach(function (cat) {
+      var any = 0;
+      $$("[data-dish]", cat).forEach(function (d) { var ok = !q || d.dataset.search.indexOf(q) !== -1; d.hidden = !ok; if (ok) any++; });
+      cat.hidden = !any; shown += any;
+    });
+    empty.hidden = !(q && !shown);
+    if (q && !shown) empty.textContent = "Nada na ementa com «" + search.value.trim() + "». Experimente «burger», «frango» ou «sumo».";
+  }
+  if (search) {
+    var form = search.form;
+    var q0 = new URLSearchParams(location.search).get("q");
+    if (q0) { search.value = q0; filter(); }
+    search.addEventListener("input", function () {
+      filter();
+      var u = new URL(location.href);
+      if (search.value.trim()) u.searchParams.set("q", search.value.trim()); else u.searchParams.delete("q");
+      history.replaceState(null, "", u.pathname.split("/").pop() + u.search);
+    });
+    if (form) form.addEventListener("submit", function (e) { e.preventDefault(); search.blur(); });
+  }
+
+  /* ---------- Vídeo: só a tocar quando se vê ---------- */
+  // Sem vídeo com movimento reduzido, Poupança de dados ou ligação lenta: fica a imagem fixa.
+  var conn = navigator.connection || {};
+  var saveData = conn.saveData === true || /(^|-)2g$/.test(conn.effectiveType || "") || window.matchMedia("(prefers-reduced-data: reduce)").matches;
+  var phoneQ = window.matchMedia("(max-width: 639px)");
+  $$("[data-video]").forEach(function (v) {
+    if (reduced() || saveData || !("IntersectionObserver" in window)) { v.remove(); return; }
+    var loaded = false, visible = false;
+    function load() {
+      if (loaded) return;
+      loaded = true;
+      v.src = phoneQ.matches && v.dataset.srcPhone ? v.dataset.srcPhone : v.dataset.src;
+    }
+    function play() {
+      if (!visible || document.hidden) return;
+      load();
+      var p = v.play();
+      if (p && p.catch) p.catch(function () { /* autoplay recusado: fica a imagem */ });
+    }
+    v.addEventListener("playing", function () { v.dataset.playing = "true"; });
+    new IntersectionObserver(function (es) {
+      visible = es[0].isIntersecting;
+      if (visible) play(); else if (loaded) v.pause();
+    }, { threshold: 0.2 }).observe(v);
+    document.addEventListener("visibilitychange", function () { if (document.hidden) v.pause(); else play(); });
+    rq.addEventListener("change", function () { if (rq.matches) { v.pause(); v.dataset.playing = "false"; } });
+  });
 
   /* ---------- Pedido ---------- */
   var cart = [];
@@ -519,6 +568,17 @@
   wideQ.addEventListener("change", function () { sheetP.set(sheetOpen ? 0 : 1); });
 
   paintButtons(); paintCounts(); renderCart(); paintMode();
+
+  // O pedido é o mesmo em todas as páginas: volta a ler-se ao regressar (bfcache) ou se mudar noutro separador.
+  function reloadCart() {
+    try {
+      var s2 = JSON.parse(localStorage.getItem(STORE) || "[]");
+      cart = Array.isArray(s2) ? s2.filter(function (i) { return i && i.key && i.qty > 0 && i.kz > 0; }) : [];
+    } catch (e) { cart = []; }
+    paintButtons(); paintCounts(); renderCart();
+  }
+  window.addEventListener("pageshow", function (e) { if (e.persisted) reloadCart(); });
+  window.addEventListener("storage", function (e) { if (e.key === STORE) reloadCart(); });
 
   /* ---------- Reserva ---------- */
   var reserva = $("[data-reserva]");
