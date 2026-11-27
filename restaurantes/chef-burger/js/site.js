@@ -532,7 +532,10 @@
       if (!dragging) return;
       var dy = event.clientY - dragStart;
       var next = dragOrigin + dy;
-      if (next < 0) next *= 0.22;
+      if (next < 0) {
+        var dim = span() || 1;
+        next = (next * dim * 0.55) / (dim + 0.55 * Math.abs(next));
+      }
       apply(next);
       moves.push({ t: performance.now(), y: event.clientY });
       if (moves.length > 6) moves.shift();
