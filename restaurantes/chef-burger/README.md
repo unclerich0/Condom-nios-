@@ -8,7 +8,7 @@ O site que está no ar em [https://chef-burger-demo.vercel.app/](https://chef-bu
 
 Direção visual: **«Touro vermelho em osso»** (ver [DESIGN-NOTES.md](DESIGN-NOTES.md)). Fundo osso, tinta quase preta e o vermelho da caveira de touro do logótipo; tipo Archivo largo e pesado; a comida em fotografia grande, sem nada por cima.
 
-- **Páginas:** início (`index.html`), toda a ementa com pesquisa (`ementa.html`) e uma página por categoria (`hamburgueres.html`, `pizzas.html`, `grelhados.html`, `faita.html`, `esparguete.html`, `meze.html`, `matabicho.html`, `sobremesas.html`, `bebidas-quentes.html`, `bebidas-frias.html`).
+- **Páginas:** início (`index.html`), toda a ementa (`ementa.html`): um livro que se folheia com o dedo (StPageFlip, em `js/vendor/`) e a lista completa com pesquisa e uma página por categoria (`hamburgueres.html`, `pizzas.html`, `grelhados.html`, `faita.html`, `esparguete.html`, `meze.html`, `matabicho.html`, `sobremesas.html`, `bebidas-quentes.html`, `bebidas-frias.html`).
 - **Barra de vidro** = navegação da ementa: fica no topo, desliza na horizontal no telemóvel, e o indicador escuro passa de item em item com uma mola.
 - **Esfolhar** entre páginas (View Transitions entre documentos): a página atual vira como a folha de uma carta, pela lombada à esquerda, e mostra a seguinte; para trás, a folha volta da esquerda. Sem suporte, meia volta curta ao abrir; com movimento reduzido, só um esbater.
 - **Vídeo** no primeiro ecrã e no topo de hambúrgueres, pizzas e grelhados (ver [video/README.md](video/README.md)).

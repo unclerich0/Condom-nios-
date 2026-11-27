@@ -733,3 +733,61 @@ html[data-enter="back"] main { animation: leaf-in-back 460ms var(--ease-out) bot
 @keyframes vt-fade-in { from { opacity: 0; } }
 .media picture { position: absolute; inset: 0; }
 .media picture img { position: absolute; inset: 0; }
+
+/* =====================================================================
+   Ementa em livro (v5): StPageFlip em js/vendor, folhas de papel
+   ===================================================================== */
+.menu--page { padding-bottom: 8px; }
+.book-sec { padding: 24px 0 clamp(56px, 8vw, 96px); scroll-margin-top: calc(var(--nav-h) + var(--catbar-h) + 16px); }
+.book-sec__head { display: grid; gap: 8px; margin-bottom: 20px; }
+.book-sec__head h2 { font-size: clamp(1.75rem, 1.2rem + 2.2vw, 3rem); }
+.book-sec__head p { color: var(--muted); max-width: 52ch; }
+.book-stage { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; display: flex; justify-content: center; padding: 8px 12px 0; overflow: hidden; touch-action: pan-y; }
+.flipbook { margin: 0 auto; }
+/* O papel */
+.page { background: var(--paper); color: var(--ink); overflow: hidden; }
+.page__in { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 22px 20px 14px; overflow: hidden;
+  background:
+    linear-gradient(90deg, rgba(20, 21, 24, 0.07), rgba(20, 21, 24, 0) 7%),
+    radial-gradient(120% 80% at 50% 0%, #fffdf8 0%, var(--paper) 60%, #f3ede2 100%); }
+.--right .page__in, .page.--right .page__in { background:
+    linear-gradient(270deg, rgba(20, 21, 24, 0.0), rgba(20, 21, 24, 0) 93%, rgba(20, 21, 24, 0.07)),
+    radial-gradient(120% 80% at 50% 0%, #fffdf8 0%, var(--paper) 60%, #f3ede2 100%); }
+.page__pic { margin: -22px -20px 14px; height: 30%; min-height: 110px; overflow: hidden; background: #1b1714; flex: none; }
+.page__pic img { width: 100%; height: 100%; object-fit: cover; }
+.page__t { font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem); font-weight: 900; font-stretch: 122%; letter-spacing: -0.035em; line-height: 0.95; }
+.page__intro { margin-top: 6px; font-size: 0.875rem; line-height: 1.4; color: var(--muted); }
+.page__run { display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 2px solid var(--ink); font-size: 0.8125rem; font-weight: 750; font-stretch: 112%; text-transform: uppercase; letter-spacing: 0.04em; }
+.page__run span { color: var(--muted); font-weight: 500; }
+.page__dishes { margin-top: 10px; list-style: none; padding: 0; }
+.page .dish { padding: 10px 0; gap: 6px 10px; }
+.page .dish:last-child { border-bottom: 0; }
+.page .dish__t { font-size: 0.9375rem; }
+.page .dish__text p { font-size: 0.8125rem; line-height: 1.35; }
+.page .add { height: 36px; padding: 0 4px 0 12px; font-size: 0.875rem; gap: 8px; }
+.page .add__icon { width: 28px; height: 28px; }
+.page .dish__buy--two { grid-column: 1 / -1; justify-content: flex-start; }
+.page__no { margin-top: auto; padding-top: 6px; text-align: center; font-size: 0.75rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.page.page--cover .page__in { background: var(--red); color: #fff; justify-content: space-between; padding: 30px 26px; }
+.page--cover .brand__chef { color: #fff; font-size: 1.25rem; }
+.page--cover .brand__burger { font-size: 1.5rem; }
+.cover__brand { display: flex; gap: 0.35em; align-items: baseline; }
+.cover__t { font-size: clamp(4rem, 2.5rem + 6vw, 6.5rem); font-weight: 900; font-stretch: 125%; letter-spacing: -0.05em; line-height: 0.85; }
+.cover__s { font-size: 0.9375rem; line-height: 1.4; max-width: 28ch; color: rgba(255, 255, 255, 0.86); }
+.cover__hint { display: inline-flex; align-items: center; gap: 8px; align-self: flex-end; font-weight: 650; font-size: 0.875rem; }
+.page--back .page__in { justify-content: flex-end; gap: 12px; }
+.page--note .page__in { justify-content: center; text-align: center; align-items: center; gap: 10px; }
+.book-ctl { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 18px; }
+.book-ctl__b { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; border: 0; background: var(--ink); color: var(--bg); transition: transform 140ms var(--ease-out), opacity 200ms ease; }
+.book-ctl__b:active { transform: scale(0.94); }
+.book-ctl__b:disabled { opacity: 0.25; }
+.book-ctl__where { min-width: 14ch; text-align: center; font-weight: 600; font-variant-numeric: tabular-nums; font-size: 0.9375rem; }
+.list-t { font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem); padding-top: 8px; }
+.menu--list { padding-top: clamp(40px, 6vw, 72px); }
+/* Movimento reduzido / sem biblioteca: páginas fixas, troca por esbatimento */
+.flipbook--static { display: flex; gap: 0; justify-content: center; width: 100%; }
+.flipbook--static .page { position: relative; width: min(100%, 440px); aspect-ratio: 1 / 1.5; box-shadow: 0 20px 40px -24px rgba(20, 21, 24, 0.5); animation: vt-fade-in 200ms ease both; }
+.flipbook--static .page[hidden] { display: none; }
+@media (min-width: 900px) { .flipbook--static .page { width: 470px; aspect-ratio: 1 / 1.42; } }
+.stf__parent { margin: 0 auto; }
+.menu__head .menu__book { justify-self: start; margin-block: 4px 8px; }

@@ -74,3 +74,13 @@ O pedido abre numa folha (sheet) que sobe de baixo no telemóvel e entra pela di
 - Entre páginas, a folha atual vira pela lombada (bordo esquerdo): `rotateY(0 → -90deg)` com a perspetiva no `::view-transition-image-pair(root)` (ponto de fuga no centro do ecrã, `max(2200px, 190vw)`), escurece a meio da volta e some no fim; a página de baixo sai da sombra (`brightness .62 → 1`). Para trás, a folha anterior volta da esquerda e pousa por cima.
 - Mola criticamente amortecida, resposta 0,5 s, amostrada em `linear()` durante 640 ms. Só transform, opacity e filter; sombra fixa (não animada).
 - Sem View Transitions entre documentos: meia volta curta no `main` (460 ms). Movimento reduzido: esbatimento de 120 ms.
+
+## v5 — Ementa em livro (folha de papel a sério)
+
+- `ementa.html#livro`: a ementa é um livro que se folheia com o dedo. Arrastar do canto ou da borda dobra a folha em tempo real (sombra na dobra, gradiente no verso, sombra por baixo); largar depois do meio completa a viragem, antes disso a folha volta. Tocar nas bordas ou nas setas também vira.
+- Motor: StPageFlip 2.0.7 (MIT), em `js/vendor/` sem CDN. Remendo único: `checkTarget` usa `closest()`, para o toque no preço (button > span) juntar ao pedido em vez de virar a folha. Ver `js/vendor/README.md`.
+- Telemóvel: uma página (largura até 440 px; em ecrãs estreitos a página cresce em altura para não cortar pratos). Computador: duas páginas lado a lado, 450×621 cada.
+- Capa e contracapa duras, em vermelho touro. Cada categoria abre com foto, título e introdução; as páginas seguintes têm cabeçalho corrido "Categoria k/n". Os pratos são os mesmos itens (mesmos botões, mesma chave) da lista.
+- A barra de vidro, em `ementa.html`, abre o livro na primeira página da categoria; nas páginas de categoria continua a navegar como antes. No início há o botão "Folhear a ementa".
+- Movimento reduzido: sem dobra; uma página (ou um par no computador) de cada vez, troca por esbatimento curto.
+- Por baixo do livro continua "A ementa toda, em lista", com a pesquisa.

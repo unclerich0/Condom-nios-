@@ -84,7 +84,7 @@ const sectionLd = (c) => ({ '@type': 'MenuSection', name: c.title, hasMenuItem: 
 })) });
 const menuLd = { '@context': 'https://schema.org', '@type': 'Menu', name: 'Ementa do Chef Burger', inLanguage: 'pt-AO', hasMenuSection: menu.map(sectionLd) };
 
-function page({ name, idx, title, desc, preload = '', ld = '', main }) {
+function page({ name, idx, title, desc, preload = '', ld = '', main, scripts = '' }) {
   const H = name === 'inicio' ? '' : './';
   const ementa = name === 'inicio' ? '#ementa' : 'ementa.html';
   return base
@@ -96,8 +96,63 @@ function page({ name, idx, title, desc, preload = '', ld = '', main }) {
     .replace('{{MAIN}}', main.trimEnd())
     .replace('{{RODAPE}}', part('rodape'))
     .replace('{{PEDIDO}}', part('pedido'))
+    .replace('{{SCRIPTS}}', scripts)
     .replace('{{DOCK_EMENTA_CUR}}', name !== 'inicio' ? ' aria-current="page"' : '')
     .replaceAll('{{EMENTA}}', ementa).replaceAll('{{H}}', H);
+}
+
+
+/* ---------- Ementa em livro (StPageFlip) ---------- */
+// Cada categoria abre numa página com fotografia; os pratos seguem em páginas de papel.
+// O peso de cada prato decide quantos cabem numa página (dois preços e descrição longa pesam mais).
+function livro() {
+  const weight = (d) => 1 + (d.prices.length > 1 ? 0.45 : 0) + (d.desc && d.desc.length > 60 ? 0.3 : 0);
+  const pages = [];
+  pages.push(`<div class="page page--cover" data-density="hard"><div class="page__in">
+          <p class="cover__brand"><span class="brand__chef">Chef</span><span class="brand__burger">Burger</span></p>
+          <p class="cover__t">Ementa</p>
+          <p class="cover__s">${total} pratos turcos, 100% halal · Quarteirão W17, Kilamba</p>
+          <p class="cover__hint" aria-hidden="true">Arraste o canto da página <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></p>
+        </div></div>`);
+  menu.forEach((c, ci) => {
+    const chunks = []; let cur = [], w = 0, cap = 3.3;
+    c.dishes.forEach((d) => { const dw = weight(d); if (cur.length && w + dw > cap) { chunks.push(cur); cur = []; w = 0; cap = 5.6; } cur.push(d); w += dw; });
+    if (cur.length) chunks.push(cur);
+    chunks.forEach((ch, k) => {
+      const head = k === 0
+        ? `<figure class="page__pic"><img src="${c.img}" alt="" width="800" height="800" loading="lazy" decoding="async"></figure><h3 class="page__t">${esc(c.title)}</h3>${c.intro ? `<p class="page__intro">${esc(c.intro)}</p>` : ''}`
+        : `<p class="page__run">${esc(c.title)} <span>${k + 1}/${chunks.length}</span></p>`;
+      pages.push(`<div class="page" data-cat-id="${c.id}"${k === 0 ? ` data-cat-start="${ci + 1}"` : ''}><div class="page__in">
+          ${head}
+          <ul class="page__dishes" role="list">
+            ${ch.map((d) => dishLi(c, d, 'h4')).join('\n            ')}
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>`);
+    });
+  });
+  if (pages.length % 2) pages.push(`<div class="page page--note"><div class="page__in"><p class="page__t">Bom apetite.</p><p class="page__intro">Toque no preço para juntar ao pedido. O pedido segue pelo WhatsApp e a equipa responde a confirmar.</p></div></div>`);
+  pages.push(`<div class="page page--cover page--back" data-density="hard"><div class="page__in">
+          <p class="cover__brand"><span class="brand__chef">Chef</span><span class="brand__burger">Burger</span></p>
+          <p class="cover__s">Quarteirão W17, Centralidade do Kilamba · +244 925 918 468 · @chefburgerao</p>
+        </div></div>`);
+  return `    <section class="book-sec" id="livro" aria-labelledby="livro-t" data-book-sec>
+      <div class="wrap book-sec__head">
+        <h2 id="livro-t">Folhear a ementa</h2>
+        <p>Arraste o canto da página com o dedo, ou toque nas setas. O preço junta o prato ao pedido.</p>
+      </div>
+      <div class="book-stage" data-book-stage>
+        <div class="flipbook" data-book>
+        ${pages.join('\n        ')}
+        </div>
+      </div>
+      <div class="wrap book-ctl">
+        <button type="button" class="book-ctl__b" data-book-prev aria-label="Página anterior"><svg class="ic ic--back" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+        <p class="book-ctl__where" data-book-where aria-live="polite">Capa</p>
+        <button type="button" class="book-ctl__b" data-book-next aria-label="Página seguinte"><svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+      </div>
+    </section>
+`;
 }
 
 const out = {};
@@ -138,6 +193,7 @@ out['ementa.html'] = page({
   title: 'Ementa · Chef Burger, Kilamba',
   desc: `Os ${total} pratos do Chef Burger com o preço da carta em kwanzas: hambúrgueres, pizzas, grelhados turcos, faita, meze, matabicho, sobremesas e bebidas. Pedido pelo WhatsApp.`,
   ld: `  <script type="application/ld+json">${JSON.stringify(menuLd)}</script>`,
+  scripts: '  <script src="js/vendor/page-flip.browser.js" defer></script>\n  <script src="js/livro.js" defer></script>\n',
   main: `${catbar(0)}
     <section class="menu menu--page" aria-labelledby="ementa-t">
       <div class="wrap menu__head">
@@ -145,6 +201,10 @@ out['ementa.html'] = page({
         <p>${total} pratos com o preço da carta, em kwanzas. Toque no preço para juntar ao pedido e envie tudo pelo WhatsApp; a equipa responde a confirmar.</p>
 ${procura(true)}
       </div>
+    </section>
+${livro()}
+    <section class="menu menu--list" aria-labelledby="lista-t">
+      <div class="wrap"><h2 class="list-t" id="lista-t">A ementa toda, em lista</h2></div>
       <div class="wrap menu__body">
       <p class="empty" data-empty hidden>Nada na ementa com esse nome.</p>
 ${allCats}
