@@ -10,7 +10,7 @@ Direção visual: **«Touro vermelho em osso»** (ver [DESIGN-NOTES.md](DESIGN-N
 
 - **Páginas:** início (`index.html`), toda a ementa com pesquisa (`ementa.html`) e uma página por categoria (`hamburgueres.html`, `pizzas.html`, `grelhados.html`, `faita.html`, `esparguete.html`, `meze.html`, `matabicho.html`, `sobremesas.html`, `bebidas-quentes.html`, `bebidas-frias.html`).
 - **Barra de vidro** = navegação da ementa: fica no topo, desliza na horizontal no telemóvel, e o indicador escuro passa de item em item com uma mola.
-- **Transição de folha** entre páginas (View Transitions entre documentos): a página seguinte entra pela direita por cima da anterior; a anterior volta pela esquerda. Sem suporte, a página entra de lado, curta; com movimento reduzido, só um esbater.
+- **Esfolhar** entre páginas (View Transitions entre documentos): a página atual vira como a folha de uma carta, pela lombada à esquerda, e mostra a seguinte; para trás, a folha volta da esquerda. Sem suporte, meia volta curta ao abrir; com movimento reduzido, só um esbater.
 - **Vídeo** no primeiro ecrã e no topo de hambúrgueres, pizzas e grelhados (ver [video/README.md](video/README.md)).
 - Hero com vídeo a toda a largura, estado aberto/fechado no fuso de Luanda (`Africa/Luanda`), **Pedir da ementa** e **Reservar mesa**.
 - «Onde estamos»: W17 em grande, horário com o dia de hoje marcado, telefones, mapa e WhatsApp.
