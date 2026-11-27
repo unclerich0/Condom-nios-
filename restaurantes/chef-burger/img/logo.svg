@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Chef Burger">
+  <circle cx="32" cy="32" r="30" fill="#c51b32"/>
+  <circle cx="32" cy="32" r="23.5" fill="none" stroke="#f6f1e8" stroke-width="1.4"/>
+  <text x="32" y="39" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="20" fill="#f6f1e8">CB</text>
+</svg>
