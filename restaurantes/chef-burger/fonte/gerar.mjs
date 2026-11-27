@@ -112,7 +112,7 @@ function livro() {
           <p class="cover__brand"><span class="brand__chef">Chef</span><span class="brand__burger">Burger</span></p>
           <p class="cover__t">Ementa</p>
           <p class="cover__s">${total} pratos turcos, 100% halal · Quarteirão W17, Kilamba</p>
-          <p class="cover__hint" aria-hidden="true">Arraste o canto da página <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></p>
+          <p class="cover__hint" aria-hidden="true">Arraste a página <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></p>
         </div></div>`);
   menu.forEach((c, ci) => {
     const chunks = []; let cur = [], w = 0, cap = 3.3;
@@ -139,7 +139,7 @@ function livro() {
   return `    <section class="book-sec" id="livro" aria-labelledby="livro-t" data-book-sec>
       <div class="wrap book-sec__head">
         <h2 id="livro-t">Folhear a ementa</h2>
-        <p>Arraste o canto da página com o dedo, ou toque nas setas. O preço junta o prato ao pedido.</p>
+        <p>Arraste a página com o dedo, ou toque na borda dela ou nas setas. O preço junta o prato ao pedido.</p>
       </div>
       <div class="book-stage" data-book-stage>
         <div class="flipbook" data-book>

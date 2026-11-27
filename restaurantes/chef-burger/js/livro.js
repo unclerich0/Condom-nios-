@@ -20,6 +20,7 @@
     if (i === total - 1) return "Contracapa";
     var cat = p.dataset.catId ? p.querySelector(".page__t, .page__run") : null;
     var name = cat ? cat.childNodes[0].textContent.trim() : "";
+    if (window.matchMedia("(max-width: 959px)").matches) return (name ? name + " · " : "") + i + "/" + (total - 2);
     return (name ? name + " · " : "") + "página " + i + " de " + (total - 2);
   }
   function catName(i) {
@@ -64,16 +65,38 @@
       width: w, height: h, size: "fixed",
       showCover: true, usePortrait: true, drawShadow: true, maxShadowOpacity: 0.55,
       flippingTime: 720, mobileScrollSupport: true, swipeDistance: 24,
-      clickEventForward: true, showPageCorners: true, disableFlipByClick: false, startZIndex: 1
+      clickEventForward: true, showPageCorners: !phone, disableFlipByClick: false, startZIndex: 1
     });
     book.loadFromHTML(pages);
+    var lastTurn = 0;
+    book.on("changeState", function (e) { if (e.data !== "read") lastTurn = Date.now(); });
     book.on("flip", function (e) { cur = e.data; paint(cur); });
+    // Tocar na borda da página também vira (o resto da página fica livre para ler e tocar nos preços).
+    el.addEventListener("click", function (e) {
+      if (e.target.closest("a, button, input, select, label, [data-noflip]")) return;
+      if (Date.now() - lastTurn < 500 || book.getState() !== "read") return;
+      var r = el.getBoundingClientRect();
+      var f = (e.clientX - r.left) / r.width;
+      var edge = book.getOrientation() === "portrait" ? 0.3 : 0.18;
+      if (f > 1 - edge) book.flipNext(e.clientY - r.top > r.height / 2 ? "bottom" : "top");
+      else if (f < edge) book.flipPrev(e.clientY - r.top > r.height / 2 ? "bottom" : "top");
+    });
     book.on("changeOrientation", function () { paint(book.getCurrentPageIndex()); });
     prev.addEventListener("click", function () { book.flipPrev("bottom"); });
     next.addEventListener("click", function () { book.flipNext("bottom"); });
-    window.cbBook = { go: function (i) { book.flip(i, "top"); } };
+    window.cbBook = { go: function (i) { book.flip(i, "top"); }, pf: book };
     paint(0);
   }
+
+  // Ao chegar por #livro (botão "Folhear a ementa"), o livro fica logo à vista, por baixo da barra de vidro.
+  function toBook() {
+    if (location.hash !== "#livro") return;
+    var sec = document.querySelector("[data-book-sec]");
+    var off = parseFloat(getComputedStyle(sec).scrollMarginTop) || 0;
+    window.scrollTo(0, Math.max(0, stage.getBoundingClientRect().top + window.scrollY - off));
+  }
+  if (document.readyState === "complete") requestAnimationFrame(toBook);
+  else window.addEventListener("load", function () { requestAnimationFrame(toBook); });
 
   document.addEventListener("keydown", function (e) {
     if (e.target.closest && e.target.closest("input, textarea, select, [data-sheet]:not([hidden])")) return;

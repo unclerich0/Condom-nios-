@@ -84,3 +84,10 @@ O pedido abre numa folha (sheet) que sobe de baixo no telemóvel e entra pela di
 - A barra de vidro, em `ementa.html`, abre o livro na primeira página da categoria; nas páginas de categoria continua a navegar como antes. No início há o botão "Folhear a ementa".
 - Movimento reduzido: sem dobra; uma página (ou um par no computador) de cada vez, troca por esbatimento curto.
 - Por baixo do livro continua "A ementa toda, em lista", com a pesquisa.
+
+### v5.1 — o livro no telemóvel (correção)
+
+- No telemóvel, a folha não virava a partir da página 1: os toques que começavam num preço (a borda direita, onde o dedo pousa para virar) eram ignorados, e um arrasto lento só completava se o dedo saísse do ecrã. A biblioteca foi corrigida (ver `js/vendor/README.md`).
+- Tocar na borda da página (30% de cada lado no telemóvel, 18% no computador) vira; o meio da página não.
+- No telemóvel, as setas e o "Categoria · n/29" ficam colados por cima da barra de baixo enquanto o livro está no ecrã.
+- Ao chegar por `#livro`, a página desce até o livro ficar logo por baixo da barra de vidro.

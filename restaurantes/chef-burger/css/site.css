@@ -791,3 +791,13 @@ html[data-enter="back"] main { animation: leaf-in-back 460ms var(--ease-out) bot
 @media (min-width: 900px) { .flipbook--static .page { width: 470px; aspect-ratio: 1 / 1.42; } }
 .stf__parent { margin: 0 auto; }
 .menu__head .menu__book { justify-self: start; margin-block: 4px 8px; }
+/* Telemóvel: as setas ficam sempre à mão, por cima da barra de baixo, enquanto o livro está no ecrã */
+@media (max-width: 959px) {
+  .book-ctl { position: sticky; z-index: 5; bottom: calc(var(--dock-space) + env(safe-area-inset-bottom)); margin-top: 12px; padding-block: 8px; }
+  .book-ctl__where { padding: 8px 14px; border-radius: 999px; background: color-mix(in srgb, var(--bg) 82%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+  .book-ctl__b { box-shadow: 0 10px 24px -10px rgba(20, 21, 24, 0.55); }
+}
+.book-stage .stf__block { touch-action: pan-y; }
+.book-ctl { pointer-events: none; }
+.book-ctl > * { pointer-events: auto; }
+@media (max-width: 959px) { .book-ctl__where { white-space: nowrap; min-width: 0; font-size: 0.875rem; } }
