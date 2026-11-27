@@ -5,6 +5,10 @@ services:
       - "3000:3000"
     environment:
       - JWT_SECRET=troque-isto-por-um-segredo-longo
+      # Postgres (opcional). Se DATABASE_URL existir, o volume SQLite deixa de ser usado.
+      # - DATABASE_URL=postgres://portaria:portaria@db:5432/portaria
+      # - SEED_DEMO=false
+      # - ADMIN_PASSWORD=troque-esta-palavra-passe
       # - INSECURE_COOKIES=1   # só se não usar HTTPS (ex.: teste numa rede local)
     volumes:
       - portaria-data:/app/data

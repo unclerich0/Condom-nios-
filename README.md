@@ -35,7 +35,7 @@ Funciona no telemóvel (moradores), no tablet (portaria) e no computador (admini
 - **Registo de auditoria** de todas as ações (quem fez o quê e quando), em hora de Luanda.
 
 ### Técnico
-- Backend real: **Node.js + Express 5 + SQLite** (better-sqlite3, modo WAL).
+- Backend real: **Node.js + Express 5**, com **PostgreSQL** quando `DATABASE_URL` está definida e **SQLite** (better-sqlite3, modo WAL) como alternativa sem configuração.
 - **Tempo real com Server-Sent Events** (reconexão automática e ressincronização).
 - **Autenticação** com sessão JWT em cookie `httpOnly` + papéis (`morador`, `seguranca`, `admin`); palavras-passe com bcrypt; limite de tentativas de login.
 - **Web Push** (VAPID) + Notification API + notificações dentro da app.
@@ -57,7 +57,7 @@ Funciona no telemóvel (moradores), no tablet (portaria) e no computador (admini
 
 Os moradores estão nos blocos A, B e C (apartamentos 101–301). Na página de login há botões para entrar rapidamente com cada conta de demonstração.
 
-> ⚠️ Antes de usar a sério: mude ou apague estas contas no painel de administração e defina `JWT_SECRET`.
+> ⚠️ Antes de usar a sério: defina `JWT_SECRET`, `ADMIN_PASSWORD` e `SEED_DEMO=false`. Assim o primeiro arranque cria só a conta `admin` (com a palavra-passe que escolheu) e não grava moradores nem visitas de exemplo. `ADMIN_PASSWORD` só é aplicada quando a tabela de utilizadores ainda está vazia.
 
 ---
 
@@ -69,7 +69,7 @@ Requisitos: **Node.js 20 ou superior**.
 npm install && npm start
 ```
 
-Abra **http://localhost:3000**. Na primeira execução é criada a base de dados `data/condominio.db` com os dados de exemplo.
+Abra **http://localhost:3000**. Sem `DATABASE_URL`, a primeira execução cria `data/condominio.db` com os dados de exemplo. Com `DATABASE_URL`, usa PostgreSQL e cria o esquema no arranque — sem apagar dados que já existam.
 
 Outros comandos:
 
@@ -84,7 +84,28 @@ Para testar com o telemóvel na mesma rede Wi-Fi: abra `http://IP-DO-COMPUTADOR:
 (As notificações push do sistema exigem HTTPS ou `localhost`; os avisos dentro da app funcionam sempre.)
 
 ### Variáveis de ambiente
-Veja `.env.example`. As principais: `PORT`, `JWT_SECRET`, `DB_FILE`, `SEED=0` (não criar dados de exemplo), `VAPID_PUBLIC_KEY`/`VAPID_PRIVATE_KEY` (opcional).
+Veja `.env.example`. Resumo:
+
+| Variável | Função |
+|---|---|
+| `PORT` | Porta HTTP (a Render injeta esta; o servidor escuta em `0.0.0.0`). Omissão: `3000`. |
+| `NODE_ENV` | `production` ativa cookies `Secure` e cache dos ficheiros estáticos. |
+| `JWT_SECRET` | Segredo das sessões. **Obrigatório em produção.** Se ficar vazio, é gerado e guardado na tabela `settings` (persiste no Postgres). |
+| `DATABASE_URL` | Ligação PostgreSQL. Se estiver definida, a app deixa de usar SQLite. Na Render, use o **Internal Database URL** do mesmo workspace e região. |
+| `DATABASE_SSL` | `true` força TLS (`rejectUnauthorized: false`, necessário nas URLs externas da Render). `false` desliga TLS. Se omitida: TLS só quando o host contém `.render.com`. URLs internas (sem esse sufixo) ligam sem SSL. |
+| `DATABASE_POOL_MAX` | Tamanho máximo do pool `pg`. Omissão: `5`. |
+| `DATABASE_SCHEMA` | Schema Postgres opcional (testes). Omissão: `public`. |
+| `DB_FILE` | Ficheiro SQLite quando **não** há `DATABASE_URL`. Omissão: `data/condominio.db`. |
+| `SEED` | `0` não cria nada no arranque, mesmo com a tabela vazia. Qualquer outro valor (ou omissão) semeia só se `users` estiver vazia. |
+| `SEED_DEMO` | `false` (ou `0`) cria **apenas** o administrador. Omitida ou `true`: contas e visitas de demonstração, como até aqui. |
+| `ADMIN_PASSWORD` | Palavra-passe do `admin` na primeira semente. Omissão: `admin123`. Não altera uma conta que já exista. |
+| `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` / `VAPID_SUBJECT` | Web Push. Se as chaves faltarem, são geradas e guardadas em `settings`. |
+| `INSECURE_COOKIES` | `1` permite cookies sem HTTPS em `NODE_ENV=production` (só redes locais de teste). |
+| `DISABLE_PUSH` | `1` não envia Web Push (os testes usam isto). |
+| `LOGIN_RATE_LIMIT` | Tentativas de login por 10 minutos. Omissão: `30`. |
+| `APP_TZ` | Fuso horário. Omissão: `Africa/Luanda`. |
+
+Sem `DATABASE_URL`, `npm test` usa SQLite em memória. Com `DATABASE_URL=postgres://… npm test`, a mesma suíte corre em Postgres (cada teste num schema próprio) e confirma que os dados sobrevivem a um reinício do servidor. A conta da base precisa de permissão para criar schemas.
 
 ---
 
@@ -102,17 +123,27 @@ portaria.seudominio.ao {
 ```
 > O Caddy obtém o certificado HTTPS automaticamente. Para SSE funcionar atrás do Nginx, use `proxy_buffering off;`.
 
-### Opção B — Render
+### Opção B — Render (plano gratuito, sem disco)
+O plano gratuito não tem disco: um ficheiro SQLite desaparece em cada deploy ou restart. Use **PostgreSQL**.
+
 1. Publique o código no GitHub (ver abaixo).
-2. Em [render.com](https://render.com) → **New → Web Service** → escolha o repositório.
-3. Runtime **Docker** (usa o `Dockerfile`), ou Node com *Build* `npm install` e *Start* `npm start`.
-4. Em **Environment** defina `JWT_SECRET` e `NODE_ENV=production`.
-5. Adicione um **Disk** montado em `/app/data` para a base de dados persistir.
+2. No mesmo workspace e região, crie uma base **PostgreSQL**.
+3. **New → Web Service** → escolha o repositório. Runtime **Docker** (usa o `Dockerfile`), ou Node com *Build* `npm install` e *Start* `npm start`.
+4. Em **Environment** do serviço web:
+   - `DATABASE_URL` — **Internal Database URL** (não leva SSL; o host não contém `.render.com`). Se usar a URL externa, o TLS é ligado automaticamente.
+   - `JWT_SECRET` — `openssl rand -hex 32`
+   - `NODE_ENV=production`
+   - `ADMIN_PASSWORD` — palavra-passe forte do primeiro administrador
+   - `SEED_DEMO=false` — não criar moradores nem visitas de exemplo
+5. Não é preciso disco. O esquema (`CREATE TABLE IF NOT EXISTS`) é criado no arranque e os dados existentes não são apagados.
+6. Entre com o utilizador `admin` e a `ADMIN_PASSWORD`. Mudar a variável depois **não** muda a palavra-passe já gravada.
+
+> O Postgres gratuito da Render expira ao fim de 30 dias. Para um condomínio real, use um plano pago. Prefira sempre a URL interna.
 
 ### Opção C — Railway
 1. [railway.app](https://railway.app) → **New Project → Deploy from GitHub repo**.
-2. Defina `JWT_SECRET`, `NODE_ENV=production` e `DB_FILE=/data/condominio.db`.
-3. Adicione um **Volume** montado em `/data`.
+2. Defina `JWT_SECRET` e `NODE_ENV=production`. Para não depender de disco, adicione Postgres e `DATABASE_URL` (num condomínio real, também `ADMIN_PASSWORD` e `SEED_DEMO=false`).
+3. Com SQLite, defina `DB_FILE=/data/condominio.db` e adicione um **Volume** montado em `/data`.
 
 ### Opção D — VPS sem Docker
 ```bash
@@ -121,8 +152,8 @@ npm ci --omit=dev
 JWT_SECRET=$(openssl rand -hex 32) NODE_ENV=production npx pm2 start src/server.js --name portaria
 ```
 
-### Escalar para PostgreSQL
-Todo o acesso a dados usa SQL simples em `src/db.js`, `src/services.js` e `src/routes/`. Para Postgres: troque `better-sqlite3` por `pg`, adapte o esquema (`INTEGER PRIMARY KEY AUTOINCREMENT` → `SERIAL`/`IDENTITY`, `strftime(...)` → `now()`), e torne as consultas assíncronas. Para vários servidores em paralelo, troque o `EventHub` (`src/events.js`) por Redis Pub/Sub ou `LISTEN/NOTIFY` do Postgres.
+### Vários servidores
+PostgreSQL já é o modo persistente: defina `DATABASE_URL`. O `EventHub` (`src/events.js`) continua em memória neste processo. Para vários servidores em paralelo, troque-o por Redis Pub/Sub ou `LISTEN/NOTIFY` do Postgres.
 
 ---
 
@@ -155,7 +186,7 @@ condominio-visitas/
 ├── src/
 │   ├── server.js          # arranque do servidor
 │   ├── app.js             # Express: middlewares, rotas, SSE, ficheiros estáticos
-│   ├── db.js              # esquema SQLite e ligação
+│   ├── db.js              # SQLite ou PostgreSQL (pool `pg` quando há DATABASE_URL)
 │   ├── seed.js            # dados de exemplo (npm run seed / seed:reset)
 │   ├── auth.js            # sessões JWT, papéis, bcrypt
 │   ├── events.js          # hub de tempo real (Server-Sent Events)
