@@ -1,7 +1,6 @@
-Big Shoulders Display — Copyright 2019 The Big Shoulders Project Authors
-Literata — Copyright 2017 The Literata Project Authors
+Archivo — Copyright 2020 The Archivo Project Authors (https://github.com/Omnibus-Type/Archivo)
 
-Both fonts are licensed under the SIL Open Font License, Version 1.1.
+Licenciada sob a SIL Open Font License, versão 1.1.
 https://openfontlicense.org/open-font-license-text/
 
-The files in this folder are the Latin and Latin-ext subsets published by Google Fonts.
+Os ficheiros desta pasta são os subconjuntos Latin e Latin-ext, variáveis em largura (62–125) e peso (100–900), publicados pelo Google Fonts.

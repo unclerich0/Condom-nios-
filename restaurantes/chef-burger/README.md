@@ -6,13 +6,24 @@ O site que está no ar em [https://chef-burger-demo.vercel.app/](https://chef-bu
 
 ## O que está neste site
 
-- Hero com fotografia de comida, estado aberto/fechado no fuso de Luanda (`Africa/Luanda`) e dois botões: **Pedir pelo WhatsApp** e **Reservar mesa**.
-- Ementa por categoria, barra de categorias fixa, pesquisa, preços em Kz e selo 100% halal.
-- Pedido: quantidades, nota por prato, entrega ou levantamento, pré-visualização da mensagem e envio para o WhatsApp **+244 925 918 468**.
-- Reserva: dia, hora dentro do horário publicado (08h00–21h30), até 12 pessoas, nome e telefone, também por WhatsApp.
-- Morada, mapa, horário e contactos.
+Direção visual: **«Touro vermelho em osso»** (ver [DESIGN-NOTES.md](DESIGN-NOTES.md)). Fundo osso, tinta quase preta e o vermelho da caveira de touro do logótipo; tipo Archivo largo e pesado; a comida em fotografia grande, sem nada por cima.
+
+- Hero com foto a toda a largura, estado aberto/fechado no fuso de Luanda (`Africa/Luanda`), **Pedir da ementa** e **Reservar mesa**.
+- «Onde estamos»: W17 em grande, horário com o dia de hoje marcado, telefones, mapa e WhatsApp.
+- «A casa»: quatro capítulos com foto (hambúrgueres, grelhados, pizzas, matabicho e çay).
+- Ementa: 94 pratos em 10 categorias, barra de categorias fixa, pesquisa (sem acentos: «cay» encontra Çay), preço em Kz como botão que junta ao pedido.
+- Pedido numa folha que se arrasta: quantidades, entrega ou levantamento no W17, nota, pré-visualização e envio para o WhatsApp **+244 925 918 468**.
+- Reserva: pessoas, dia (7 dias), hora dentro do horário publicado (08h00–21h30, com 1 hora de antecedência no próprio dia), até 12 pessoas, por WhatsApp.
+- Barra inferior em vidro no telemóvel (Ementa, Reservar, Ligar, Pedido).
 
 Nada fica num servidor. O pedido vive no telemóvel (`localStorage`) até a pessoa o enviar.
+
+## Como editar
+
+- **Pratos e preços:** `fonte/menu.json`. Depois: `node fonte/gerar.mjs` (gera `index.html` a partir de `fonte/pagina.html`). Não editar `index.html` à mão.
+- **Textos da página:** `fonte/pagina.html`, e voltar a correr o gerador.
+- **Estilos e interação:** `css/site.css` e `js/site.js` (sem build).
+- **Fotos:** ver [img/README.md](img/README.md).
 
 ## Fontes dos dados
 
@@ -30,7 +41,7 @@ Nada fica num servidor. O pedido vive no telemóvel (`localStorage`) até a pess
 ## O que é exemplo
 
 - **Fotografias.** São referências Unsplash, não fotos do restaurante nem as imagens do site da Webomarketing. A lista, o que cada ficheiro mostra e que pratos cobre está em [img/README.md](img/README.md). Para trocar, grave um ficheiro com o **mesmo nome**.
-- **Logótipo** `img/logo.svg`. Monograma desta proposta. Substituir pelo logótipo da casa.
+- **Logótipo.** A marca no cabeçalho é texto (Archivo). Quando a casa enviar o logótipo em vetor, pode entrar no cabeçalho.
 - **Tamanho das pizzas.** A carta publicada traz dois preços por pizza e não diz o tamanho. O site mostra os dois valores e diz isso. Não inventámos «média» nem «familiar».
 - **Taxa de entrega.** A equipa confirma o valor. Não há número inventado.
 - **Descrições em falta** na carta (várias faitas, esparguetes, mezes) ficaram sem texto. Não foram preenchidas.
@@ -40,7 +51,7 @@ Nada fica num servidor. O pedido vive no telemóvel (`localStorage`) até a pess
 
 O site deles já tem a ementa certa, pedido por WhatsApp, reservas com página de equipa (PIN) e versão em inglês. Esta proposta não copia isso tudo. O que muda para o cliente:
 
-1. **A comida ocupa o primeiro ecrã.** Fotografia grande, tipo Fraunces, e o estado aberto/fechado calculado na hora, no fuso de Luanda. No site deles o hero é um cartaz de agência com a mesma informação em todo o lado.
+1. **A comida ocupa o primeiro ecrã.** Fotografia grande, tipo Archivo largo, e o estado aberto/fechado calculado na hora, no fuso de Luanda. No site deles o hero é um cartaz de agência com a mesma informação em todo o lado.
 2. **Pedir é um fluxo, não um botão solto.** Barra de categorias que fica visível, pesquisa (incluindo sem acentos: «cay» encontra Çay), quantidades, nota para a cozinha, entrega ou levantamento, e a mensagem do WhatsApp à vista antes de enviar, já com o total.
 3. **A reserva não depende de uma API.** Dia, hora só dentro do horário deles (08h00–21h30) e pessoas. Se o servidor deles falhar, o cliente deles cai num plano B. Aqui o plano é o WhatsApp desde o início, e funciona num site estático.
 4. **Mais rápido de abrir.** HTML, CSS e JavaScript simples, imagens WebP com `width`/`height` e `loading="lazy"`, fontes em WOFF2. Sem framework.

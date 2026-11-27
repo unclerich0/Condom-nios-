@@ -1,0 +1,1116 @@
+[
+ {
+  "id": "hamburgueres",
+  "title": "Hambúrgueres",
+  "intro": "Da nossa grill house, com o molho da casa do Chef.",
+  "img": "img/cat-hamburgueres.webp",
+  "dishes": [
+   {
+    "name": "Chef Burger",
+    "desc": "Carne, cebola caramelizada, queijo, molho Chef e batatas fritas",
+    "prices": [
+     {
+      "v": "",
+      "kz": 11500
+     }
+    ]
+   },
+   {
+    "name": "İstanbul Cheese Burger",
+    "desc": "Carne, cebola caramelizada, molho Chef e batatas fritas",
+    "prices": [
+     {
+      "v": "",
+      "kz": 11500
+     }
+    ]
+   },
+   {
+    "name": "İzmir Burger",
+    "desc": "Carne, cebola, salada, queijo, molho Chef e batatas fritas",
+    "prices": [
+     {
+      "v": "",
+      "kz": 11500
+     }
+    ]
+   },
+   {
+    "name": "Ankara Burger",
+    "desc": "Carne grelhada, molho Chef, tomate, alface, cebola fresca e pickles",
+    "prices": [
+     {
+      "v": "",
+      "kz": 14000
+     }
+    ]
+   },
+   {
+    "name": "Atum Burger",
+    "desc": "Carne, cebola, salada, queijo, molho Chef, atum e batatas fritas",
+    "prices": [
+     {
+      "v": "",
+      "kz": 13000
+     }
+    ]
+   },
+   {
+    "name": "Ovo Cheese Burger",
+    "desc": "Carne, queijo, cebola caramelizada, molho Chef e batatas fritas",
+    "prices": [
+     {
+      "v": "",
+      "kz": 12000
+     }
+    ]
+   },
+   {
+    "name": "Big Burger",
+    "desc": "Carne dupla, queijo duplo, alface, cebola, molho Chef, pimento em salmoura e batatas fritas",
+    "prices": [
+     {
+      "v": "",
+      "kz": 14000
+     }
+    ]
+   },
+   {
+    "name": "Cogumelo Cheese Burger",
+    "desc": "Carne, queijo, cebola caramelizada, molho Chef, cogumelos salteados e batatas fritas",
+    "prices": [
+     {
+      "v": "",
+      "kz": 12000
+     }
+    ]
+   },
+   {
+    "name": "Abacate Cheese Burger",
+    "desc": "Carne, queijo, cebola caramelizada, molho Chef, abacate e batatas fritas",
+    "prices": [
+     {
+      "v": "",
+      "kz": 12000
+     }
+    ]
+   },
+   {
+    "name": "Frango Burger",
+    "desc": "Frango grelhado, salada, queijo, molho Chef e batatas fritas",
+    "prices": [
+     {
+      "v": "",
+      "kz": 11500
+     }
+    ]
+   },
+   {
+    "name": "Abacaxi Burger",
+    "desc": "Carne, queijo, cebola caramelizada, molho Chef, abacaxi e batatas fritas",
+    "prices": [
+     {
+      "v": "",
+      "kz": 12000
+     }
+    ]
+   }
+  ],
+  "alt": "Hambúrguer duplo com queijo cheddar e pickles, sobre fundo escuro"
+ },
+ {
+  "id": "pizzas",
+  "title": "Pizzas",
+  "intro": "Com o molho İstanbul do Chef e mozzarella. A carta dá dois preços por pizza; a equipa confirma o tamanho no WhatsApp.",
+  "img": "img/cat-pizzas.webp",
+  "dishes": [
+   {
+    "name": "Pizza de salame",
+    "desc": "Molho Chef, queijo, mozzarella, pimento, cebola e milho",
+    "prices": [
+     {
+      "v": "",
+      "kz": 16000
+     },
+     {
+      "v": "",
+      "kz": 15000
+     }
+    ]
+   },
+   {
+    "name": "Pizza de almôndegas",
+    "desc": "Molho İstanbul, queijo, mozzarella, pimento, tomate e almôndegas",
+    "prices": [
+     {
+      "v": "",
+      "kz": 16500
+     },
+     {
+      "v": "",
+      "kz": 15500
+     }
+    ]
+   },
+   {
+    "name": "Pizza de frango barbecue",
+    "desc": "Molho İstanbul, queijo, mozzarella, frango e molho barbecue",
+    "prices": [
+     {
+      "v": "",
+      "kz": 15000
+     },
+     {
+      "v": "",
+      "kz": 14000
+     }
+    ]
+   },
+   {
+    "name": "Pizza margarita",
+    "desc": "Molho İstanbul, queijo, mozzarella, pimento, tomate e cogumelos",
+    "prices": [
+     {
+      "v": "",
+      "kz": 15000
+     },
+     {
+      "v": "",
+      "kz": 13500
+     }
+    ]
+   },
+   {
+    "name": "Pizza de frango",
+    "desc": "Molho İstanbul, queijo, mozzarella, pimento, frango, tomate e cogumelos",
+    "prices": [
+     {
+      "v": "",
+      "kz": 16000
+     },
+     {
+      "v": "",
+      "kz": 14500
+     }
+    ]
+   },
+   {
+    "name": "Pizza de salsicha",
+    "desc": "Molho İstanbul, queijo, mozzarella, salsicha, tomate e pimento",
+    "prices": [
+     {
+      "v": "",
+      "kz": 15000
+     },
+     {
+      "v": "",
+      "kz": 14000
+     }
+    ]
+   },
+   {
+    "name": "Pizza mista",
+    "desc": "Molho İstanbul, queijo, mozzarella, pimento, tomate, milho, azeitonas, carne, frango, cogumelos e almôndegas",
+    "prices": [
+     {
+      "v": "",
+      "kz": 17500
+     },
+     {
+      "v": "",
+      "kz": 16000
+     }
+    ]
+   },
+   {
+    "name": "Pizza de carne",
+    "desc": "Molho İstanbul, queijo, mozzarella, pimento, tomate, milho e carne",
+    "prices": [
+     {
+      "v": "",
+      "kz": 17000
+     },
+     {
+      "v": "",
+      "kz": 15500
+     }
+    ]
+   },
+   {
+    "name": "Pizza de atum",
+    "desc": "Molho İstanbul, queijo, mozzarella, pimento, atum, tomate e cogumelos",
+    "prices": [
+     {
+      "v": "",
+      "kz": 17500
+     },
+     {
+      "v": "",
+      "kz": 16000
+     }
+    ]
+   },
+   {
+    "name": "Pizza de cogumelos",
+    "desc": "Molho İstanbul, queijo, mozzarella, pimento, tomate, milho e cogumelos",
+    "prices": [
+     {
+      "v": "",
+      "kz": 16000
+     },
+     {
+      "v": "",
+      "kz": 14500
+     }
+    ]
+   },
+   {
+    "name": "Pizza de camarão",
+    "desc": "Molho İstanbul, queijo, mozzarella, camarão, cogumelos e milho",
+    "prices": [
+     {
+      "v": "",
+      "kz": 20000
+     },
+     {
+      "v": "",
+      "kz": 18000
+     }
+    ]
+   },
+   {
+    "name": "Pizza de carne moída",
+    "desc": "Molho İstanbul, queijo, mozzarella, carne moída, tomate e pimento",
+    "prices": [
+     {
+      "v": "",
+      "kz": 17000
+     },
+     {
+      "v": "",
+      "kz": 15000
+     }
+    ]
+   },
+   {
+    "name": "Pizza vegetariana",
+    "desc": "Molho İstanbul, queijo, mozzarella, tomate, milho, pimento, abóbora e beringela",
+    "prices": [
+     {
+      "v": "",
+      "kz": 16000
+     },
+     {
+      "v": "",
+      "kz": 14500
+     }
+    ]
+   },
+   {
+    "name": "Pizza 4 estações",
+    "desc": "Molho İstanbul, queijo, mozzarella, pimento, tomate, carne, frango, atum e cogumelos",
+    "prices": [
+     {
+      "v": "",
+      "kz": 18000
+     },
+     {
+      "v": "",
+      "kz": 16000
+     }
+    ]
+   },
+   {
+    "name": "Pizza de presunto e ovo",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 16500
+     },
+     {
+      "v": "",
+      "kz": 15000
+     }
+    ]
+   },
+   {
+    "name": "Pizza de almôndegas de frango",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 16500
+     },
+     {
+      "v": "",
+      "kz": 14500
+     }
+    ]
+   }
+  ],
+  "alt": "Pizza fatiada com tomate cereja e alecrim numa tábua"
+ },
+ {
+  "id": "grelhados",
+  "title": "Grelhados turcos",
+  "intro": "Servidos com arroz, batata frita e salada.",
+  "img": "img/cat-grelhados.webp",
+  "dishes": [
+   {
+    "name": "Carne grelhada",
+    "desc": "Carne grelhada, arroz, batata frita e salada",
+    "prices": [
+     {
+      "v": "",
+      "kz": 16500
+     }
+    ]
+   },
+   {
+    "name": "Köfte grelhado com molho de tomate",
+    "desc": "Köfte, arroz, batata frita e salada",
+    "prices": [
+     {
+      "v": "",
+      "kz": 16500
+     }
+    ]
+   },
+   {
+    "name": "Frango grelhado",
+    "desc": "Frango grelhado, arroz, batata frita e salada",
+    "prices": [
+     {
+      "v": "",
+      "kz": 15000
+     }
+    ]
+   },
+   {
+    "name": "Grelhado misto",
+    "desc": "Carne, frango e köfte, com arroz, batata frita e salada",
+    "prices": [
+     {
+      "v": "",
+      "kz": 18500
+     }
+    ]
+   },
+   {
+    "name": "Grelhada bitoque",
+    "desc": "Grelhada, arroz, batata frita e salada",
+    "prices": [
+     {
+      "v": "",
+      "kz": 17000
+     }
+    ]
+   },
+   {
+    "name": "Franga com molho",
+    "desc": "Franga com molho, arroz, batata frita e salada",
+    "prices": [
+     {
+      "v": "",
+      "kz": 16000
+     }
+    ]
+   },
+   {
+    "name": "Köfte",
+    "desc": "Köfte, arroz, batata frita e salada",
+    "prices": [
+     {
+      "v": "",
+      "kz": 16000
+     }
+    ]
+   },
+   {
+    "name": "Frango crocante",
+    "desc": "Frango crocante, arroz, batata frita e salada",
+    "prices": [
+     {
+      "v": "",
+      "kz": 16500
+     }
+    ]
+   }
+  ],
+  "alt": "Espetadas de carne picada grelhada com molho de tomate e salada"
+ },
+ {
+  "id": "faita",
+  "title": "Faita",
+  "intro": "",
+  "img": "img/cat-faita.webp",
+  "dishes": [
+   {
+    "name": "Faita de carne",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 11000
+     }
+    ]
+   },
+   {
+    "name": "Faita de frango",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 10500
+     }
+    ]
+   },
+   {
+    "name": "Faita de almôndegas",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 11000
+     }
+    ]
+   },
+   {
+    "name": "Faita de atum",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 12500
+     }
+    ]
+   },
+   {
+    "name": "Faita mista",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 12500
+     }
+    ]
+   },
+   {
+    "name": "Faita de camarão",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 14500
+     }
+    ]
+   }
+  ],
+  "alt": "Wrap de carne grelhada com salada, cortado ao meio"
+ },
+ {
+  "id": "esparguete",
+  "title": "Esparguete",
+  "intro": "",
+  "img": "img/cat-esparguete.webp",
+  "dishes": [
+   {
+    "name": "Esparguete com almôndegas",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 16500
+     }
+    ]
+   },
+   {
+    "name": "Esparguete com atum",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 16500
+     }
+    ]
+   },
+   {
+    "name": "Esparguete com frango",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 16500
+     }
+    ]
+   },
+   {
+    "name": "Esparguete à bolonhesa",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 16500
+     }
+    ]
+   },
+   {
+    "name": "Esparguete com camarão",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 18500
+     }
+    ]
+   }
+  ],
+  "alt": "Esparguete com almôndegas e molho de tomate"
+ },
+ {
+  "id": "meze",
+  "title": "Meze turco",
+  "intro": "Pequenos pratos para partilhar.",
+  "img": "img/cat-meze.webp",
+  "dishes": [
+   {
+    "name": "Meze de Urfa",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 4000
+     }
+    ]
+   },
+   {
+    "name": "Meze de húmus",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 5000
+     }
+    ]
+   },
+   {
+    "name": "Meze russo",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 5000
+     }
+    ]
+   }
+  ],
+  "alt": "Taça de húmus com azeite e especiarias"
+ },
+ {
+  "id": "matabicho",
+  "title": "Matabicho",
+  "intro": "Pequeno-almoço todos os dias, das 08h00 às 14h00.",
+  "img": "img/cat-matabicho.webp",
+  "dishes": [
+   {
+    "name": "Omelete de queijo",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 9000
+     }
+    ]
+   },
+   {
+    "name": "Omelete de frango",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 9500
+     }
+    ]
+   },
+   {
+    "name": "Omelete de carne",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 10500
+     }
+    ]
+   },
+   {
+    "name": "Omelete misto",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 11000
+     }
+    ]
+   },
+   {
+    "name": "Torrada de queijo",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 8500
+     }
+    ]
+   },
+   {
+    "name": "Torrada mista",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 9500
+     }
+    ]
+   },
+   {
+    "name": "Sopa turca de lentilhas",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 6000
+     }
+    ]
+   },
+   {
+    "name": "Sopa de tomate",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 6000
+     }
+    ]
+   },
+   {
+    "name": "Batata frita",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 6000
+     }
+    ]
+   }
+  ],
+  "alt": "Mesa de pequeno-almoço turco com pão, ovos e pequenos pratos"
+ },
+ {
+  "id": "sobremesas",
+  "title": "Sobremesas",
+  "intro": "Temos diversas sobremesas frescas, feitas todos os dias. Veja-as na nossa vitrine.",
+  "img": "img/cat-sobremesas.webp",
+  "dishes": [
+   {
+    "name": "Cheesecake de morango",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 8000
+     }
+    ]
+   },
+   {
+    "name": "Cheesecake São Sebastião",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 8000
+     }
+    ]
+   },
+   {
+    "name": "Magnólia",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 5000
+     }
+    ]
+   },
+   {
+    "name": "Arroz doce",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 5000
+     }
+    ]
+   },
+   {
+    "name": "Pasta",
+    "desc": "Fatia de bolo do dia, à escolha na vitrine",
+    "prices": [
+     {
+      "v": "",
+      "kz": 4000
+     }
+    ]
+   }
+  ],
+  "alt": "Fatia de cheesecake num prato escuro"
+ },
+ {
+  "id": "bebidas-quentes",
+  "title": "Cafés, chá e sumos naturais",
+  "intro": "",
+  "img": "img/cat-bebidas-quentes.webp",
+  "dishes": [
+   {
+    "name": "Çay turco",
+    "desc": "O chá turco, servido no copo tulipa",
+    "prices": [
+     {
+      "v": "",
+      "kz": 3000
+     }
+    ]
+   },
+   {
+    "name": "Café turco",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 5000
+     }
+    ]
+   },
+   {
+    "name": "Café expresso",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 3000
+     }
+    ]
+   },
+   {
+    "name": "Galão",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 6000
+     }
+    ]
+   },
+   {
+    "name": "Chá",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 5000
+     }
+    ]
+   },
+   {
+    "name": "Limonada turca",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 3500
+     }
+    ]
+   },
+   {
+    "name": "Sumo natural de pitaia",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 7500
+     }
+    ]
+   },
+   {
+    "name": "Sumo natural de maracujá",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 7500
+     }
+    ]
+   },
+   {
+    "name": "Sumo natural de maçã",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 7500
+     }
+    ]
+   },
+   {
+    "name": "Sumo natural de tomate",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 7500
+     }
+    ]
+   },
+   {
+    "name": "Sumo natural de melancia",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 7000
+     }
+    ]
+   },
+   {
+    "name": "Sumo natural de cenoura",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 7000
+     }
+    ]
+   },
+   {
+    "name": "Sumo natural misto",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 8500
+     }
+    ]
+   }
+  ],
+  "alt": "Copo de chá turco a fumegar"
+ },
+ {
+  "id": "bebidas-frias",
+  "title": "Bebidas frias",
+  "intro": "",
+  "img": "img/cat-bebidas-frias.webp",
+  "dishes": [
+   {
+    "name": "Limonada",
+    "desc": "",
+    "prices": [
+     {
+      "v": "Pequena",
+      "kz": 3000
+     },
+     {
+      "v": "Grande",
+      "kz": 3500
+     }
+    ]
+   },
+   {
+    "name": "Sumo natural de laranja",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 7500
+     }
+    ]
+   },
+   {
+    "name": "Sumo natural de ananás",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 7500
+     }
+    ]
+   },
+   {
+    "name": "Sumo natural misto",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 7500
+     }
+    ]
+   },
+   {
+    "name": "Milkshake de banana",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 8500
+     }
+    ]
+   },
+   {
+    "name": "Milkshake de chocolate",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 9000
+     }
+    ]
+   },
+   {
+    "name": "Milkshake misto",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 10000
+     }
+    ]
+   },
+   {
+    "name": "Batido de abacate",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 7000
+     }
+    ]
+   },
+   {
+    "name": "Batido misto",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 8000
+     }
+    ]
+   },
+   {
+    "name": "Água",
+    "desc": "",
+    "prices": [
+     {
+      "v": "500 ml",
+      "kz": 1500
+     },
+     {
+      "v": "1,5 l",
+      "kz": 4500
+     }
+    ]
+   },
+   {
+    "name": "Água tónica",
+    "desc": "",
+    "prices": [
+     {
+      "v": "330 ml",
+      "kz": 3500
+     }
+    ]
+   },
+   {
+    "name": "Coca-Cola",
+    "desc": "",
+    "prices": [
+     {
+      "v": "330 ml",
+      "kz": 3000
+     },
+     {
+      "v": "1,5 l",
+      "kz": 8500
+     }
+    ]
+   },
+   {
+    "name": "Fanta",
+    "desc": "",
+    "prices": [
+     {
+      "v": "330 ml",
+      "kz": 3000
+     },
+     {
+      "v": "1,5 l",
+      "kz": 8500
+     }
+    ]
+   },
+   {
+    "name": "Sprite",
+    "desc": "",
+    "prices": [
+     {
+      "v": "330 ml",
+      "kz": 3000
+     },
+     {
+      "v": "1,5 l",
+      "kz": 8500
+     }
+    ]
+   },
+   {
+    "name": "Pepsi",
+    "desc": "",
+    "prices": [
+     {
+      "v": "330 ml",
+      "kz": 3000
+     }
+    ]
+   },
+   {
+    "name": "Sumol de ananás",
+    "desc": "",
+    "prices": [
+     {
+      "v": "330 ml",
+      "kz": 3000
+     }
+    ]
+   },
+   {
+    "name": "Sumol de laranja",
+    "desc": "",
+    "prices": [
+     {
+      "v": "",
+      "kz": 3000
+     }
+    ]
+   },
+   {
+    "name": "Red Bull",
+    "desc": "",
+    "prices": [
+     {
+      "v": "200 ml",
+      "kz": 5000
+     }
+    ]
+   }
+  ],
+  "alt": "Batido de chocolate com bolachas no topo"
+ }
+]
