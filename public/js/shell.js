@@ -1,5 +1,5 @@
 // shell.js — estrutura nativa: barra de navegação com título grande que colapsa,
-// separadores de vidro flutuantes (iPhone) / barra lateral flutuante (iPad),
+// separadores de vidro flutuantes (iPhone) / barra lateral opaca com cabeçalho de vidro (iPad),
 // folha da conta. As páginas só declaram separadores e ecrãs.
 import { $, $$, h, esc, icon, Spring, hydrateIcons, installPressFeedback, installGlass, openSheet, toast, busy, setFieldError, haptic, initials, ROLE, makeSlider, expandSearch, reducedMotion } from './ui.js';
 import { post, logout, enableNotifications, notificationsSupported, notificationsGranted } from './api.js';
@@ -9,6 +9,8 @@ export function mountShell({ me, tabs, actions = [], defaultTab, unitLine = '', 
   installGlass();
   hydrateIcons();
   const navbar = $('#navbar');
+  navbar.classList.add('lens-bar');
+  navbar.dataset.adapt = '';
   navbar.innerHTML = `<div class="navbar-inner">
       <div class="nb-lead"><span class="live" id="live"><i></i><span>A ligar…</span></span></div>
       <div class="nb-title" id="nb-title" aria-hidden="true"></div>
@@ -23,11 +25,11 @@ export function mountShell({ me, tabs, actions = [], defaultTab, unitLine = '', 
 
   // ---- separadores (telemóvel) e barra lateral (iPad)
   const main = tabs.filter((t) => !t.solo), solo = tabs.find((t) => t.solo);
-  const tabHtml = (t) => `<button class="tab" data-tab="${t.id}" aria-selected="false" aria-label="${esc(t.label)}">${icon[t.icon]}<span class="t">${esc(t.label)}</span><span class="tbadge" hidden>0</span></button>`;
-  const tabbar = h(`<nav class="tabbar" aria-label="Secções"><div class="tab-pill glass lens-bar" data-adapt>${main.map(tabHtml).join('')}<span class="tab-ind"></span></div>
+  const tabHtml = (t, extra = '') => `<button class="tab${extra}" data-tab="${t.id}" aria-selected="false" aria-label="${esc(t.label)}">${icon[t.icon]}<span class="t">${esc(t.label)}</span><span class="tbadge" hidden>0</span></button>`;
+  const tabbar = h(`<nav class="tabbar" aria-label="Secções"><div class="tab-pill glass lens-bar" data-adapt>${main.map((t) => tabHtml(t)).join('')}<span class="tab-ind"></span></div>
     ${solo ? `<button class="tab-solo glass lens-btn" data-tab="${solo.id}" aria-selected="false" aria-label="${esc(solo.label)}" data-adapt>${icon[solo.icon]}</button>` : ''}</nav>`);
-  const sidebar = h(`<aside class="sidebar glass glass-thick"><div class="sb-brand"><img src="/icons/icon-192.png" alt=""><div><strong>Portaria</strong><small>${esc(unitLine || ROLE[me.role])}</small></div></div>
-    <nav class="sb-tabs" aria-label="Secções">${tabs.map(tabHtml).join('')}<span class="sb-ind"></span></nav></aside>`);
+  const sidebar = h(`<aside class="sidebar"><div class="sb-brand glass lens-bar"><img src="/icons/icon-192.png" alt=""><div><strong>Portaria</strong><small>${esc(unitLine || ROLE[me.role])}</small></div></div>
+    <nav class="sb-tabs" aria-label="Secções">${tabs.map((t) => tabHtml(t, ' glass lens-btn')).join('')}<span class="sb-ind"></span></nav></aside>`);
   document.body.append(tabbar, sidebar);
 
   // indicadores deslizantes: mola na posição e esticão na direção do movimento

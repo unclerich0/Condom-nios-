@@ -8,8 +8,8 @@
 //  • Toque: encolhe no pointer-down e regressa com mola; o indicador dos
 //    separadores estica na direção do movimento; as listas fazem FLIP.
 //  • Feedback no pointer-down, haptics só em momentos de commit.
-//  • Liquid Glass: lente SVG (Chromium), tinta adaptativa e realce especular
-//    que segue o dedo — installGlass().
+//  • Vidro regular (barras e botões): lente SVG suave no Chromium, tinta
+//    adaptativa e realce ao premir — installGlass().
 // ============================================================================
 
 export const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -334,12 +334,11 @@ export function confirmChegada(btn) {
 
 // =========================================================== Liquid Glass ===
 /**
- * 1) Lente: filtros SVG com feDisplacementMap aplicados ao backdrop (só Chromium;
- *    Safari/Firefox ignoram url() em backdrop-filter, por isso detetamos a capacidade
- *    e deixamos o blur+saturação+aro como alternativa — já é um bom vidro).
- *    A direção do deslocamento aponta sempre para o interior (nunca amostra fora da caixa).
- * 2) Tinta adaptativa: mede a cor do conteúdo por baixo de cada [data-adapt] ao scroll.
- * 3) Realce especular que segue o dedo/rato (--px/--py/--spec).
+ * 1) Lente suave (GlassView regular): feDisplacementMap só na borda, escala baixa.
+ *    Só Chromium aceita url() em backdrop-filter; Safari/Firefox ficam com
+ *    blur + saturação + realce de topo.
+ * 2) Tinta adaptativa nas barras flutuantes ([data-adapt]).
+ * 3) Realce ao premir, alinhado com a mola (.is-pressed / --spec).
  */
 function lensMap(axis, band) {
   const hi = axis === 'x' ? 'rgb(255,128,128)' : 'rgb(128,255,128)';
@@ -363,8 +362,8 @@ export function installGlass() {
   const chromium = 'chrome' in window || navigator.userAgentData?.brands?.some((b) => /Chromium/.test(b.brand));
   if (chromium && CSS.supports('backdrop-filter', 'url(#a)')) {
     const svg = h(`<svg id="lg-defs" width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
-      ${lensFilter('lg-bar', { bx: 0.05, by: 0.36, scale: 32 })}
-      ${lensFilter('lg-btn', { bx: 0.3, by: 0.3, scale: 16 })}
+      ${lensFilter('lg-bar', { bx: 0.12, by: 0.2, scale: 11 })}
+      ${lensFilter('lg-btn', { bx: 0.2, by: 0.2, scale: 7 })}
     </defs></svg>`.replace(/<svg /, '<svg xmlns="http://www.w3.org/2000/svg" '));
     document.body.append(svg);
     document.documentElement.dataset.lens = '';
@@ -377,7 +376,7 @@ export function installGlass() {
     const stack = document.elementsFromPoint(r.left + r.width / 2, r.top + r.height / 2);
     let rgb = null;
     for (const n of stack) {
-      if (n.closest('.glass, .glass-thick, .navbar, .sheet-root')) continue;
+      if (n.closest('.glass, .navbar, .searchfield, .segmented, .sb-brand, .btn, .gbtn, .sheet-root, .toast, .banner')) continue;
       const c = parseRgb(getComputedStyle(n).backgroundColor); if (c && c.a > 0.6) { rgb = c; break; }
     }
     if (!rgb) rgb = parseRgb(getComputedStyle(document.body).backgroundColor) || { r: 242, g: 242, b: 247, a: 1 };
@@ -395,7 +394,7 @@ export function installGlass() {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   let cur = null;
   const set = (el, e, spec) => { const r = el.getBoundingClientRect(); el.style.setProperty('--px', `${((e.clientX - r.left) / r.width) * 100}%`); el.style.setProperty('--py', `${((e.clientY - r.top) / r.height) * 100}%`); el.style.setProperty('--spec', spec); };
-  const target = (e) => e.target.closest('.gbtn, .tab-solo, .tab-pill, .btn, .sidebar');
+  const target = (e) => e.target.closest('.gbtn, .tab-solo, .tab, .tab-pill, .btn, .segmented button, .searchfield, .sb-brand, .navbar');
   document.addEventListener('pointermove', (e) => { const el = target(e); if (cur && cur !== el) cur.style.setProperty('--spec', 0); cur = el; if (el && (e.pointerType === 'mouse' || e.buttons)) set(el, e, e.buttons ? 1 : 0.55); }, { passive: true });
   document.addEventListener('pointerdown', (e) => { const el = target(e); if (el) { cur = el; set(el, e, 1); } }, { passive: true });
   const off = () => { if (cur) cur.style.setProperty('--spec', 0); };
@@ -473,7 +472,7 @@ export const icon = {
 let toastEl, toastSpring, toastTimer;
 export function toast(message, { error = false, duration = 2600 } = {}) {
   if (!toastEl) {
-    toastEl = h('<div class="toast glass" role="status" aria-live="polite" data-adapt></div>'); document.body.append(toastEl);
+    toastEl = h('<div class="toast" role="status" aria-live="polite"></div>'); document.body.append(toastEl);
     toastSpring = new Spring({ value: 0, damping: 0.78, response: 0.38, precision: 0.002, onUpdate: (p) => {
       const c = Math.max(0, Math.min(1, p));
       toastEl.style.opacity = String(c);
@@ -488,11 +487,11 @@ export function toast(message, { error = false, duration = 2600 } = {}) {
 }
 
 // ------------------------------------------------------------------ Banner -
-// Aviso no estilo das notificações do iOS: vidro, ícone da app, "agora".
+// Aviso no estilo das notificações do iOS: cartão opaco, ícone da app, "agora".
 let bannerHost;
 export function banner({ title, body = '', onClick, duration = 6000 }) {
   if (!bannerHost) { bannerHost = h('<div class="banners" aria-live="assertive"></div>'); document.body.append(bannerHost); }
-  const el = h(`<div class="banner glass glass-thick lens-bar" role="alert"><img src="/icons/icon-192.png" alt=""><div class="meta"><span>Portaria</span><span>agora</span></div><div><div class="tt">${esc(title)}</div>${body ? `<div class="bd">${esc(body)}</div>` : ''}</div></div>`);
+  const el = h(`<div class="banner" role="alert"><img src="/icons/icon-192.png" alt=""><div class="meta"><span>Portaria</span><span>agora</span></div><div><div class="tt">${esc(title)}</div>${body ? `<div class="bd">${esc(body)}</div>` : ''}</div></div>`);
   bannerHost.prepend(el);
   const height = 140;
   const y = new Spring({ value: -height, damping: 0.66, response: 0.46, precision: 0.4, onUpdate: (v) => {
@@ -528,15 +527,15 @@ export function banner({ title, body = '', onClick, duration = 6000 }) {
 // ------------------------------------------------------------------- Sheet -
 /**
  * openSheet({ title, content }) → { close, el }
- * Folha de vidro flutuante no telemóvel (arrastável, com projeção de momento),
+ * Folha opaca no telemóvel (arrastável, com projeção de momento),
  * cartão central em ecrãs grandes que "materializa" a partir do botão de origem.
  */
 export function openSheet({ title, content, onClose, origin } = {}) {
   const root = h(`<div class="sheet-root is-open" role="dialog" aria-modal="true" aria-label="${esc(title)}">
       <div class="scrim"></div>
-      <section class="sheet glass glass-thick">
+      <section class="sheet">
         <div class="grabber" aria-hidden="true"></div>
-        <header class="sheet-head"><span></span><h2>${esc(title)}</h2><button class="gbtn round glass" data-close aria-label="Fechar">${icon.x}</button></header>
+        <header class="sheet-head"><span></span><h2>${esc(title)}</h2><button class="gbtn round glass lens-btn" data-close aria-label="Fechar">${icon.x}</button></header>
         <div class="sheet-body"></div>
       </section></div>`);
   const sheet = $('.sheet', root), scrim = $('.scrim', root), body = $('.sheet-body', root);
