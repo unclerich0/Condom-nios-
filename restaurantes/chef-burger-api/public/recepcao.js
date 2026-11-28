@@ -41,10 +41,15 @@
   var ligando = false;
 
   function diaLuanda(iso) {
-    var d = iso ? new Date(iso) : new Date();
-    return new Intl.DateTimeFormat("en-CA", {
-      timeZone: "Africa/Luanda", year: "numeric", month: "2-digit", day: "2-digit"
-    }).format(d);
+    try {
+      var d = iso ? new Date(iso) : new Date();
+      if (isNaN(d.getTime())) d = new Date();
+      return new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Africa/Luanda", year: "numeric", month: "2-digit", day: "2-digit"
+      }).format(d);
+    } catch (e) {
+      return new Date().toISOString().slice(0, 10);
+    }
   }
   function hojeLuanda() { return diaLuanda(); }
 
@@ -54,7 +59,18 @@
     if (s < 3600) return "há " + Math.floor(s / 60) + " min";
     return "há " + Math.floor(s / 3600) + " h";
   }
-  function headers() { return { "X-Rececao-Pin": pin, "Content-Type": "application/json" }; }
+  function headers(withBody) {
+    var h = { "X-Rececao-Pin": pin };
+    if (withBody) h["Content-Type"] = "application/json";
+    return h;
+  }
+  function temNotificacao() {
+    try { return typeof Notification !== "undefined"; } catch (e) { return false; }
+  }
+  function notificacaoPermitida() {
+    try { return temNotificacao() && Notification.permission === "granted"; } catch (e) { return false; }
+  }
+
 
   function toast(msg, opts) {
     opts = opts || {};
@@ -145,6 +161,7 @@
   }
 
   function springStat(el, target, asKz) {
+    if (!el) return;
     var inited = el.dataset.val != null;
     var from = Number(el.dataset.val || 0);
     el.dataset.val = String(target);
@@ -392,12 +409,9 @@
     }, 800);
     var kill = setTimeout(function () { ctrl.abort(); }, opts.timeout || 60000);
     try {
-      var r = await fetch(path, {
-        method: method,
-        headers: headers(),
-        body: body != null ? JSON.stringify(body) : undefined,
-        signal: ctrl.signal,
-      });
+      var init = { method: method, headers: headers(body != null), signal: ctrl.signal };
+      if (body != null) init.body = JSON.stringify(body);
+      var r = await fetch(path, init);
       var data = null;
       try { data = await r.json(); } catch (e) { data = null; }
       if (r.status === 401) { sair.click(); throw new Error("PIN inválido."); }
@@ -502,7 +516,7 @@
   function ligarSSE() {
     if (esRef) { try { esRef.close(); } catch (e) {} esRef = null; }
     var es;
-    try { es = new EventSource("/api/pedidos/stream?pin=" + encodeURIComponent(pin)); } catch (e) { return poll(); }
+    try { es = new EventSource("/api/pedidos/stream?pin=" + encodeURIComponent(pin)); } catch (e) { startPoll(); return; }
     esRef = es;
     var ok = false;
     es.addEventListener("hello", function () {
@@ -530,16 +544,20 @@
       es.close();
       if (esRef === es) esRef = null;
       liveEl.hidden = true;
-      poll();
     };
-    setTimeout(function () { if (!ok) { es.close(); if (esRef === es) esRef = null; poll(); } }, 4000);
+    setTimeout(function () {
+      if (!ok) {
+        es.close();
+        if (esRef === es) esRef = null;
+        liveEl.hidden = true;
+      }
+    }, 4000);
   }
 
   var pollT = 0;
-  function poll() {
-    liveEl.hidden = true;
+  function startPoll() {
     clearInterval(pollT);
-    pollT = setInterval(function () { carregar(true).catch(function () {}); }, 4000);
+    pollT = setInterval(function () { carregar(true).catch(function () {}); }, 10000);
   }
 
   function b64ToBytes(b64) {
@@ -604,10 +622,12 @@
     login.hidden = true;
     board.hidden = false;
     sair.hidden = false;
-    if ("serviceWorker" in navigator && window.isSecureContext) {
-      navigator.serviceWorker.register("sw.js", { scope: "/recepcao/" }).catch(function () {});
-    }
-    if (Notification && Notification.permission === "granted") {
+    try {
+      if ("serviceWorker" in navigator && window.isSecureContext) {
+        navigator.serviceWorker.register("sw.js", { scope: "/recepcao/" }).catch(function () {});
+      }
+    } catch (e) {}
+    if (notificacaoPermitida()) {
       var btn = $("[data-notify]");
       if (btn) btn.textContent = "Notificações ligadas";
     }
@@ -615,6 +635,7 @@
     carregar(false).then(function () {
       ligando = false;
       ligarSSE();
+      startPoll();
     }).catch(function (e) {
       ligando = false;
       err.textContent = (e && e.message) || "Não foi possível abrir o quadro.";
@@ -633,8 +654,13 @@
       if (r.status === 401) { err.textContent = "PIN inválido."; return; }
       if (!r.ok) { err.textContent = "Não foi possível entrar."; return; }
       err.textContent = "";
-      entrar(v);
-    }).catch(function () { err.textContent = "Sem ligação à receção. Se o serviço estiver a acordar, espere até um minuto e tente de novo."; }).finally(function () { clearTimeout(t); });
+      try { entrar(v); } catch (e) { err.textContent = (e && e.message) || "Não foi possível abrir o quadro."; }
+    }).catch(function (e) {
+      if (err.textContent && err.textContent !== "A ligar à receção…") return;
+      err.textContent = (e && e.name === "AbortError")
+        ? "A receção demorou demasiado. Tente outra vez."
+        : "Sem ligação à receção. Se o serviço estiver a acordar, espere até um minuto e tente de novo.";
+    }).finally(function () { clearTimeout(t); });
   });
 
   sair.addEventListener("click", function () {
@@ -651,12 +677,15 @@
     login.pin.focus();
   });
 
-  $("[data-notify]").addEventListener("click", function () { ativarNotificacoes(); });
-  $("[data-limpar-todos]").addEventListener("click", function () {
+  var notifyBtn = $("[data-notify]");
+  if (notifyBtn) notifyBtn.addEventListener("click", function () { ativarNotificacoes(); });
+  var limparTodos = $("[data-limpar-todos]");
+  if (limparTodos) limparTodos.addEventListener("click", function () {
     var ids = pedidos.filter(function (p) { return !p.arquivado && !p.cancelado && FEITOS[p.estado]; }).map(function (p) { return p.id; });
     arquivar(ids, true);
   });
-  $("[data-historico]").addEventListener("click", function () {
+  var histBtn = $("[data-historico]");
+  if (histBtn) histBtn.addEventListener("click", function () {
     var painel = $("[data-historico-painel]");
     painel.hidden = !painel.hidden;
     if (!painel.hidden) {

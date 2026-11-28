@@ -69,3 +69,7 @@ O Safari no iOS só entrega Web Push a partir do **iOS 16.4**, e só depois de *
 
 No Chrome (e Chromium) as notificações e o push funcionam no próprio navegador, sem instalar a PWA — embora a instalação também esteja disponível.
 
+Depois de um deploy, o service worker (`cb-rececao-v11`) vai à rede primeiro para o HTML e o JavaScript do quadro (e nunca interceta `/api/`). No iPhone, actualize a página ou feche e volte a abrir o ícone no ecrã principal; só é preciso remover e voltar a adicionar o ícone se o quadro continuar desactualizado. No Safari do iPhone (e em versões abaixo do iOS 16.4, mesmo como PWA) a API `Notification` pode não existir — o quadro tem de abrir na mesma, sem esse recurso.
+
+O quadro também faz *polling* a cada 10 segundos, mesmo que o fluxo SSE falhe ou não esteja disponível no Safari.
+

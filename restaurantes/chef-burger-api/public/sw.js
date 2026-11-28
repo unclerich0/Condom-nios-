@@ -1,15 +1,24 @@
 /* Service worker da receção: cache do quadro + Web Push. */
-const CACHE = "cb-rececao-v10";
+const CACHE = "cb-rececao-v11";
 const PRECACHE = [
-  "/recepcao/",
   "/recepcao/recepcao.css",
-  "/recepcao/recepcao.js",
   "/recepcao/icon.svg",
   "/recepcao/icon-192.png",
   "/recepcao/icon-512.png",
   "/recepcao/manifest.webmanifest",
   "/recepcao/fonts/archivo-latin.woff2",
 ];
+
+function isShell(url) {
+  const p = url.pathname;
+  return (
+    /\/recepcao\/?$/.test(p) ||
+    p.endsWith("/recepcao.html") ||
+    p.endsWith("/recepcao.js") ||
+    p.endsWith("/sw.js") ||
+    p.endsWith("/config.js")
+  );
+}
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(PRECACHE)).then(() => self.skipWaiting()).catch(() => self.skipWaiting()));
@@ -27,10 +36,11 @@ self.addEventListener("fetch", (e) => {
   const url = new URL(e.request.url);
   if (e.request.method !== "GET") return;
   if (url.pathname.startsWith("/api/")) return;
+  const fresh = isShell(url);
   e.respondWith((async () => {
     try {
-      const net = await fetch(e.request);
-      if (net.ok && url.pathname.startsWith("/recepcao")) {
+      const net = await fetch(e.request, fresh ? { cache: "no-store" } : undefined);
+      if (net.ok && url.pathname.startsWith("/recepcao") && !fresh) {
         const copy = net.clone();
         caches.open(CACHE).then((c) => c.put(e.request, copy)).catch(() => {});
       }

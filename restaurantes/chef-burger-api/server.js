@@ -267,6 +267,9 @@ app.use("/recepcao", express.static(path.join(here, "public"), {
       res.setHeader("Cache-Control", "no-cache");
       res.setHeader("Service-Worker-Allowed", "/recepcao/");
     }
+    if (filePath.endsWith(".html") || filePath.endsWith(".js") || filePath.endsWith("recepcao.js")) {
+      res.setHeader("Cache-Control", "no-cache");
+    }
     if (filePath.endsWith(".webmanifest") || filePath.endsWith("manifest.json")) {
       res.type("application/manifest+json");
     }
