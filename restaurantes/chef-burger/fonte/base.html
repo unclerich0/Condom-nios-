@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-AO" data-type="place" data-page="{{PAGE}}" data-idx="{{IDX}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+  <title>{{TITLE}}</title>
+  <meta name="description" content="{{DESC}}">
+  <meta name="page-type" content="place">
+  <meta name="theme-color" content="#f4efe6">
+  <meta name="color-scheme" content="light">
+  <meta property="og:title" content="{{TITLE}}">
+  <meta property="og:description" content="{{DESC}}">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_AO">
+  <meta property="og:image" content="https://chef-burger-kilamba.onrender.com/img/og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Hambúrguer duplo com queijo e cebola caramelizada">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+{{PRELOAD}}
+  <link rel="stylesheet" href="css/site.css">
+  <script>
+    /* Transição entre páginas: a direção sai da ordem das páginas (início -1, ementa 0, categorias 1…10). */
+    (function () {
+      var d = document.documentElement, K = "cb-nav";
+      d.classList.add("js");
+      var to = Number(d.dataset.idx);
+      /* Safari (iPhone, iPad, Mac): sem transição entre documentos; o Voltar do Safari salta entradas com ela. */
+      var ua = navigator.userAgent, webkit = /iPhone|iPad|iPod/.test(ua) || (/AppleWebKit/.test(ua) && !/Chrome|Chromium|Edg|Android/.test(ua));
+      function read() {
+        var from = null, sl = null;
+        try { var o = JSON.parse(sessionStorage.getItem(K) || "null"); if (o && Date.now() - o.t < 8000) { from = o.from; sl = o.sl; } } catch (e) {}
+        return { from: from, to: to, sl: sl, dir: from === null || from === to ? "" : (to > from ? "forward" : "back") };
+      }
+      var nav = window.__cbNav = read();
+      if (nav.dir) d.dataset.arrived = nav.dir;
+      function remember() {
+        var n = document.querySelector("[data-catnav]");
+        try { sessionStorage.setItem(K, JSON.stringify({ from: to, t: Date.now(), sl: n ? n.scrollLeft : null })); } catch (e) {}
+      }
+      function thumbName(v) { var t = document.querySelector("[data-catbar] [data-thumb]"); if (t) t.style.viewTransitionName = v; }
+      function isHome(url) { try { return /\/(index\.html)?$/.test(new URL(url, location.href).pathname); } catch (e) { return false; } }
+      window.addEventListener("pageswap", function (e) {
+        remember();
+        if (!e.viewTransition) return;
+        if (webkit) { e.viewTransition.ready.catch(function () {}); e.viewTransition.skipTransition(); return; }
+        /* De e para o início, a barra muda de sítio: o indicador viaja dentro dela, não à parte. */
+        if (to < 0 || (e.activation && e.activation.entry && isHome(e.activation.entry.url))) thumbName("none");
+        /* A barra de vidro só viaja se estiver à vista; fora do ecrã voaria de longe. */
+        var bar = document.querySelector("[data-catbar]");
+        if (bar) { var r = bar.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) { bar.style.viewTransitionName = "none"; var t = bar.querySelector("[data-thumb]"); if (t) t.style.viewTransitionName = "none"; } }
+      });
+      window.addEventListener("pagehide", remember);
+      window.addEventListener("pageshow", function () {
+        $$reset();
+      });
+      function $$reset() { var bar = document.querySelector("[data-catbar]"); if (!bar) return; bar.style.viewTransitionName = ""; var t = bar.querySelector("[data-thumb]"); if (t) t.style.viewTransitionName = ""; }
+      var vtCross = "CSSViewTransitionRule" in window;
+      if (!vtCross && nav.dir && !matchMedia("(prefers-reduced-motion: reduce)").matches) d.dataset.enter = nav.dir;
+      window.__cbReveal = new Promise(function (res) {
+        window.addEventListener("pagereveal", function (e) {
+          var n = window.__cbNav = read();
+          if (!e.viewTransition) return res();
+          if (webkit || !n.dir) { e.viewTransition.ready.catch(function () {}); e.viewTransition.skipTransition(); return res(); }
+          if (n.from < 0 || n.to < 0) thumbName("none");
+          e.viewTransition.types.add(n.dir);
+          if (n.from >= 0 && n.to >= 0) e.viewTransition.types.add("within"); /* a barra fica no sítio: o indicador pode ressaltar */
+          e.viewTransition.finished.then(res, res);
+        });
+        setTimeout(res, 900);
+      });
+    })();
+  </script>
+{{LD}}
+</head>
+<body>
+{{SIMBOLOS}}
+  <a class="skip" href="#conteudo">Saltar para o conteúdo</a>
+
+  <header class="nav" data-nav>
+    <div class="wrap nav__in">
+      <a class="brand" href="./" aria-label="Chef Burger, início" data-idx="-1"><span class="brand__chef">Chef</span><span class="brand__burger">Burger</span></a>
+      <nav class="nav__links" aria-label="Páginas">
+{{NAVLINKS}}
+      </nav>
+      <div class="nav__end">
+        <p class="status" data-status><span class="status__dot" aria-hidden="true"></span><span data-status-short>Aberto</span></p>
+        <button type="button" class="nav__bag glass" data-open-cart aria-label="Abrir o pedido, vazio">
+          <svg class="ic" aria-hidden="true"><use href="#i-bag"/></svg>
+          <span class="nav__bag-text">Pedido</span>
+          <span class="count" data-count hidden>0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="conteudo">
+{{MAIN}}
+  </main>
+
+{{RODAPE}}
+  <nav class="dock glass" data-dock aria-label="Atalhos">
+    <a class="dock__b" href="{{EMENTA}}"{{DOCK_EMENTA_CUR}}><svg class="ic" aria-hidden="true"><use href="#i-menu"/></svg><span>Ementa</span></a>
+    <a class="dock__b" href="{{H}}#reservar"><svg class="ic" aria-hidden="true"><use href="#i-cal"/></svg><span>Reservar</span></a>
+    <a class="dock__b" href="tel:+244925918468"><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg><span>Ligar</span></a>
+    <button type="button" class="dock__cart" data-open-cart data-dock-cart aria-label="Abrir o pedido">
+      <svg class="ic" aria-hidden="true"><use href="#i-bag"/></svg>
+      <span class="dock__cart-text" data-dock-text>Pedido</span>
+      <span class="count count--dock" data-count hidden>0</span>
+    </button>
+  </nav>
+
+{{PEDIDO}}
+  <p class="sr" data-live aria-live="polite"></p>
+  <noscript><p class="noscript">Para montar o pedido neste site é preciso JavaScript. Pode escrever na mesma para o WhatsApp +244 925 918 468.</p></noscript>
+{{SCRIPTS}}  <script src="js/site.js" defer></script>
+</body>
+</html>

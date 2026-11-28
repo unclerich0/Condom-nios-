@@ -6,3 +6,9 @@ data/*.db-*
 .DS_Store
 test-results/
 playwright-report/
+
+# Pedidos da receção (disco efémero no plano grátis)
+restaurantes/chef-burger-api/data/
+
+# Chaves VAPID (nunca no Git)
+vapid*.env

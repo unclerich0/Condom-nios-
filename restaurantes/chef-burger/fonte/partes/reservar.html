@@ -1,0 +1,41 @@
+    <section class="book" id="reservar" aria-labelledby="reservar-t">
+      <div class="wrap book__grid">
+        <div class="book__main">
+          <h2 id="reservar-t">Reservar mesa</h2>
+          <p class="book__lead">Escolha o dia, a hora e quantas pessoas vêm. A reserva segue para o WhatsApp do restaurante e fica marcada quando a equipa responder.</p>
+          <form class="form" data-reserva novalidate>
+            <div class="form__row">
+              <div class="field field--people">
+                <span class="field__label" id="pessoas-l">Pessoas</span>
+                <div class="stepper" role="group" aria-labelledby="pessoas-l">
+                  <button type="button" class="stepper__b" data-step="-1" aria-label="Menos uma pessoa"><svg class="ic" aria-hidden="true"><use href="#i-minus"/></svg></button>
+                  <output class="stepper__v" data-pessoas-out aria-live="polite">2</output>
+                  <button type="button" class="stepper__b" data-step="1" aria-label="Mais uma pessoa"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg></button>
+                </div>
+                <input type="hidden" name="pessoas" value="2" data-pessoas>
+              </div>
+              <div class="field field--day">
+                <span class="field__label" id="dia-l">Dia</span>
+                <div class="days" role="radiogroup" aria-labelledby="dia-l" data-days-pick></div>
+                <input type="hidden" name="data" data-data>
+              </div>
+            </div>
+            <label class="field">
+              <span class="field__label">Hora</span>
+              <select name="hora" data-hora required><option value="">Escolha primeiro o dia</option></select>
+              <span class="field__err" data-err="hora"></span>
+            </label>
+            <div class="form__row">
+              <label class="field"><span class="field__label">Nome</span><input name="nome" autocomplete="name" maxlength="80" required><span class="field__err" data-err="nome"></span></label>
+              <label class="field"><span class="field__label">Telefone</span><input name="telefone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" required><span class="field__err" data-err="telefone"></span></label>
+            </div>
+            <label class="field"><span class="field__label">Notas <small>(opcional)</small></span><input name="nota" maxlength="200" placeholder="Aniversário, cadeira de bebé, mesa lá fora…"></label>
+            <div class="form__foot">
+              <button type="submit" class="btn btn--red btn--wide"><svg class="ic ic--brand" aria-hidden="true"><use href="#i-wa"/></svg>Enviar reserva pelo WhatsApp</button>
+              <p class="fine">Até 12 pessoas por reserva. Grupos maiores, ligue para o +244 925 918 468.</p>
+            </div>
+          </form>
+        </div>
+        <figure class="book__photo"><img src="img/reservar.webp" alt="Mesa vista de cima com espetadas grelhadas, legumes assados e molhos para partilhar" width="1000" height="1250" loading="lazy" decoding="async"></figure>
+      </div>
+    </section>

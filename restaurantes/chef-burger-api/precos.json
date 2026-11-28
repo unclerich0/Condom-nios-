@@ -1,0 +1,577 @@
+{
+  "hamburgueres:chef-burger:0": {
+    "nome": "Chef Burger",
+    "variante": "",
+    "kz": 11500
+  },
+  "hamburgueres:istanbul-cheese-burger:0": {
+    "nome": "İstanbul Cheese Burger",
+    "variante": "",
+    "kz": 11500
+  },
+  "hamburgueres:izmir-burger:0": {
+    "nome": "İzmir Burger",
+    "variante": "",
+    "kz": 11500
+  },
+  "hamburgueres:ankara-burger:0": {
+    "nome": "Ankara Burger",
+    "variante": "",
+    "kz": 14000
+  },
+  "hamburgueres:atum-burger:0": {
+    "nome": "Atum Burger",
+    "variante": "",
+    "kz": 13000
+  },
+  "hamburgueres:ovo-cheese-burger:0": {
+    "nome": "Ovo Cheese Burger",
+    "variante": "",
+    "kz": 12000
+  },
+  "hamburgueres:big-burger:0": {
+    "nome": "Big Burger",
+    "variante": "",
+    "kz": 14000
+  },
+  "hamburgueres:cogumelo-cheese-burger:0": {
+    "nome": "Cogumelo Cheese Burger",
+    "variante": "",
+    "kz": 12000
+  },
+  "hamburgueres:abacate-cheese-burger:0": {
+    "nome": "Abacate Cheese Burger",
+    "variante": "",
+    "kz": 12000
+  },
+  "hamburgueres:frango-burger:0": {
+    "nome": "Frango Burger",
+    "variante": "",
+    "kz": 11500
+  },
+  "hamburgueres:abacaxi-burger:0": {
+    "nome": "Abacaxi Burger",
+    "variante": "",
+    "kz": 12000
+  },
+  "pizzas:pizza-de-salame:0": {
+    "nome": "Pizza de salame",
+    "variante": "",
+    "kz": 16000
+  },
+  "pizzas:pizza-de-salame:1": {
+    "nome": "Pizza de salame",
+    "variante": "",
+    "kz": 15000
+  },
+  "pizzas:pizza-de-almondegas:0": {
+    "nome": "Pizza de almôndegas",
+    "variante": "",
+    "kz": 16500
+  },
+  "pizzas:pizza-de-almondegas:1": {
+    "nome": "Pizza de almôndegas",
+    "variante": "",
+    "kz": 15500
+  },
+  "pizzas:pizza-de-frango-barbecue:0": {
+    "nome": "Pizza de frango barbecue",
+    "variante": "",
+    "kz": 15000
+  },
+  "pizzas:pizza-de-frango-barbecue:1": {
+    "nome": "Pizza de frango barbecue",
+    "variante": "",
+    "kz": 14000
+  },
+  "pizzas:pizza-margarita:0": {
+    "nome": "Pizza margarita",
+    "variante": "",
+    "kz": 15000
+  },
+  "pizzas:pizza-margarita:1": {
+    "nome": "Pizza margarita",
+    "variante": "",
+    "kz": 13500
+  },
+  "pizzas:pizza-de-frango:0": {
+    "nome": "Pizza de frango",
+    "variante": "",
+    "kz": 16000
+  },
+  "pizzas:pizza-de-frango:1": {
+    "nome": "Pizza de frango",
+    "variante": "",
+    "kz": 14500
+  },
+  "pizzas:pizza-de-salsicha:0": {
+    "nome": "Pizza de salsicha",
+    "variante": "",
+    "kz": 15000
+  },
+  "pizzas:pizza-de-salsicha:1": {
+    "nome": "Pizza de salsicha",
+    "variante": "",
+    "kz": 14000
+  },
+  "pizzas:pizza-mista:0": {
+    "nome": "Pizza mista",
+    "variante": "",
+    "kz": 17500
+  },
+  "pizzas:pizza-mista:1": {
+    "nome": "Pizza mista",
+    "variante": "",
+    "kz": 16000
+  },
+  "pizzas:pizza-de-carne:0": {
+    "nome": "Pizza de carne",
+    "variante": "",
+    "kz": 17000
+  },
+  "pizzas:pizza-de-carne:1": {
+    "nome": "Pizza de carne",
+    "variante": "",
+    "kz": 15500
+  },
+  "pizzas:pizza-de-atum:0": {
+    "nome": "Pizza de atum",
+    "variante": "",
+    "kz": 17500
+  },
+  "pizzas:pizza-de-atum:1": {
+    "nome": "Pizza de atum",
+    "variante": "",
+    "kz": 16000
+  },
+  "pizzas:pizza-de-cogumelos:0": {
+    "nome": "Pizza de cogumelos",
+    "variante": "",
+    "kz": 16000
+  },
+  "pizzas:pizza-de-cogumelos:1": {
+    "nome": "Pizza de cogumelos",
+    "variante": "",
+    "kz": 14500
+  },
+  "pizzas:pizza-de-camarao:0": {
+    "nome": "Pizza de camarão",
+    "variante": "",
+    "kz": 20000
+  },
+  "pizzas:pizza-de-camarao:1": {
+    "nome": "Pizza de camarão",
+    "variante": "",
+    "kz": 18000
+  },
+  "pizzas:pizza-de-carne-moida:0": {
+    "nome": "Pizza de carne moída",
+    "variante": "",
+    "kz": 17000
+  },
+  "pizzas:pizza-de-carne-moida:1": {
+    "nome": "Pizza de carne moída",
+    "variante": "",
+    "kz": 15000
+  },
+  "pizzas:pizza-vegetariana:0": {
+    "nome": "Pizza vegetariana",
+    "variante": "",
+    "kz": 16000
+  },
+  "pizzas:pizza-vegetariana:1": {
+    "nome": "Pizza vegetariana",
+    "variante": "",
+    "kz": 14500
+  },
+  "pizzas:pizza-4-estacoes:0": {
+    "nome": "Pizza 4 estações",
+    "variante": "",
+    "kz": 18000
+  },
+  "pizzas:pizza-4-estacoes:1": {
+    "nome": "Pizza 4 estações",
+    "variante": "",
+    "kz": 16000
+  },
+  "pizzas:pizza-de-presunto-e-ovo:0": {
+    "nome": "Pizza de presunto e ovo",
+    "variante": "",
+    "kz": 16500
+  },
+  "pizzas:pizza-de-presunto-e-ovo:1": {
+    "nome": "Pizza de presunto e ovo",
+    "variante": "",
+    "kz": 15000
+  },
+  "pizzas:pizza-de-almondegas-de-frango:0": {
+    "nome": "Pizza de almôndegas de frango",
+    "variante": "",
+    "kz": 16500
+  },
+  "pizzas:pizza-de-almondegas-de-frango:1": {
+    "nome": "Pizza de almôndegas de frango",
+    "variante": "",
+    "kz": 14500
+  },
+  "grelhados:carne-grelhada:0": {
+    "nome": "Carne grelhada",
+    "variante": "",
+    "kz": 16500
+  },
+  "grelhados:kofte-grelhado-com-molho-de-tomate:0": {
+    "nome": "Köfte grelhado com molho de tomate",
+    "variante": "",
+    "kz": 16500
+  },
+  "grelhados:frango-grelhado:0": {
+    "nome": "Frango grelhado",
+    "variante": "",
+    "kz": 15000
+  },
+  "grelhados:grelhado-misto:0": {
+    "nome": "Grelhado misto",
+    "variante": "",
+    "kz": 18500
+  },
+  "grelhados:grelhada-bitoque:0": {
+    "nome": "Grelhada bitoque",
+    "variante": "",
+    "kz": 17000
+  },
+  "grelhados:franga-com-molho:0": {
+    "nome": "Franga com molho",
+    "variante": "",
+    "kz": 16000
+  },
+  "grelhados:kofte:0": {
+    "nome": "Köfte",
+    "variante": "",
+    "kz": 16000
+  },
+  "grelhados:frango-crocante:0": {
+    "nome": "Frango crocante",
+    "variante": "",
+    "kz": 16500
+  },
+  "faita:faita-de-carne:0": {
+    "nome": "Faita de carne",
+    "variante": "",
+    "kz": 11000
+  },
+  "faita:faita-de-frango:0": {
+    "nome": "Faita de frango",
+    "variante": "",
+    "kz": 10500
+  },
+  "faita:faita-de-almondegas:0": {
+    "nome": "Faita de almôndegas",
+    "variante": "",
+    "kz": 11000
+  },
+  "faita:faita-de-atum:0": {
+    "nome": "Faita de atum",
+    "variante": "",
+    "kz": 12500
+  },
+  "faita:faita-mista:0": {
+    "nome": "Faita mista",
+    "variante": "",
+    "kz": 12500
+  },
+  "faita:faita-de-camarao:0": {
+    "nome": "Faita de camarão",
+    "variante": "",
+    "kz": 14500
+  },
+  "esparguete:esparguete-com-almondegas:0": {
+    "nome": "Esparguete com almôndegas",
+    "variante": "",
+    "kz": 16500
+  },
+  "esparguete:esparguete-com-atum:0": {
+    "nome": "Esparguete com atum",
+    "variante": "",
+    "kz": 16500
+  },
+  "esparguete:esparguete-com-frango:0": {
+    "nome": "Esparguete com frango",
+    "variante": "",
+    "kz": 16500
+  },
+  "esparguete:esparguete-a-bolonhesa:0": {
+    "nome": "Esparguete à bolonhesa",
+    "variante": "",
+    "kz": 16500
+  },
+  "esparguete:esparguete-com-camarao:0": {
+    "nome": "Esparguete com camarão",
+    "variante": "",
+    "kz": 18500
+  },
+  "meze:meze-de-urfa:0": {
+    "nome": "Meze de Urfa",
+    "variante": "",
+    "kz": 4000
+  },
+  "meze:meze-de-humus:0": {
+    "nome": "Meze de húmus",
+    "variante": "",
+    "kz": 5000
+  },
+  "meze:meze-russo:0": {
+    "nome": "Meze russo",
+    "variante": "",
+    "kz": 5000
+  },
+  "matabicho:omelete-de-queijo:0": {
+    "nome": "Omelete de queijo",
+    "variante": "",
+    "kz": 9000
+  },
+  "matabicho:omelete-de-frango:0": {
+    "nome": "Omelete de frango",
+    "variante": "",
+    "kz": 9500
+  },
+  "matabicho:omelete-de-carne:0": {
+    "nome": "Omelete de carne",
+    "variante": "",
+    "kz": 10500
+  },
+  "matabicho:omelete-misto:0": {
+    "nome": "Omelete misto",
+    "variante": "",
+    "kz": 11000
+  },
+  "matabicho:torrada-de-queijo:0": {
+    "nome": "Torrada de queijo",
+    "variante": "",
+    "kz": 8500
+  },
+  "matabicho:torrada-mista:0": {
+    "nome": "Torrada mista",
+    "variante": "",
+    "kz": 9500
+  },
+  "matabicho:sopa-turca-de-lentilhas:0": {
+    "nome": "Sopa turca de lentilhas",
+    "variante": "",
+    "kz": 6000
+  },
+  "matabicho:sopa-de-tomate:0": {
+    "nome": "Sopa de tomate",
+    "variante": "",
+    "kz": 6000
+  },
+  "matabicho:batata-frita:0": {
+    "nome": "Batata frita",
+    "variante": "",
+    "kz": 6000
+  },
+  "sobremesas:cheesecake-de-morango:0": {
+    "nome": "Cheesecake de morango",
+    "variante": "",
+    "kz": 8000
+  },
+  "sobremesas:cheesecake-sao-sebastiao:0": {
+    "nome": "Cheesecake São Sebastião",
+    "variante": "",
+    "kz": 8000
+  },
+  "sobremesas:magnolia:0": {
+    "nome": "Magnólia",
+    "variante": "",
+    "kz": 5000
+  },
+  "sobremesas:arroz-doce:0": {
+    "nome": "Arroz doce",
+    "variante": "",
+    "kz": 5000
+  },
+  "sobremesas:pasta:0": {
+    "nome": "Pasta",
+    "variante": "",
+    "kz": 4000
+  },
+  "bebidas-quentes:cay-turco:0": {
+    "nome": "Çay turco",
+    "variante": "",
+    "kz": 3000
+  },
+  "bebidas-quentes:cafe-turco:0": {
+    "nome": "Café turco",
+    "variante": "",
+    "kz": 5000
+  },
+  "bebidas-quentes:cafe-expresso:0": {
+    "nome": "Café expresso",
+    "variante": "",
+    "kz": 3000
+  },
+  "bebidas-quentes:galao:0": {
+    "nome": "Galão",
+    "variante": "",
+    "kz": 6000
+  },
+  "bebidas-quentes:cha:0": {
+    "nome": "Chá",
+    "variante": "",
+    "kz": 5000
+  },
+  "bebidas-quentes:limonada-turca:0": {
+    "nome": "Limonada turca",
+    "variante": "",
+    "kz": 3500
+  },
+  "bebidas-quentes:sumo-natural-de-pitaia:0": {
+    "nome": "Sumo natural de pitaia",
+    "variante": "",
+    "kz": 7500
+  },
+  "bebidas-quentes:sumo-natural-de-maracuja:0": {
+    "nome": "Sumo natural de maracujá",
+    "variante": "",
+    "kz": 7500
+  },
+  "bebidas-quentes:sumo-natural-de-maca:0": {
+    "nome": "Sumo natural de maçã",
+    "variante": "",
+    "kz": 7500
+  },
+  "bebidas-quentes:sumo-natural-de-tomate:0": {
+    "nome": "Sumo natural de tomate",
+    "variante": "",
+    "kz": 7500
+  },
+  "bebidas-quentes:sumo-natural-de-melancia:0": {
+    "nome": "Sumo natural de melancia",
+    "variante": "",
+    "kz": 7000
+  },
+  "bebidas-quentes:sumo-natural-de-cenoura:0": {
+    "nome": "Sumo natural de cenoura",
+    "variante": "",
+    "kz": 7000
+  },
+  "bebidas-quentes:sumo-natural-misto:0": {
+    "nome": "Sumo natural misto",
+    "variante": "",
+    "kz": 8500
+  },
+  "bebidas-frias:limonada:0": {
+    "nome": "Limonada",
+    "variante": "Pequena",
+    "kz": 3000
+  },
+  "bebidas-frias:limonada:1": {
+    "nome": "Limonada",
+    "variante": "Grande",
+    "kz": 3500
+  },
+  "bebidas-frias:sumo-natural-de-laranja:0": {
+    "nome": "Sumo natural de laranja",
+    "variante": "",
+    "kz": 7500
+  },
+  "bebidas-frias:sumo-natural-de-ananas:0": {
+    "nome": "Sumo natural de ananás",
+    "variante": "",
+    "kz": 7500
+  },
+  "bebidas-frias:sumo-natural-misto:0": {
+    "nome": "Sumo natural misto",
+    "variante": "",
+    "kz": 7500
+  },
+  "bebidas-frias:milkshake-de-banana:0": {
+    "nome": "Milkshake de banana",
+    "variante": "",
+    "kz": 8500
+  },
+  "bebidas-frias:milkshake-de-chocolate:0": {
+    "nome": "Milkshake de chocolate",
+    "variante": "",
+    "kz": 9000
+  },
+  "bebidas-frias:milkshake-misto:0": {
+    "nome": "Milkshake misto",
+    "variante": "",
+    "kz": 10000
+  },
+  "bebidas-frias:batido-de-abacate:0": {
+    "nome": "Batido de abacate",
+    "variante": "",
+    "kz": 7000
+  },
+  "bebidas-frias:batido-misto:0": {
+    "nome": "Batido misto",
+    "variante": "",
+    "kz": 8000
+  },
+  "bebidas-frias:agua:0": {
+    "nome": "Água",
+    "variante": "500 ml",
+    "kz": 1500
+  },
+  "bebidas-frias:agua:1": {
+    "nome": "Água",
+    "variante": "1,5 l",
+    "kz": 4500
+  },
+  "bebidas-frias:agua-tonica:0": {
+    "nome": "Água tónica",
+    "variante": "330 ml",
+    "kz": 3500
+  },
+  "bebidas-frias:coca-cola:0": {
+    "nome": "Coca-Cola",
+    "variante": "330 ml",
+    "kz": 3000
+  },
+  "bebidas-frias:coca-cola:1": {
+    "nome": "Coca-Cola",
+    "variante": "1,5 l",
+    "kz": 8500
+  },
+  "bebidas-frias:fanta:0": {
+    "nome": "Fanta",
+    "variante": "330 ml",
+    "kz": 3000
+  },
+  "bebidas-frias:fanta:1": {
+    "nome": "Fanta",
+    "variante": "1,5 l",
+    "kz": 8500
+  },
+  "bebidas-frias:sprite:0": {
+    "nome": "Sprite",
+    "variante": "330 ml",
+    "kz": 3000
+  },
+  "bebidas-frias:sprite:1": {
+    "nome": "Sprite",
+    "variante": "1,5 l",
+    "kz": 8500
+  },
+  "bebidas-frias:pepsi:0": {
+    "nome": "Pepsi",
+    "variante": "330 ml",
+    "kz": 3000
+  },
+  "bebidas-frias:sumol-de-ananas:0": {
+    "nome": "Sumol de ananás",
+    "variante": "330 ml",
+    "kz": 3000
+  },
+  "bebidas-frias:sumol-de-laranja:0": {
+    "nome": "Sumol de laranja",
+    "variante": "",
+    "kz": 3000
+  },
+  "bebidas-frias:red-bull:0": {
+    "nome": "Red Bull",
+    "variante": "200 ml",
+    "kz": 5000
+  }
+}

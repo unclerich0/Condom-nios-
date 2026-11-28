@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="pt-AO" data-type="place" data-page="ementa" data-idx="0">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+  <title>Ementa · Chef Burger, Kilamba</title>
+  <meta name="description" content="Os 94 pratos do Chef Burger com o preço da carta em kwanzas: hambúrgueres, pizzas, grelhados turcos, faita, meze, matabicho, sobremesas e bebidas. Pedido pelo WhatsApp.">
+  <meta name="page-type" content="place">
+  <meta name="theme-color" content="#f4efe6">
+  <meta name="color-scheme" content="light">
+  <meta property="og:title" content="Ementa · Chef Burger, Kilamba">
+  <meta property="og:description" content="Os 94 pratos do Chef Burger com o preço da carta em kwanzas: hambúrgueres, pizzas, grelhados turcos, faita, meze, matabicho, sobremesas e bebidas. Pedido pelo WhatsApp.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_AO">
+  <meta property="og:image" content="https://chef-burger-kilamba.onrender.com/img/og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Hambúrguer duplo com queijo e cebola caramelizada">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+
+  <link rel="stylesheet" href="css/site.css">
+  <script>
+    /* Transição entre páginas: a direção sai da ordem das páginas (início -1, ementa 0, categorias 1…10). */
+    (function () {
+      var d = document.documentElement, K = "cb-nav";
+      d.classList.add("js");
+      var to = Number(d.dataset.idx);
+      /* Safari (iPhone, iPad, Mac): sem transição entre documentos; o Voltar do Safari salta entradas com ela. */
+      var ua = navigator.userAgent, webkit = /iPhone|iPad|iPod/.test(ua) || (/AppleWebKit/.test(ua) && !/Chrome|Chromium|Edg|Android/.test(ua));
+      function read() {
+        var from = null, sl = null;
+        try { var o = JSON.parse(sessionStorage.getItem(K) || "null"); if (o && Date.now() - o.t < 8000) { from = o.from; sl = o.sl; } } catch (e) {}
+        return { from: from, to: to, sl: sl, dir: from === null || from === to ? "" : (to > from ? "forward" : "back") };
+      }
+      var nav = window.__cbNav = read();
+      if (nav.dir) d.dataset.arrived = nav.dir;
+      function remember() {
+        var n = document.querySelector("[data-catnav]");
+        try { sessionStorage.setItem(K, JSON.stringify({ from: to, t: Date.now(), sl: n ? n.scrollLeft : null })); } catch (e) {}
+      }
+      function thumbName(v) { var t = document.querySelector("[data-catbar] [data-thumb]"); if (t) t.style.viewTransitionName = v; }
+      function isHome(url) { try { return /\/(index\.html)?$/.test(new URL(url, location.href).pathname); } catch (e) { return false; } }
+      window.addEventListener("pageswap", function (e) {
+        remember();
+        if (!e.viewTransition) return;
+        if (webkit) { e.viewTransition.ready.catch(function () {}); e.viewTransition.skipTransition(); return; }
+        /* De e para o início, a barra muda de sítio: o indicador viaja dentro dela, não à parte. */
+        if (to < 0 || (e.activation && e.activation.entry && isHome(e.activation.entry.url))) thumbName("none");
+        /* A barra de vidro só viaja se estiver à vista; fora do ecrã voaria de longe. */
+        var bar = document.querySelector("[data-catbar]");
+        if (bar) { var r = bar.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) { bar.style.viewTransitionName = "none"; var t = bar.querySelector("[data-thumb]"); if (t) t.style.viewTransitionName = "none"; } }
+      });
+      window.addEventListener("pagehide", remember);
+      window.addEventListener("pageshow", function () {
+        $$reset();
+      });
+      function $$reset() { var bar = document.querySelector("[data-catbar]"); if (!bar) return; bar.style.viewTransitionName = ""; var t = bar.querySelector("[data-thumb]"); if (t) t.style.viewTransitionName = ""; }
+      var vtCross = "CSSViewTransitionRule" in window;
+      if (!vtCross && nav.dir && !matchMedia("(prefers-reduced-motion: reduce)").matches) d.dataset.enter = nav.dir;
+      window.__cbReveal = new Promise(function (res) {
+        window.addEventListener("pagereveal", function (e) {
+          var n = window.__cbNav = read();
+          if (!e.viewTransition) return res();
+          if (webkit || !n.dir) { e.viewTransition.ready.catch(function () {}); e.viewTransition.skipTransition(); return res(); }
+          if (n.from < 0 || n.to < 0) thumbName("none");
+          e.viewTransition.types.add(n.dir);
+          if (n.from >= 0 && n.to >= 0) e.viewTransition.types.add("within"); /* a barra fica no sítio: o indicador pode ressaltar */
+          e.viewTransition.finished.then(res, res);
+        });
+        setTimeout(res, 900);
+      });
+    })();
+  </script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Menu","name":"Ementa do Chef Burger","inLanguage":"pt-AO","hasMenuSection":[{"@type":"MenuSection","name":"Hambúrgueres","hasMenuItem":[{"@type":"MenuItem","name":"Chef Burger","description":"Carne, cebola caramelizada, queijo, molho Chef e batatas fritas","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":11500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"İstanbul Cheese Burger","description":"Carne, cebola caramelizada, molho Chef e batatas fritas","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":11500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"İzmir Burger","description":"Carne, cebola, salada, queijo, molho Chef e batatas fritas","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":11500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Ankara Burger","description":"Carne grelhada, molho Chef, tomate, alface, cebola fresca e pickles","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":14000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Atum Burger","description":"Carne, cebola, salada, queijo, molho Chef, atum e batatas fritas","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":13000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Ovo Cheese Burger","description":"Carne, queijo, cebola caramelizada, molho Chef e batatas fritas","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":12000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Big Burger","description":"Carne dupla, queijo duplo, alface, cebola, molho Chef, pimento em salmoura e batatas fritas","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":14000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Cogumelo Cheese Burger","description":"Carne, queijo, cebola caramelizada, molho Chef, cogumelos salteados e batatas fritas","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":12000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Abacate Cheese Burger","description":"Carne, queijo, cebola caramelizada, molho Chef, abacate e batatas fritas","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":12000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Frango Burger","description":"Frango grelhado, salada, queijo, molho Chef e batatas fritas","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":11500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Abacaxi Burger","description":"Carne, queijo, cebola caramelizada, molho Chef, abacaxi e batatas fritas","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":12000,"priceCurrency":"AOA"}]}]},{"@type":"MenuSection","name":"Pizzas","hasMenuItem":[{"@type":"MenuItem","name":"Pizza de salame","description":"Molho Chef, queijo, mozzarella, pimento, cebola e milho","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":16000,"priceCurrency":"AOA"},{"@type":"Offer","price":15000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Pizza de almôndegas","description":"Molho İstanbul, queijo, mozzarella, pimento, tomate e almôndegas","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":16500,"priceCurrency":"AOA"},{"@type":"Offer","price":15500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Pizza de frango barbecue","description":"Molho İstanbul, queijo, mozzarella, frango e molho barbecue","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":15000,"priceCurrency":"AOA"},{"@type":"Offer","price":14000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Pizza margarita","description":"Molho İstanbul, queijo, mozzarella, pimento, tomate e cogumelos","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":15000,"priceCurrency":"AOA"},{"@type":"Offer","price":13500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Pizza de frango","description":"Molho İstanbul, queijo, mozzarella, pimento, frango, tomate e cogumelos","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":16000,"priceCurrency":"AOA"},{"@type":"Offer","price":14500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Pizza de salsicha","description":"Molho İstanbul, queijo, mozzarella, salsicha, tomate e pimento","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":15000,"priceCurrency":"AOA"},{"@type":"Offer","price":14000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Pizza mista","description":"Molho İstanbul, queijo, mozzarella, pimento, tomate, milho, azeitonas, carne, frango, cogumelos e almôndegas","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":17500,"priceCurrency":"AOA"},{"@type":"Offer","price":16000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Pizza de carne","description":"Molho İstanbul, queijo, mozzarella, pimento, tomate, milho e carne","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":17000,"priceCurrency":"AOA"},{"@type":"Offer","price":15500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Pizza de atum","description":"Molho İstanbul, queijo, mozzarella, pimento, atum, tomate e cogumelos","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":17500,"priceCurrency":"AOA"},{"@type":"Offer","price":16000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Pizza de cogumelos","description":"Molho İstanbul, queijo, mozzarella, pimento, tomate, milho e cogumelos","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":16000,"priceCurrency":"AOA"},{"@type":"Offer","price":14500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Pizza de camarão","description":"Molho İstanbul, queijo, mozzarella, camarão, cogumelos e milho","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":20000,"priceCurrency":"AOA"},{"@type":"Offer","price":18000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Pizza de carne moída","description":"Molho İstanbul, queijo, mozzarella, carne moída, tomate e pimento","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":17000,"priceCurrency":"AOA"},{"@type":"Offer","price":15000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Pizza vegetariana","description":"Molho İstanbul, queijo, mozzarella, tomate, milho, pimento, abóbora e beringela","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":16000,"priceCurrency":"AOA"},{"@type":"Offer","price":14500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Pizza 4 estações","description":"Molho İstanbul, queijo, mozzarella, pimento, tomate, carne, frango, atum e cogumelos","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":18000,"priceCurrency":"AOA"},{"@type":"Offer","price":16000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Pizza de presunto e ovo","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":16500,"priceCurrency":"AOA"},{"@type":"Offer","price":15000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Pizza de almôndegas de frango","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":16500,"priceCurrency":"AOA"},{"@type":"Offer","price":14500,"priceCurrency":"AOA"}]}]},{"@type":"MenuSection","name":"Grelhados turcos","hasMenuItem":[{"@type":"MenuItem","name":"Carne grelhada","description":"Carne grelhada, arroz, batata frita e salada","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":16500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Köfte grelhado com molho de tomate","description":"Köfte, arroz, batata frita e salada","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":16500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Frango grelhado","description":"Frango grelhado, arroz, batata frita e salada","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":15000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Grelhado misto","description":"Carne, frango e köfte, com arroz, batata frita e salada","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":18500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Grelhada bitoque","description":"Grelhada, arroz, batata frita e salada","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":17000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Franga com molho","description":"Franga com molho, arroz, batata frita e salada","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":16000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Köfte","description":"Köfte, arroz, batata frita e salada","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":16000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Frango crocante","description":"Frango crocante, arroz, batata frita e salada","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":16500,"priceCurrency":"AOA"}]}]},{"@type":"MenuSection","name":"Faita","hasMenuItem":[{"@type":"MenuItem","name":"Faita de carne","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":11000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Faita de frango","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":10500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Faita de almôndegas","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":11000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Faita de atum","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":12500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Faita mista","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":12500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Faita de camarão","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":14500,"priceCurrency":"AOA"}]}]},{"@type":"MenuSection","name":"Esparguete","hasMenuItem":[{"@type":"MenuItem","name":"Esparguete com almôndegas","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":16500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Esparguete com atum","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":16500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Esparguete com frango","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":16500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Esparguete à bolonhesa","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":16500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Esparguete com camarão","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":18500,"priceCurrency":"AOA"}]}]},{"@type":"MenuSection","name":"Meze turco","hasMenuItem":[{"@type":"MenuItem","name":"Meze de Urfa","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":4000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Meze de húmus","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":5000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Meze russo","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":5000,"priceCurrency":"AOA"}]}]},{"@type":"MenuSection","name":"Matabicho","hasMenuItem":[{"@type":"MenuItem","name":"Omelete de queijo","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":9000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Omelete de frango","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":9500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Omelete de carne","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":10500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Omelete misto","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":11000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Torrada de queijo","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":8500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Torrada mista","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":9500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Sopa turca de lentilhas","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":6000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Sopa de tomate","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":6000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Batata frita","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":6000,"priceCurrency":"AOA"}]}]},{"@type":"MenuSection","name":"Sobremesas","hasMenuItem":[{"@type":"MenuItem","name":"Cheesecake de morango","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":8000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Cheesecake São Sebastião","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":8000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Magnólia","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":5000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Arroz doce","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":5000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Pasta","description":"Fatia de bolo do dia, à escolha na vitrine","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":4000,"priceCurrency":"AOA"}]}]},{"@type":"MenuSection","name":"Cafés, chá e sumos naturais","hasMenuItem":[{"@type":"MenuItem","name":"Çay turco","description":"O chá turco, servido no copo tulipa","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":3000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Café turco","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":5000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Café expresso","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":3000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Galão","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":6000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Chá","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":5000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Limonada turca","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":3500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Sumo natural de pitaia","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":7500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Sumo natural de maracujá","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":7500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Sumo natural de maçã","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":7500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Sumo natural de tomate","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":7500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Sumo natural de melancia","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":7000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Sumo natural de cenoura","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":7000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Sumo natural misto","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":8500,"priceCurrency":"AOA"}]}]},{"@type":"MenuSection","name":"Bebidas frias","hasMenuItem":[{"@type":"MenuItem","name":"Limonada","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":3000,"priceCurrency":"AOA","name":"Pequena"},{"@type":"Offer","price":3500,"priceCurrency":"AOA","name":"Grande"}]},{"@type":"MenuItem","name":"Sumo natural de laranja","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":7500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Sumo natural de ananás","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":7500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Sumo natural misto","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":7500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Milkshake de banana","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":8500,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Milkshake de chocolate","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":9000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Milkshake misto","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":10000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Batido de abacate","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":7000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Batido misto","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":8000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Água","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":1500,"priceCurrency":"AOA","name":"500 ml"},{"@type":"Offer","price":4500,"priceCurrency":"AOA","name":"1,5 l"}]},{"@type":"MenuItem","name":"Água tónica","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":3500,"priceCurrency":"AOA","name":"330 ml"}]},{"@type":"MenuItem","name":"Coca-Cola","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":3000,"priceCurrency":"AOA","name":"330 ml"},{"@type":"Offer","price":8500,"priceCurrency":"AOA","name":"1,5 l"}]},{"@type":"MenuItem","name":"Fanta","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":3000,"priceCurrency":"AOA","name":"330 ml"},{"@type":"Offer","price":8500,"priceCurrency":"AOA","name":"1,5 l"}]},{"@type":"MenuItem","name":"Sprite","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":3000,"priceCurrency":"AOA","name":"330 ml"},{"@type":"Offer","price":8500,"priceCurrency":"AOA","name":"1,5 l"}]},{"@type":"MenuItem","name":"Pepsi","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":3000,"priceCurrency":"AOA","name":"330 ml"}]},{"@type":"MenuItem","name":"Sumol de ananás","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":3000,"priceCurrency":"AOA","name":"330 ml"}]},{"@type":"MenuItem","name":"Sumol de laranja","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":3000,"priceCurrency":"AOA"}]},{"@type":"MenuItem","name":"Red Bull","suitableForDiet":"https://schema.org/HalalDiet","offers":[{"@type":"Offer","price":5000,"priceCurrency":"AOA","name":"200 ml"}]}]}]}</script>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></symbol>
+    <symbol id="i-bag" viewBox="0 0 24 24"><path d="M5.5 8h13l-1 12h-11z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M6.6 3.5h2.6l1.4 4-2 1.3a11 11 0 0 0 6.6 6.6l1.3-2 4 1.4v2.6a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2z"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h9"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="14.5" rx="2"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="i-wa" viewBox="0 0 24 24"><path class="fill" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></symbol>
+    <symbol id="i-ig" viewBox="0 0 24 24"><path class="fill" d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/></symbol>
+    <symbol id="i-fb" viewBox="0 0 24 24"><path class="fill" d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></symbol>
+    <symbol id="i-tt" viewBox="0 0 24 24"><path class="fill" d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></symbol>
+  </svg>
+  <a class="skip" href="#conteudo">Saltar para o conteúdo</a>
+
+  <header class="nav" data-nav>
+    <div class="wrap nav__in">
+      <a class="brand" href="./" aria-label="Chef Burger, início" data-idx="-1"><span class="brand__chef">Chef</span><span class="brand__burger">Burger</span></a>
+      <nav class="nav__links" aria-label="Páginas">
+        <a href="ementa.html" data-idx="0" aria-current="page">Ementa</a>
+        <a href="./#casa" data-idx="-1">A casa</a>
+        <a href="./#reservar" data-idx="-1">Reservar</a>
+        <a href="./#onde" data-idx="-1">Onde estamos</a>
+      </nav>
+      <div class="nav__end">
+        <p class="status" data-status><span class="status__dot" aria-hidden="true"></span><span data-status-short>Aberto</span></p>
+        <button type="button" class="nav__bag glass" data-open-cart aria-label="Abrir o pedido, vazio">
+          <svg class="ic" aria-hidden="true"><use href="#i-bag"/></svg>
+          <span class="nav__bag-text">Pedido</span>
+          <span class="count" data-count hidden>0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="conteudo">
+      <div class="catbar" data-catbar>
+        <nav class="wrap catbar__in glass" aria-label="Páginas da ementa" data-catnav>
+          <span class="catbar__thumb" data-thumb aria-hidden="true"></span>
+          <a class="chip" href="ementa.html" data-idx="0" aria-current="page">Tudo</a>
+          <a class="chip" href="ementa.html#livro-hamburgueres" data-idx="1">Hambúrgueres</a>
+          <a class="chip" href="ementa.html#livro-pizzas" data-idx="2">Pizzas</a>
+          <a class="chip" href="ementa.html#livro-grelhados" data-idx="3">Grelhados</a>
+          <a class="chip" href="ementa.html#livro-faita" data-idx="4">Faita</a>
+          <a class="chip" href="ementa.html#livro-esparguete" data-idx="5">Esparguete</a>
+          <a class="chip" href="ementa.html#livro-meze" data-idx="6">Meze</a>
+          <a class="chip" href="ementa.html#livro-matabicho" data-idx="7">Matabicho</a>
+          <a class="chip" href="ementa.html#livro-sobremesas" data-idx="8">Sobremesas</a>
+          <a class="chip" href="ementa.html#livro-bebidas-quentes" data-idx="9">Cafés e chá</a>
+          <a class="chip" href="ementa.html#livro-bebidas-frias" data-idx="10">Bebidas frias</a>
+        </nav>
+      </div>
+      <script>(function(){var n=document.querySelector("[data-catnav]");if(!n)return;var a=n.querySelector('[aria-current="page"]'),t=n.querySelector("[data-thumb]"),s=window.__cbNav;if(s&&typeof s.sl==="number")n.scrollLeft=s.sl;else if(a)n.scrollLeft=a.offsetLeft-(n.clientWidth-a.offsetWidth)/2;if(a&&t){t.style.width=a.offsetWidth+"px";t.style.transform="translateX("+a.offsetLeft+"px)";t.dataset.on="true";}})();</script>
+    <section class="book-sec" id="livro" aria-labelledby="livro-t" data-book-sec>
+      <div class="wrap book-sec__head">
+        <h2 id="livro-t">Folhear a ementa</h2>
+        <p>Arraste a página com o dedo, ou toque na borda dela ou nas setas. O preço junta o prato ao pedido.</p>
+      </div>
+      <div class="book-stage" data-book-stage>
+        <div class="flipbook" data-book>
+        <div class="page page--cover" data-density="hard"><div class="page__in">
+          <p class="cover__brand"><span class="brand__chef">Chef</span><span class="brand__burger">Burger</span></p>
+          <p class="cover__t">Ementa</p>
+          <p class="cover__s">94 pratos turcos, 100% halal · Quarteirão W17, Kilamba</p>
+          <p class="cover__hint" aria-hidden="true">Arraste a página <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></p>
+        </div></div>
+        <div class="page" data-cat-id="hamburgueres" data-cat-start="1"><div class="page__in">
+          <figure class="page__pic"><img src="img/cat-hamburgueres.webp" srcset="img/cat-hamburgueres-480.webp 480w, img/cat-hamburgueres.webp 800w" sizes="(max-width: 899px) calc(100vw - 24px), 450px" alt="" width="800" height="800" loading="lazy" decoding="async"></figure><h3 class="page__t">Hambúrgueres</h3><p class="page__intro">Da nossa grill house, com o molho da casa do Chef.</p>
+          <ul class="page__dishes" role="list">
+            <li class="dish" data-dish data-search="hamburgueres chef burger carne, cebola caramelizada, queijo, molho chef e batatas fritas ">
+              <div class="dish__text"><h4 class="dish__t">Chef Burger</h4><p>Carne, cebola caramelizada, queijo, molho Chef e batatas fritas</p></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="hamburgueres:chef-burger:0" data-name="Chef Burger" data-variant="" data-kz="11500" data-cat="hamburgueres" aria-label="Juntar Chef Burger, 11.500 Kz, ao pedido"><span class="add__price">11.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="hamburgueres istanbul cheese burger carne, cebola caramelizada, molho chef e batatas fritas ">
+              <div class="dish__text"><h4 class="dish__t">İstanbul Cheese Burger</h4><p>Carne, cebola caramelizada, molho Chef e batatas fritas</p></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="hamburgueres:istanbul-cheese-burger:0" data-name="İstanbul Cheese Burger" data-variant="" data-kz="11500" data-cat="hamburgueres" aria-label="Juntar İstanbul Cheese Burger, 11.500 Kz, ao pedido"><span class="add__price">11.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="hamburgueres izmir burger carne, cebola, salada, queijo, molho chef e batatas fritas ">
+              <div class="dish__text"><h4 class="dish__t">İzmir Burger</h4><p>Carne, cebola, salada, queijo, molho Chef e batatas fritas</p></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="hamburgueres:izmir-burger:0" data-name="İzmir Burger" data-variant="" data-kz="11500" data-cat="hamburgueres" aria-label="Juntar İzmir Burger, 11.500 Kz, ao pedido"><span class="add__price">11.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>
+        <div class="page" data-cat-id="hamburgueres"><div class="page__in">
+          <p class="page__run">Hambúrgueres <span>2/3</span></p>
+          <ul class="page__dishes" role="list">
+            <li class="dish" data-dish data-search="hamburgueres ankara burger carne grelhada, molho chef, tomate, alface, cebola fresca e pickles ">
+              <div class="dish__text"><h4 class="dish__t">Ankara Burger</h4><p>Carne grelhada, molho Chef, tomate, alface, cebola fresca e pickles</p></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="hamburgueres:ankara-burger:0" data-name="Ankara Burger" data-variant="" data-kz="14000" data-cat="hamburgueres" aria-label="Juntar Ankara Burger, 14.000 Kz, ao pedido"><span class="add__price">14.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="hamburgueres atum burger carne, cebola, salada, queijo, molho chef, atum e batatas fritas ">
+              <div class="dish__text"><h4 class="dish__t">Atum Burger</h4><p>Carne, cebola, salada, queijo, molho Chef, atum e batatas fritas</p></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="hamburgueres:atum-burger:0" data-name="Atum Burger" data-variant="" data-kz="13000" data-cat="hamburgueres" aria-label="Juntar Atum Burger, 13.000 Kz, ao pedido"><span class="add__price">13.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="hamburgueres ovo cheese burger carne, queijo, cebola caramelizada, molho chef e batatas fritas ">
+              <div class="dish__text"><h4 class="dish__t">Ovo Cheese Burger</h4><p>Carne, queijo, cebola caramelizada, molho Chef e batatas fritas</p></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="hamburgueres:ovo-cheese-burger:0" data-name="Ovo Cheese Burger" data-variant="" data-kz="12000" data-cat="hamburgueres" aria-label="Juntar Ovo Cheese Burger, 12.000 Kz, ao pedido"><span class="add__price">12.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="hamburgueres big burger carne dupla, queijo duplo, alface, cebola, molho chef, pimento em salmoura e batatas fritas ">
+              <div class="dish__text"><h4 class="dish__t">Big Burger</h4><p>Carne dupla, queijo duplo, alface, cebola, molho Chef, pimento em salmoura e batatas fritas</p></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="hamburgueres:big-burger:0" data-name="Big Burger" data-variant="" data-kz="14000" data-cat="hamburgueres" aria-label="Juntar Big Burger, 14.000 Kz, ao pedido"><span class="add__price">14.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>
+        <div class="page" data-cat-id="hamburgueres"><div class="page__in">
+          <p class="page__run">Hambúrgueres <span>3/3</span></p>
+          <ul class="page__dishes" role="list">
+            <li class="dish" data-dish data-search="hamburgueres cogumelo cheese burger carne, queijo, cebola caramelizada, molho chef, cogumelos salteados e batatas fritas ">
+              <div class="dish__text"><h4 class="dish__t">Cogumelo Cheese Burger</h4><p>Carne, queijo, cebola caramelizada, molho Chef, cogumelos salteados e batatas fritas</p></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="hamburgueres:cogumelo-cheese-burger:0" data-name="Cogumelo Cheese Burger" data-variant="" data-kz="12000" data-cat="hamburgueres" aria-label="Juntar Cogumelo Cheese Burger, 12.000 Kz, ao pedido"><span class="add__price">12.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="hamburgueres abacate cheese burger carne, queijo, cebola caramelizada, molho chef, abacate e batatas fritas ">
+              <div class="dish__text"><h4 class="dish__t">Abacate Cheese Burger</h4><p>Carne, queijo, cebola caramelizada, molho Chef, abacate e batatas fritas</p></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="hamburgueres:abacate-cheese-burger:0" data-name="Abacate Cheese Burger" data-variant="" data-kz="12000" data-cat="hamburgueres" aria-label="Juntar Abacate Cheese Burger, 12.000 Kz, ao pedido"><span class="add__price">12.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="hamburgueres frango burger frango grelhado, salada, queijo, molho chef e batatas fritas ">
+              <div class="dish__text"><h4 class="dish__t">Frango Burger</h4><p>Frango grelhado, salada, queijo, molho Chef e batatas fritas</p></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="hamburgueres:frango-burger:0" data-name="Frango Burger" data-variant="" data-kz="11500" data-cat="hamburgueres" aria-label="Juntar Frango Burger, 11.500 Kz, ao pedido"><span class="add__price">11.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="hamburgueres abacaxi burger carne, queijo, cebola caramelizada, molho chef, abacaxi e batatas fritas ">
+              <div class="dish__text"><h4 class="dish__t">Abacaxi Burger</h4><p>Carne, queijo, cebola caramelizada, molho Chef, abacaxi e batatas fritas</p></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="hamburgueres:abacaxi-burger:0" data-name="Abacaxi Burger" data-variant="" data-kz="12000" data-cat="hamburgueres" aria-label="Juntar Abacaxi Burger, 12.000 Kz, ao pedido"><span class="add__price">12.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>
+        <div class="page" data-cat-id="pizzas" data-cat-start="2"><div class="page__in">
+          <figure class="page__pic"><img src="img/cat-pizzas.webp" srcset="img/cat-pizzas-480.webp 480w, img/cat-pizzas.webp 800w" sizes="(max-width: 899px) calc(100vw - 24px), 450px" alt="" width="800" height="800" loading="lazy" decoding="async"></figure><h3 class="page__t">Pizzas</h3><p class="page__intro">Com o molho İstanbul do Chef e mozzarella. A carta dá dois preços por pizza; a equipa confirma o tamanho no WhatsApp.</p>
+          <ul class="page__dishes" role="list">
+            <li class="dish" data-dish data-search="pizzas pizza de salame molho chef, queijo, mozzarella, pimento, cebola e milho  ">
+              <div class="dish__text"><h4 class="dish__t">Pizza de salame</h4><p>Molho Chef, queijo, mozzarella, pimento, cebola e milho</p></div>
+              <div class="dish__buy dish__buy--two"><button type="button" class="add" data-add data-key="pizzas:pizza-de-salame:0" data-name="Pizza de salame" data-variant="" data-kz="16000" data-cat="pizzas" aria-label="Juntar Pizza de salame, 16.000 Kz, ao pedido"><span class="add__price">16.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button><button type="button" class="add" data-add data-key="pizzas:pizza-de-salame:1" data-name="Pizza de salame" data-variant="" data-kz="15000" data-cat="pizzas" aria-label="Juntar Pizza de salame, 15.000 Kz, ao pedido"><span class="add__price">15.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="pizzas pizza de almondegas molho istanbul, queijo, mozzarella, pimento, tomate e almondegas  ">
+              <div class="dish__text"><h4 class="dish__t">Pizza de almôndegas</h4><p>Molho İstanbul, queijo, mozzarella, pimento, tomate e almôndegas</p></div>
+              <div class="dish__buy dish__buy--two"><button type="button" class="add" data-add data-key="pizzas:pizza-de-almondegas:0" data-name="Pizza de almôndegas" data-variant="" data-kz="16500" data-cat="pizzas" aria-label="Juntar Pizza de almôndegas, 16.500 Kz, ao pedido"><span class="add__price">16.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button><button type="button" class="add" data-add data-key="pizzas:pizza-de-almondegas:1" data-name="Pizza de almôndegas" data-variant="" data-kz="15500" data-cat="pizzas" aria-label="Juntar Pizza de almôndegas, 15.500 Kz, ao pedido"><span class="add__price">15.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>
+        <div class="page" data-cat-id="pizzas"><div class="page__in">
+          <p class="page__run">Pizzas <span>2/6</span></p>
+          <ul class="page__dishes" role="list">
+            <li class="dish" data-dish data-search="pizzas pizza de frango barbecue molho istanbul, queijo, mozzarella, frango e molho barbecue  ">
+              <div class="dish__text"><h4 class="dish__t">Pizza de frango barbecue</h4><p>Molho İstanbul, queijo, mozzarella, frango e molho barbecue</p></div>
+              <div class="dish__buy dish__buy--two"><button type="button" class="add" data-add data-key="pizzas:pizza-de-frango-barbecue:0" data-name="Pizza de frango barbecue" data-variant="" data-kz="15000" data-cat="pizzas" aria-label="Juntar Pizza de frango barbecue, 15.000 Kz, ao pedido"><span class="add__price">15.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button><button type="button" class="add" data-add data-key="pizzas:pizza-de-frango-barbecue:1" data-name="Pizza de frango barbecue" data-variant="" data-kz="14000" data-cat="pizzas" aria-label="Juntar Pizza de frango barbecue, 14.000 Kz, ao pedido"><span class="add__price">14.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="pizzas pizza margarita molho istanbul, queijo, mozzarella, pimento, tomate e cogumelos  ">
+              <div class="dish__text"><h4 class="dish__t">Pizza margarita</h4><p>Molho İstanbul, queijo, mozzarella, pimento, tomate e cogumelos</p></div>
+              <div class="dish__buy dish__buy--two"><button type="button" class="add" data-add data-key="pizzas:pizza-margarita:0" data-name="Pizza margarita" data-variant="" data-kz="15000" data-cat="pizzas" aria-label="Juntar Pizza margarita, 15.000 Kz, ao pedido"><span class="add__price">15.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button><button type="button" class="add" data-add data-key="pizzas:pizza-margarita:1" data-name="Pizza margarita" data-variant="" data-kz="13500" data-cat="pizzas" aria-label="Juntar Pizza margarita, 13.500 Kz, ao pedido"><span class="add__price">13.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="pizzas pizza de frango molho istanbul, queijo, mozzarella, pimento, frango, tomate e cogumelos  ">
+              <div class="dish__text"><h4 class="dish__t">Pizza de frango</h4><p>Molho İstanbul, queijo, mozzarella, pimento, frango, tomate e cogumelos</p></div>
+              <div class="dish__buy dish__buy--two"><button type="button" class="add" data-add data-key="pizzas:pizza-de-frango:0" data-name="Pizza de frango" data-variant="" data-kz="16000" data-cat="pizzas" aria-label="Juntar Pizza de frango, 16.000 Kz, ao pedido"><span class="add__price">16.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button><button type="button" class="add" data-add data-key="pizzas:pizza-de-frango:1" data-name="Pizza de frango" data-variant="" data-kz="14500" data-cat="pizzas" aria-label="Juntar Pizza de frango, 14.500 Kz, ao pedido"><span class="add__price">14.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>
+        <div class="page" data-cat-id="pizzas"><div class="page__in">
+          <p class="page__run">Pizzas <span>3/6</span></p>
+          <ul class="page__dishes" role="list">
+            <li class="dish" data-dish data-search="pizzas pizza de salsicha molho istanbul, queijo, mozzarella, salsicha, tomate e pimento  ">
+              <div class="dish__text"><h4 class="dish__t">Pizza de salsicha</h4><p>Molho İstanbul, queijo, mozzarella, salsicha, tomate e pimento</p></div>
+              <div class="dish__buy dish__buy--two"><button type="button" class="add" data-add data-key="pizzas:pizza-de-salsicha:0" data-name="Pizza de salsicha" data-variant="" data-kz="15000" data-cat="pizzas" aria-label="Juntar Pizza de salsicha, 15.000 Kz, ao pedido"><span class="add__price">15.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button><button type="button" class="add" data-add data-key="pizzas:pizza-de-salsicha:1" data-name="Pizza de salsicha" data-variant="" data-kz="14000" data-cat="pizzas" aria-label="Juntar Pizza de salsicha, 14.000 Kz, ao pedido"><span class="add__price">14.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="pizzas pizza mista molho istanbul, queijo, mozzarella, pimento, tomate, milho, azeitonas, carne, frango, cogumelos e almondegas  ">
+              <div class="dish__text"><h4 class="dish__t">Pizza mista</h4><p>Molho İstanbul, queijo, mozzarella, pimento, tomate, milho, azeitonas, carne, frango, cogumelos e almôndegas</p></div>
+              <div class="dish__buy dish__buy--two"><button type="button" class="add" data-add data-key="pizzas:pizza-mista:0" data-name="Pizza mista" data-variant="" data-kz="17500" data-cat="pizzas" aria-label="Juntar Pizza mista, 17.500 Kz, ao pedido"><span class="add__price">17.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button><button type="button" class="add" data-add data-key="pizzas:pizza-mista:1" data-name="Pizza mista" data-variant="" data-kz="16000" data-cat="pizzas" aria-label="Juntar Pizza mista, 16.000 Kz, ao pedido"><span class="add__price">16.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="pizzas pizza de carne molho istanbul, queijo, mozzarella, pimento, tomate, milho e carne  ">
+              <div class="dish__text"><h4 class="dish__t">Pizza de carne</h4><p>Molho İstanbul, queijo, mozzarella, pimento, tomate, milho e carne</p></div>
+              <div class="dish__buy dish__buy--two"><button type="button" class="add" data-add data-key="pizzas:pizza-de-carne:0" data-name="Pizza de carne" data-variant="" data-kz="17000" data-cat="pizzas" aria-label="Juntar Pizza de carne, 17.000 Kz, ao pedido"><span class="add__price">17.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button><button type="button" class="add" data-add data-key="pizzas:pizza-de-carne:1" data-name="Pizza de carne" data-variant="" data-kz="15500" data-cat="pizzas" aria-label="Juntar Pizza de carne, 15.500 Kz, ao pedido"><span class="add__price">15.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>
+        <div class="page" data-cat-id="pizzas"><div class="page__in">
+          <p class="page__run">Pizzas <span>4/6</span></p>
+          <ul class="page__dishes" role="list">
+            <li class="dish" data-dish data-search="pizzas pizza de atum molho istanbul, queijo, mozzarella, pimento, atum, tomate e cogumelos  ">
+              <div class="dish__text"><h4 class="dish__t">Pizza de atum</h4><p>Molho İstanbul, queijo, mozzarella, pimento, atum, tomate e cogumelos</p></div>
+              <div class="dish__buy dish__buy--two"><button type="button" class="add" data-add data-key="pizzas:pizza-de-atum:0" data-name="Pizza de atum" data-variant="" data-kz="17500" data-cat="pizzas" aria-label="Juntar Pizza de atum, 17.500 Kz, ao pedido"><span class="add__price">17.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button><button type="button" class="add" data-add data-key="pizzas:pizza-de-atum:1" data-name="Pizza de atum" data-variant="" data-kz="16000" data-cat="pizzas" aria-label="Juntar Pizza de atum, 16.000 Kz, ao pedido"><span class="add__price">16.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="pizzas pizza de cogumelos molho istanbul, queijo, mozzarella, pimento, tomate, milho e cogumelos  ">
+              <div class="dish__text"><h4 class="dish__t">Pizza de cogumelos</h4><p>Molho İstanbul, queijo, mozzarella, pimento, tomate, milho e cogumelos</p></div>
+              <div class="dish__buy dish__buy--two"><button type="button" class="add" data-add data-key="pizzas:pizza-de-cogumelos:0" data-name="Pizza de cogumelos" data-variant="" data-kz="16000" data-cat="pizzas" aria-label="Juntar Pizza de cogumelos, 16.000 Kz, ao pedido"><span class="add__price">16.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button><button type="button" class="add" data-add data-key="pizzas:pizza-de-cogumelos:1" data-name="Pizza de cogumelos" data-variant="" data-kz="14500" data-cat="pizzas" aria-label="Juntar Pizza de cogumelos, 14.500 Kz, ao pedido"><span class="add__price">14.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="pizzas pizza de camarao molho istanbul, queijo, mozzarella, camarao, cogumelos e milho  ">
+              <div class="dish__text"><h4 class="dish__t">Pizza de camarão</h4><p>Molho İstanbul, queijo, mozzarella, camarão, cogumelos e milho</p></div>
+              <div class="dish__buy dish__buy--two"><button type="button" class="add" data-add data-key="pizzas:pizza-de-camarao:0" data-name="Pizza de camarão" data-variant="" data-kz="20000" data-cat="pizzas" aria-label="Juntar Pizza de camarão, 20.000 Kz, ao pedido"><span class="add__price">20.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button><button type="button" class="add" data-add data-key="pizzas:pizza-de-camarao:1" data-name="Pizza de camarão" data-variant="" data-kz="18000" data-cat="pizzas" aria-label="Juntar Pizza de camarão, 18.000 Kz, ao pedido"><span class="add__price">18.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>
+        <div class="page" data-cat-id="pizzas"><div class="page__in">
+          <p class="page__run">Pizzas <span>5/6</span></p>
+          <ul class="page__dishes" role="list">
+            <li class="dish" data-dish data-search="pizzas pizza de carne moida molho istanbul, queijo, mozzarella, carne moida, tomate e pimento  ">
+              <div class="dish__text"><h4 class="dish__t">Pizza de carne moída</h4><p>Molho İstanbul, queijo, mozzarella, carne moída, tomate e pimento</p></div>
+              <div class="dish__buy dish__buy--two"><button type="button" class="add" data-add data-key="pizzas:pizza-de-carne-moida:0" data-name="Pizza de carne moída" data-variant="" data-kz="17000" data-cat="pizzas" aria-label="Juntar Pizza de carne moída, 17.000 Kz, ao pedido"><span class="add__price">17.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button><button type="button" class="add" data-add data-key="pizzas:pizza-de-carne-moida:1" data-name="Pizza de carne moída" data-variant="" data-kz="15000" data-cat="pizzas" aria-label="Juntar Pizza de carne moída, 15.000 Kz, ao pedido"><span class="add__price">15.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="pizzas pizza vegetariana molho istanbul, queijo, mozzarella, tomate, milho, pimento, abobora e beringela  ">
+              <div class="dish__text"><h4 class="dish__t">Pizza vegetariana</h4><p>Molho İstanbul, queijo, mozzarella, tomate, milho, pimento, abóbora e beringela</p></div>
+              <div class="dish__buy dish__buy--two"><button type="button" class="add" data-add data-key="pizzas:pizza-vegetariana:0" data-name="Pizza vegetariana" data-variant="" data-kz="16000" data-cat="pizzas" aria-label="Juntar Pizza vegetariana, 16.000 Kz, ao pedido"><span class="add__price">16.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button><button type="button" class="add" data-add data-key="pizzas:pizza-vegetariana:1" data-name="Pizza vegetariana" data-variant="" data-kz="14500" data-cat="pizzas" aria-label="Juntar Pizza vegetariana, 14.500 Kz, ao pedido"><span class="add__price">14.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="pizzas pizza 4 estacoes molho istanbul, queijo, mozzarella, pimento, tomate, carne, frango, atum e cogumelos  ">
+              <div class="dish__text"><h4 class="dish__t">Pizza 4 estações</h4><p>Molho İstanbul, queijo, mozzarella, pimento, tomate, carne, frango, atum e cogumelos</p></div>
+              <div class="dish__buy dish__buy--two"><button type="button" class="add" data-add data-key="pizzas:pizza-4-estacoes:0" data-name="Pizza 4 estações" data-variant="" data-kz="18000" data-cat="pizzas" aria-label="Juntar Pizza 4 estações, 18.000 Kz, ao pedido"><span class="add__price">18.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button><button type="button" class="add" data-add data-key="pizzas:pizza-4-estacoes:1" data-name="Pizza 4 estações" data-variant="" data-kz="16000" data-cat="pizzas" aria-label="Juntar Pizza 4 estações, 16.000 Kz, ao pedido"><span class="add__price">16.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>
+        <div class="page" data-cat-id="pizzas"><div class="page__in">
+          <p class="page__run">Pizzas <span>6/6</span></p>
+          <ul class="page__dishes" role="list">
+            <li class="dish" data-dish data-search="pizzas pizza de presunto e ovo   ">
+              <div class="dish__text"><h4 class="dish__t">Pizza de presunto e ovo</h4></div>
+              <div class="dish__buy dish__buy--two"><button type="button" class="add" data-add data-key="pizzas:pizza-de-presunto-e-ovo:0" data-name="Pizza de presunto e ovo" data-variant="" data-kz="16500" data-cat="pizzas" aria-label="Juntar Pizza de presunto e ovo, 16.500 Kz, ao pedido"><span class="add__price">16.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button><button type="button" class="add" data-add data-key="pizzas:pizza-de-presunto-e-ovo:1" data-name="Pizza de presunto e ovo" data-variant="" data-kz="15000" data-cat="pizzas" aria-label="Juntar Pizza de presunto e ovo, 15.000 Kz, ao pedido"><span class="add__price">15.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="pizzas pizza de almondegas de frango   ">
+              <div class="dish__text"><h4 class="dish__t">Pizza de almôndegas de frango</h4></div>
+              <div class="dish__buy dish__buy--two"><button type="button" class="add" data-add data-key="pizzas:pizza-de-almondegas-de-frango:0" data-name="Pizza de almôndegas de frango" data-variant="" data-kz="16500" data-cat="pizzas" aria-label="Juntar Pizza de almôndegas de frango, 16.500 Kz, ao pedido"><span class="add__price">16.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button><button type="button" class="add" data-add data-key="pizzas:pizza-de-almondegas-de-frango:1" data-name="Pizza de almôndegas de frango" data-variant="" data-kz="14500" data-cat="pizzas" aria-label="Juntar Pizza de almôndegas de frango, 14.500 Kz, ao pedido"><span class="add__price">14.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>
+        <div class="page" data-cat-id="grelhados" data-cat-start="3"><div class="page__in">
+          <figure class="page__pic"><img src="img/cat-grelhados.webp" srcset="img/cat-grelhados-480.webp 480w, img/cat-grelhados.webp 800w" sizes="(max-width: 899px) calc(100vw - 24px), 450px" alt="" width="800" height="800" loading="lazy" decoding="async"></figure><h3 class="page__t">Grelhados turcos</h3><p class="page__intro">Servidos com arroz, batata frita e salada.</p>
+          <ul class="page__dishes" role="list">
+            <li class="dish" data-dish data-search="grelhados turcos carne grelhada carne grelhada, arroz, batata frita e salada ">
+              <div class="dish__text"><h4 class="dish__t">Carne grelhada</h4><p>Carne grelhada, arroz, batata frita e salada</p></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="grelhados:carne-grelhada:0" data-name="Carne grelhada" data-variant="" data-kz="16500" data-cat="grelhados" aria-label="Juntar Carne grelhada, 16.500 Kz, ao pedido"><span class="add__price">16.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="grelhados turcos kofte grelhado com molho de tomate kofte, arroz, batata frita e salada ">
+              <div class="dish__text"><h4 class="dish__t">Köfte grelhado com molho de tomate</h4><p>Köfte, arroz, batata frita e salada</p></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="grelhados:kofte-grelhado-com-molho-de-tomate:0" data-name="Köfte grelhado com molho de tomate" data-variant="" data-kz="16500" data-cat="grelhados" aria-label="Juntar Köfte grelhado com molho de tomate, 16.500 Kz, ao pedido"><span class="add__price">16.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="grelhados turcos frango grelhado frango grelhado, arroz, batata frita e salada ">
+              <div class="dish__text"><h4 class="dish__t">Frango grelhado</h4><p>Frango grelhado, arroz, batata frita e salada</p></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="grelhados:frango-grelhado:0" data-name="Frango grelhado" data-variant="" data-kz="15000" data-cat="grelhados" aria-label="Juntar Frango grelhado, 15.000 Kz, ao pedido"><span class="add__price">15.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>
+        <div class="page" data-cat-id="grelhados"><div class="page__in">
+          <p class="page__run">Grelhados turcos <span>2/2</span></p>
+          <ul class="page__dishes" role="list">
+            <li class="dish" data-dish data-search="grelhados turcos grelhado misto carne, frango e kofte, com arroz, batata frita e salada ">
+              <div class="dish__text"><h4 class="dish__t">Grelhado misto</h4><p>Carne, frango e köfte, com arroz, batata frita e salada</p></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="grelhados:grelhado-misto:0" data-name="Grelhado misto" data-variant="" data-kz="18500" data-cat="grelhados" aria-label="Juntar Grelhado misto, 18.500 Kz, ao pedido"><span class="add__price">18.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="grelhados turcos grelhada bitoque grelhada, arroz, batata frita e salada ">
+              <div class="dish__text"><h4 class="dish__t">Grelhada bitoque</h4><p>Grelhada, arroz, batata frita e salada</p></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="grelhados:grelhada-bitoque:0" data-name="Grelhada bitoque" data-variant="" data-kz="17000" data-cat="grelhados" aria-label="Juntar Grelhada bitoque, 17.000 Kz, ao pedido"><span class="add__price">17.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="grelhados turcos franga com molho franga com molho, arroz, batata frita e salada ">
+              <div class="dish__text"><h4 class="dish__t">Franga com molho</h4><p>Franga com molho, arroz, batata frita e salada</p></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="grelhados:franga-com-molho:0" data-name="Franga com molho" data-variant="" data-kz="16000" data-cat="grelhados" aria-label="Juntar Franga com molho, 16.000 Kz, ao pedido"><span class="add__price">16.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="grelhados turcos kofte kofte, arroz, batata frita e salada ">
+              <div class="dish__text"><h4 class="dish__t">Köfte</h4><p>Köfte, arroz, batata frita e salada</p></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="grelhados:kofte:0" data-name="Köfte" data-variant="" data-kz="16000" data-cat="grelhados" aria-label="Juntar Köfte, 16.000 Kz, ao pedido"><span class="add__price">16.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="grelhados turcos frango crocante frango crocante, arroz, batata frita e salada ">
+              <div class="dish__text"><h4 class="dish__t">Frango crocante</h4><p>Frango crocante, arroz, batata frita e salada</p></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="grelhados:frango-crocante:0" data-name="Frango crocante" data-variant="" data-kz="16500" data-cat="grelhados" aria-label="Juntar Frango crocante, 16.500 Kz, ao pedido"><span class="add__price">16.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>
+        <div class="page" data-cat-id="faita" data-cat-start="4"><div class="page__in">
+          <figure class="page__pic"><img src="img/cat-faita.webp" srcset="img/cat-faita-480.webp 480w, img/cat-faita.webp 800w" sizes="(max-width: 899px) calc(100vw - 24px), 450px" alt="" width="800" height="800" loading="lazy" decoding="async"></figure><h3 class="page__t">Faita</h3>
+          <ul class="page__dishes" role="list">
+            <li class="dish" data-dish data-search="faita faita de carne  ">
+              <div class="dish__text"><h4 class="dish__t">Faita de carne</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="faita:faita-de-carne:0" data-name="Faita de carne" data-variant="" data-kz="11000" data-cat="faita" aria-label="Juntar Faita de carne, 11.000 Kz, ao pedido"><span class="add__price">11.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="faita faita de frango  ">
+              <div class="dish__text"><h4 class="dish__t">Faita de frango</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="faita:faita-de-frango:0" data-name="Faita de frango" data-variant="" data-kz="10500" data-cat="faita" aria-label="Juntar Faita de frango, 10.500 Kz, ao pedido"><span class="add__price">10.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="faita faita de almondegas  ">
+              <div class="dish__text"><h4 class="dish__t">Faita de almôndegas</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="faita:faita-de-almondegas:0" data-name="Faita de almôndegas" data-variant="" data-kz="11000" data-cat="faita" aria-label="Juntar Faita de almôndegas, 11.000 Kz, ao pedido"><span class="add__price">11.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>
+        <div class="page" data-cat-id="faita"><div class="page__in">
+          <p class="page__run">Faita <span>2/2</span></p>
+          <ul class="page__dishes" role="list">
+            <li class="dish" data-dish data-search="faita faita de atum  ">
+              <div class="dish__text"><h4 class="dish__t">Faita de atum</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="faita:faita-de-atum:0" data-name="Faita de atum" data-variant="" data-kz="12500" data-cat="faita" aria-label="Juntar Faita de atum, 12.500 Kz, ao pedido"><span class="add__price">12.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="faita faita mista  ">
+              <div class="dish__text"><h4 class="dish__t">Faita mista</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="faita:faita-mista:0" data-name="Faita mista" data-variant="" data-kz="12500" data-cat="faita" aria-label="Juntar Faita mista, 12.500 Kz, ao pedido"><span class="add__price">12.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="faita faita de camarao  ">
+              <div class="dish__text"><h4 class="dish__t">Faita de camarão</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="faita:faita-de-camarao:0" data-name="Faita de camarão" data-variant="" data-kz="14500" data-cat="faita" aria-label="Juntar Faita de camarão, 14.500 Kz, ao pedido"><span class="add__price">14.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>
+        <div class="page" data-cat-id="esparguete" data-cat-start="5"><div class="page__in">
+          <figure class="page__pic"><img src="img/cat-esparguete.webp" srcset="img/cat-esparguete-480.webp 480w, img/cat-esparguete.webp 800w" sizes="(max-width: 899px) calc(100vw - 24px), 450px" alt="" width="800" height="800" loading="lazy" decoding="async"></figure><h3 class="page__t">Esparguete</h3>
+          <ul class="page__dishes" role="list">
+            <li class="dish" data-dish data-search="esparguete esparguete com almondegas  ">
+              <div class="dish__text"><h4 class="dish__t">Esparguete com almôndegas</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="esparguete:esparguete-com-almondegas:0" data-name="Esparguete com almôndegas" data-variant="" data-kz="16500" data-cat="esparguete" aria-label="Juntar Esparguete com almôndegas, 16.500 Kz, ao pedido"><span class="add__price">16.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="esparguete esparguete com atum  ">
+              <div class="dish__text"><h4 class="dish__t">Esparguete com atum</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="esparguete:esparguete-com-atum:0" data-name="Esparguete com atum" data-variant="" data-kz="16500" data-cat="esparguete" aria-label="Juntar Esparguete com atum, 16.500 Kz, ao pedido"><span class="add__price">16.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="esparguete esparguete com frango  ">
+              <div class="dish__text"><h4 class="dish__t">Esparguete com frango</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="esparguete:esparguete-com-frango:0" data-name="Esparguete com frango" data-variant="" data-kz="16500" data-cat="esparguete" aria-label="Juntar Esparguete com frango, 16.500 Kz, ao pedido"><span class="add__price">16.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>
+        <div class="page" data-cat-id="esparguete"><div class="page__in">
+          <p class="page__run">Esparguete <span>2/2</span></p>
+          <ul class="page__dishes" role="list">
+            <li class="dish" data-dish data-search="esparguete esparguete a bolonhesa  ">
+              <div class="dish__text"><h4 class="dish__t">Esparguete à bolonhesa</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="esparguete:esparguete-a-bolonhesa:0" data-name="Esparguete à bolonhesa" data-variant="" data-kz="16500" data-cat="esparguete" aria-label="Juntar Esparguete à bolonhesa, 16.500 Kz, ao pedido"><span class="add__price">16.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="esparguete esparguete com camarao  ">
+              <div class="dish__text"><h4 class="dish__t">Esparguete com camarão</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="esparguete:esparguete-com-camarao:0" data-name="Esparguete com camarão" data-variant="" data-kz="18500" data-cat="esparguete" aria-label="Juntar Esparguete com camarão, 18.500 Kz, ao pedido"><span class="add__price">18.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>
+        <div class="page" data-cat-id="meze" data-cat-start="6"><div class="page__in">
+          <figure class="page__pic"><img src="img/cat-meze.webp" srcset="img/cat-meze-480.webp 480w, img/cat-meze.webp 800w" sizes="(max-width: 899px) calc(100vw - 24px), 450px" alt="" width="800" height="800" loading="lazy" decoding="async"></figure><h3 class="page__t">Meze turco</h3><p class="page__intro">Pequenos pratos para partilhar.</p>
+          <ul class="page__dishes" role="list">
+            <li class="dish" data-dish data-search="meze turco meze de urfa  ">
+              <div class="dish__text"><h4 class="dish__t">Meze de Urfa</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="meze:meze-de-urfa:0" data-name="Meze de Urfa" data-variant="" data-kz="4000" data-cat="meze" aria-label="Juntar Meze de Urfa, 4.000 Kz, ao pedido"><span class="add__price">4.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="meze turco meze de humus  ">
+              <div class="dish__text"><h4 class="dish__t">Meze de húmus</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="meze:meze-de-humus:0" data-name="Meze de húmus" data-variant="" data-kz="5000" data-cat="meze" aria-label="Juntar Meze de húmus, 5.000 Kz, ao pedido"><span class="add__price">5.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="meze turco meze russo  ">
+              <div class="dish__text"><h4 class="dish__t">Meze russo</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="meze:meze-russo:0" data-name="Meze russo" data-variant="" data-kz="5000" data-cat="meze" aria-label="Juntar Meze russo, 5.000 Kz, ao pedido"><span class="add__price">5.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>
+        <div class="page" data-cat-id="matabicho" data-cat-start="7"><div class="page__in">
+          <figure class="page__pic"><img src="img/cat-matabicho.webp" srcset="img/cat-matabicho-480.webp 480w, img/cat-matabicho.webp 800w" sizes="(max-width: 899px) calc(100vw - 24px), 450px" alt="" width="800" height="800" loading="lazy" decoding="async"></figure><h3 class="page__t">Matabicho</h3><p class="page__intro">Pequeno-almoço todos os dias, das 08h00 às 14h00.</p>
+          <ul class="page__dishes" role="list">
+            <li class="dish" data-dish data-search="matabicho omelete de queijo  ">
+              <div class="dish__text"><h4 class="dish__t">Omelete de queijo</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="matabicho:omelete-de-queijo:0" data-name="Omelete de queijo" data-variant="" data-kz="9000" data-cat="matabicho" aria-label="Juntar Omelete de queijo, 9.000 Kz, ao pedido"><span class="add__price">9.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="matabicho omelete de frango  ">
+              <div class="dish__text"><h4 class="dish__t">Omelete de frango</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="matabicho:omelete-de-frango:0" data-name="Omelete de frango" data-variant="" data-kz="9500" data-cat="matabicho" aria-label="Juntar Omelete de frango, 9.500 Kz, ao pedido"><span class="add__price">9.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="matabicho omelete de carne  ">
+              <div class="dish__text"><h4 class="dish__t">Omelete de carne</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="matabicho:omelete-de-carne:0" data-name="Omelete de carne" data-variant="" data-kz="10500" data-cat="matabicho" aria-label="Juntar Omelete de carne, 10.500 Kz, ao pedido"><span class="add__price">10.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>
+        <div class="page" data-cat-id="matabicho"><div class="page__in">
+          <p class="page__run">Matabicho <span>2/3</span></p>
+          <ul class="page__dishes" role="list">
+            <li class="dish" data-dish data-search="matabicho omelete misto  ">
+              <div class="dish__text"><h4 class="dish__t">Omelete misto</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="matabicho:omelete-misto:0" data-name="Omelete misto" data-variant="" data-kz="11000" data-cat="matabicho" aria-label="Juntar Omelete misto, 11.000 Kz, ao pedido"><span class="add__price">11.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="matabicho torrada de queijo  ">
+              <div class="dish__text"><h4 class="dish__t">Torrada de queijo</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="matabicho:torrada-de-queijo:0" data-name="Torrada de queijo" data-variant="" data-kz="8500" data-cat="matabicho" aria-label="Juntar Torrada de queijo, 8.500 Kz, ao pedido"><span class="add__price">8.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="matabicho torrada mista  ">
+              <div class="dish__text"><h4 class="dish__t">Torrada mista</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="matabicho:torrada-mista:0" data-name="Torrada mista" data-variant="" data-kz="9500" data-cat="matabicho" aria-label="Juntar Torrada mista, 9.500 Kz, ao pedido"><span class="add__price">9.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="matabicho sopa turca de lentilhas  ">
+              <div class="dish__text"><h4 class="dish__t">Sopa turca de lentilhas</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="matabicho:sopa-turca-de-lentilhas:0" data-name="Sopa turca de lentilhas" data-variant="" data-kz="6000" data-cat="matabicho" aria-label="Juntar Sopa turca de lentilhas, 6.000 Kz, ao pedido"><span class="add__price">6.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="matabicho sopa de tomate  ">
+              <div class="dish__text"><h4 class="dish__t">Sopa de tomate</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="matabicho:sopa-de-tomate:0" data-name="Sopa de tomate" data-variant="" data-kz="6000" data-cat="matabicho" aria-label="Juntar Sopa de tomate, 6.000 Kz, ao pedido"><span class="add__price">6.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>
+        <div class="page" data-cat-id="matabicho"><div class="page__in">
+          <p class="page__run">Matabicho <span>3/3</span></p>
+          <ul class="page__dishes" role="list">
+            <li class="dish" data-dish data-search="matabicho batata frita  ">
+              <div class="dish__text"><h4 class="dish__t">Batata frita</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="matabicho:batata-frita:0" data-name="Batata frita" data-variant="" data-kz="6000" data-cat="matabicho" aria-label="Juntar Batata frita, 6.000 Kz, ao pedido"><span class="add__price">6.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>
+        <div class="page" data-cat-id="sobremesas" data-cat-start="8"><div class="page__in">
+          <figure class="page__pic"><img src="img/cat-sobremesas.webp" srcset="img/cat-sobremesas-480.webp 480w, img/cat-sobremesas.webp 800w" sizes="(max-width: 899px) calc(100vw - 24px), 450px" alt="" width="800" height="800" loading="lazy" decoding="async"></figure><h3 class="page__t">Sobremesas</h3><p class="page__intro">Temos diversas sobremesas frescas, feitas todos os dias. Veja-as na nossa vitrine.</p>
+          <ul class="page__dishes" role="list">
+            <li class="dish" data-dish data-search="sobremesas cheesecake de morango  ">
+              <div class="dish__text"><h4 class="dish__t">Cheesecake de morango</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="sobremesas:cheesecake-de-morango:0" data-name="Cheesecake de morango" data-variant="" data-kz="8000" data-cat="sobremesas" aria-label="Juntar Cheesecake de morango, 8.000 Kz, ao pedido"><span class="add__price">8.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="sobremesas cheesecake sao sebastiao  ">
+              <div class="dish__text"><h4 class="dish__t">Cheesecake São Sebastião</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="sobremesas:cheesecake-sao-sebastiao:0" data-name="Cheesecake São Sebastião" data-variant="" data-kz="8000" data-cat="sobremesas" aria-label="Juntar Cheesecake São Sebastião, 8.000 Kz, ao pedido"><span class="add__price">8.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="sobremesas magnolia  ">
+              <div class="dish__text"><h4 class="dish__t">Magnólia</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="sobremesas:magnolia:0" data-name="Magnólia" data-variant="" data-kz="5000" data-cat="sobremesas" aria-label="Juntar Magnólia, 5.000 Kz, ao pedido"><span class="add__price">5.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>
+        <div class="page" data-cat-id="sobremesas"><div class="page__in">
+          <p class="page__run">Sobremesas <span>2/2</span></p>
+          <ul class="page__dishes" role="list">
+            <li class="dish" data-dish data-search="sobremesas arroz doce  ">
+              <div class="dish__text"><h4 class="dish__t">Arroz doce</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="sobremesas:arroz-doce:0" data-name="Arroz doce" data-variant="" data-kz="5000" data-cat="sobremesas" aria-label="Juntar Arroz doce, 5.000 Kz, ao pedido"><span class="add__price">5.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="sobremesas pasta fatia de bolo do dia, a escolha na vitrine ">
+              <div class="dish__text"><h4 class="dish__t">Pasta</h4><p>Fatia de bolo do dia, à escolha na vitrine</p></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="sobremesas:pasta:0" data-name="Pasta" data-variant="" data-kz="4000" data-cat="sobremesas" aria-label="Juntar Pasta, 4.000 Kz, ao pedido"><span class="add__price">4.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>
+        <div class="page" data-cat-id="bebidas-quentes" data-cat-start="9"><div class="page__in">
+          <figure class="page__pic"><img src="img/cat-bebidas-quentes.webp" srcset="img/cat-bebidas-quentes-480.webp 480w, img/cat-bebidas-quentes.webp 800w" sizes="(max-width: 899px) calc(100vw - 24px), 450px" alt="" width="800" height="800" loading="lazy" decoding="async"></figure><h3 class="page__t">Cafés, chá e sumos naturais</h3>
+          <ul class="page__dishes" role="list">
+            <li class="dish" data-dish data-search="cafes, cha e sumos naturais cay turco o cha turco, servido no copo tulipa ">
+              <div class="dish__text"><h4 class="dish__t">Çay turco</h4><p>O chá turco, servido no copo tulipa</p></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="bebidas-quentes:cay-turco:0" data-name="Çay turco" data-variant="" data-kz="3000" data-cat="bebidas-quentes" aria-label="Juntar Çay turco, 3.000 Kz, ao pedido"><span class="add__price">3.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="cafes, cha e sumos naturais cafe turco  ">
+              <div class="dish__text"><h4 class="dish__t">Café turco</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="bebidas-quentes:cafe-turco:0" data-name="Café turco" data-variant="" data-kz="5000" data-cat="bebidas-quentes" aria-label="Juntar Café turco, 5.000 Kz, ao pedido"><span class="add__price">5.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="cafes, cha e sumos naturais cafe expresso  ">
+              <div class="dish__text"><h4 class="dish__t">Café expresso</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="bebidas-quentes:cafe-expresso:0" data-name="Café expresso" data-variant="" data-kz="3000" data-cat="bebidas-quentes" aria-label="Juntar Café expresso, 3.000 Kz, ao pedido"><span class="add__price">3.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>
+        <div class="page" data-cat-id="bebidas-quentes"><div class="page__in">
+          <p class="page__run">Cafés, chá e sumos naturais <span>2/3</span></p>
+          <ul class="page__dishes" role="list">
+            <li class="dish" data-dish data-search="cafes, cha e sumos naturais galao  ">
+              <div class="dish__text"><h4 class="dish__t">Galão</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="bebidas-quentes:galao:0" data-name="Galão" data-variant="" data-kz="6000" data-cat="bebidas-quentes" aria-label="Juntar Galão, 6.000 Kz, ao pedido"><span class="add__price">6.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="cafes, cha e sumos naturais cha  ">
+              <div class="dish__text"><h4 class="dish__t">Chá</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="bebidas-quentes:cha:0" data-name="Chá" data-variant="" data-kz="5000" data-cat="bebidas-quentes" aria-label="Juntar Chá, 5.000 Kz, ao pedido"><span class="add__price">5.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="cafes, cha e sumos naturais limonada turca  ">
+              <div class="dish__text"><h4 class="dish__t">Limonada turca</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="bebidas-quentes:limonada-turca:0" data-name="Limonada turca" data-variant="" data-kz="3500" data-cat="bebidas-quentes" aria-label="Juntar Limonada turca, 3.500 Kz, ao pedido"><span class="add__price">3.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="cafes, cha e sumos naturais sumo natural de pitaia  ">
+              <div class="dish__text"><h4 class="dish__t">Sumo natural de pitaia</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="bebidas-quentes:sumo-natural-de-pitaia:0" data-name="Sumo natural de pitaia" data-variant="" data-kz="7500" data-cat="bebidas-quentes" aria-label="Juntar Sumo natural de pitaia, 7.500 Kz, ao pedido"><span class="add__price">7.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="cafes, cha e sumos naturais sumo natural de maracuja  ">
+              <div class="dish__text"><h4 class="dish__t">Sumo natural de maracujá</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="bebidas-quentes:sumo-natural-de-maracuja:0" data-name="Sumo natural de maracujá" data-variant="" data-kz="7500" data-cat="bebidas-quentes" aria-label="Juntar Sumo natural de maracujá, 7.500 Kz, ao pedido"><span class="add__price">7.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>
+        <div class="page" data-cat-id="bebidas-quentes"><div class="page__in">
+          <p class="page__run">Cafés, chá e sumos naturais <span>3/3</span></p>
+          <ul class="page__dishes" role="list">
+            <li class="dish" data-dish data-search="cafes, cha e sumos naturais sumo natural de maca  ">
+              <div class="dish__text"><h4 class="dish__t">Sumo natural de maçã</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="bebidas-quentes:sumo-natural-de-maca:0" data-name="Sumo natural de maçã" data-variant="" data-kz="7500" data-cat="bebidas-quentes" aria-label="Juntar Sumo natural de maçã, 7.500 Kz, ao pedido"><span class="add__price">7.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="cafes, cha e sumos naturais sumo natural de tomate  ">
+              <div class="dish__text"><h4 class="dish__t">Sumo natural de tomate</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="bebidas-quentes:sumo-natural-de-tomate:0" data-name="Sumo natural de tomate" data-variant="" data-kz="7500" data-cat="bebidas-quentes" aria-label="Juntar Sumo natural de tomate, 7.500 Kz, ao pedido"><span class="add__price">7.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="cafes, cha e sumos naturais sumo natural de melancia  ">
+              <div class="dish__text"><h4 class="dish__t">Sumo natural de melancia</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="bebidas-quentes:sumo-natural-de-melancia:0" data-name="Sumo natural de melancia" data-variant="" data-kz="7000" data-cat="bebidas-quentes" aria-label="Juntar Sumo natural de melancia, 7.000 Kz, ao pedido"><span class="add__price">7.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="cafes, cha e sumos naturais sumo natural de cenoura  ">
+              <div class="dish__text"><h4 class="dish__t">Sumo natural de cenoura</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="bebidas-quentes:sumo-natural-de-cenoura:0" data-name="Sumo natural de cenoura" data-variant="" data-kz="7000" data-cat="bebidas-quentes" aria-label="Juntar Sumo natural de cenoura, 7.000 Kz, ao pedido"><span class="add__price">7.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="cafes, cha e sumos naturais sumo natural misto  ">
+              <div class="dish__text"><h4 class="dish__t">Sumo natural misto</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="bebidas-quentes:sumo-natural-misto:0" data-name="Sumo natural misto" data-variant="" data-kz="8500" data-cat="bebidas-quentes" aria-label="Juntar Sumo natural misto, 8.500 Kz, ao pedido"><span class="add__price">8.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>
+        <div class="page" data-cat-id="bebidas-frias" data-cat-start="10"><div class="page__in">
+          <figure class="page__pic"><img src="img/cat-bebidas-frias.webp" srcset="img/cat-bebidas-frias-480.webp 480w, img/cat-bebidas-frias.webp 800w" sizes="(max-width: 899px) calc(100vw - 24px), 450px" alt="" width="800" height="800" loading="lazy" decoding="async"></figure><h3 class="page__t">Bebidas frias</h3>
+          <ul class="page__dishes" role="list">
+            <li class="dish" data-dish data-search="bebidas frias limonada  pequena grande">
+              <div class="dish__text"><h4 class="dish__t">Limonada</h4></div>
+              <div class="dish__buy dish__buy--two"><button type="button" class="add" data-add data-key="bebidas-frias:limonada:0" data-name="Limonada" data-variant="Pequena" data-kz="3000" data-cat="bebidas-frias" aria-label="Juntar Limonada, Pequena, 3.000 Kz, ao pedido"><span class="add__label">Pequena</span><span class="add__price">3.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button><button type="button" class="add" data-add data-key="bebidas-frias:limonada:1" data-name="Limonada" data-variant="Grande" data-kz="3500" data-cat="bebidas-frias" aria-label="Juntar Limonada, Grande, 3.500 Kz, ao pedido"><span class="add__label">Grande</span><span class="add__price">3.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="bebidas frias sumo natural de laranja  ">
+              <div class="dish__text"><h4 class="dish__t">Sumo natural de laranja</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="bebidas-frias:sumo-natural-de-laranja:0" data-name="Sumo natural de laranja" data-variant="" data-kz="7500" data-cat="bebidas-frias" aria-label="Juntar Sumo natural de laranja, 7.500 Kz, ao pedido"><span class="add__price">7.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>
+        <div class="page" data-cat-id="bebidas-frias"><div class="page__in">
+          <p class="page__run">Bebidas frias <span>2/5</span></p>
+          <ul class="page__dishes" role="list">
+            <li class="dish" data-dish data-search="bebidas frias sumo natural de ananas  ">
+              <div class="dish__text"><h4 class="dish__t">Sumo natural de ananás</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="bebidas-frias:sumo-natural-de-ananas:0" data-name="Sumo natural de ananás" data-variant="" data-kz="7500" data-cat="bebidas-frias" aria-label="Juntar Sumo natural de ananás, 7.500 Kz, ao pedido"><span class="add__price">7.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="bebidas frias sumo natural misto  ">
+              <div class="dish__text"><h4 class="dish__t">Sumo natural misto</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="bebidas-frias:sumo-natural-misto:0" data-name="Sumo natural misto" data-variant="" data-kz="7500" data-cat="bebidas-frias" aria-label="Juntar Sumo natural misto, 7.500 Kz, ao pedido"><span class="add__price">7.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="bebidas frias milkshake de banana  ">
+              <div class="dish__text"><h4 class="dish__t">Milkshake de banana</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="bebidas-frias:milkshake-de-banana:0" data-name="Milkshake de banana" data-variant="" data-kz="8500" data-cat="bebidas-frias" aria-label="Juntar Milkshake de banana, 8.500 Kz, ao pedido"><span class="add__price">8.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="bebidas frias milkshake de chocolate  ">
+              <div class="dish__text"><h4 class="dish__t">Milkshake de chocolate</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="bebidas-frias:milkshake-de-chocolate:0" data-name="Milkshake de chocolate" data-variant="" data-kz="9000" data-cat="bebidas-frias" aria-label="Juntar Milkshake de chocolate, 9.000 Kz, ao pedido"><span class="add__price">9.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="bebidas frias milkshake misto  ">
+              <div class="dish__text"><h4 class="dish__t">Milkshake misto</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="bebidas-frias:milkshake-misto:0" data-name="Milkshake misto" data-variant="" data-kz="10000" data-cat="bebidas-frias" aria-label="Juntar Milkshake misto, 10.000 Kz, ao pedido"><span class="add__price">10.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>
+        <div class="page" data-cat-id="bebidas-frias"><div class="page__in">
+          <p class="page__run">Bebidas frias <span>3/5</span></p>
+          <ul class="page__dishes" role="list">
+            <li class="dish" data-dish data-search="bebidas frias batido de abacate  ">
+              <div class="dish__text"><h4 class="dish__t">Batido de abacate</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="bebidas-frias:batido-de-abacate:0" data-name="Batido de abacate" data-variant="" data-kz="7000" data-cat="bebidas-frias" aria-label="Juntar Batido de abacate, 7.000 Kz, ao pedido"><span class="add__price">7.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="bebidas frias batido misto  ">
+              <div class="dish__text"><h4 class="dish__t">Batido misto</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="bebidas-frias:batido-misto:0" data-name="Batido misto" data-variant="" data-kz="8000" data-cat="bebidas-frias" aria-label="Juntar Batido misto, 8.000 Kz, ao pedido"><span class="add__price">8.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="bebidas frias agua  500 ml 1,5 l">
+              <div class="dish__text"><h4 class="dish__t">Água</h4></div>
+              <div class="dish__buy dish__buy--two"><button type="button" class="add" data-add data-key="bebidas-frias:agua:0" data-name="Água" data-variant="500 ml" data-kz="1500" data-cat="bebidas-frias" aria-label="Juntar Água, 500 ml, 1.500 Kz, ao pedido"><span class="add__label">500 ml</span><span class="add__price">1.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button><button type="button" class="add" data-add data-key="bebidas-frias:agua:1" data-name="Água" data-variant="1,5 l" data-kz="4500" data-cat="bebidas-frias" aria-label="Juntar Água, 1,5 l, 4.500 Kz, ao pedido"><span class="add__label">1,5 l</span><span class="add__price">4.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="bebidas frias agua tonica  330 ml">
+              <div class="dish__text"><h4 class="dish__t">Água tónica</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="bebidas-frias:agua-tonica:0" data-name="Água tónica" data-variant="330 ml" data-kz="3500" data-cat="bebidas-frias" aria-label="Juntar Água tónica, 330 ml, 3.500 Kz, ao pedido"><span class="add__label">330 ml</span><span class="add__price">3.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>
+        <div class="page" data-cat-id="bebidas-frias"><div class="page__in">
+          <p class="page__run">Bebidas frias <span>4/5</span></p>
+          <ul class="page__dishes" role="list">
+            <li class="dish" data-dish data-search="bebidas frias coca-cola  330 ml 1,5 l">
+              <div class="dish__text"><h4 class="dish__t">Coca-Cola</h4></div>
+              <div class="dish__buy dish__buy--two"><button type="button" class="add" data-add data-key="bebidas-frias:coca-cola:0" data-name="Coca-Cola" data-variant="330 ml" data-kz="3000" data-cat="bebidas-frias" aria-label="Juntar Coca-Cola, 330 ml, 3.000 Kz, ao pedido"><span class="add__label">330 ml</span><span class="add__price">3.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button><button type="button" class="add" data-add data-key="bebidas-frias:coca-cola:1" data-name="Coca-Cola" data-variant="1,5 l" data-kz="8500" data-cat="bebidas-frias" aria-label="Juntar Coca-Cola, 1,5 l, 8.500 Kz, ao pedido"><span class="add__label">1,5 l</span><span class="add__price">8.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="bebidas frias fanta  330 ml 1,5 l">
+              <div class="dish__text"><h4 class="dish__t">Fanta</h4></div>
+              <div class="dish__buy dish__buy--two"><button type="button" class="add" data-add data-key="bebidas-frias:fanta:0" data-name="Fanta" data-variant="330 ml" data-kz="3000" data-cat="bebidas-frias" aria-label="Juntar Fanta, 330 ml, 3.000 Kz, ao pedido"><span class="add__label">330 ml</span><span class="add__price">3.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button><button type="button" class="add" data-add data-key="bebidas-frias:fanta:1" data-name="Fanta" data-variant="1,5 l" data-kz="8500" data-cat="bebidas-frias" aria-label="Juntar Fanta, 1,5 l, 8.500 Kz, ao pedido"><span class="add__label">1,5 l</span><span class="add__price">8.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="bebidas frias sprite  330 ml 1,5 l">
+              <div class="dish__text"><h4 class="dish__t">Sprite</h4></div>
+              <div class="dish__buy dish__buy--two"><button type="button" class="add" data-add data-key="bebidas-frias:sprite:0" data-name="Sprite" data-variant="330 ml" data-kz="3000" data-cat="bebidas-frias" aria-label="Juntar Sprite, 330 ml, 3.000 Kz, ao pedido"><span class="add__label">330 ml</span><span class="add__price">3.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button><button type="button" class="add" data-add data-key="bebidas-frias:sprite:1" data-name="Sprite" data-variant="1,5 l" data-kz="8500" data-cat="bebidas-frias" aria-label="Juntar Sprite, 1,5 l, 8.500 Kz, ao pedido"><span class="add__label">1,5 l</span><span class="add__price">8.500 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="bebidas frias pepsi  330 ml">
+              <div class="dish__text"><h4 class="dish__t">Pepsi</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="bebidas-frias:pepsi:0" data-name="Pepsi" data-variant="330 ml" data-kz="3000" data-cat="bebidas-frias" aria-label="Juntar Pepsi, 330 ml, 3.000 Kz, ao pedido"><span class="add__label">330 ml</span><span class="add__price">3.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>
+        <div class="page" data-cat-id="bebidas-frias"><div class="page__in">
+          <p class="page__run">Bebidas frias <span>5/5</span></p>
+          <ul class="page__dishes" role="list">
+            <li class="dish" data-dish data-search="bebidas frias sumol de ananas  330 ml">
+              <div class="dish__text"><h4 class="dish__t">Sumol de ananás</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="bebidas-frias:sumol-de-ananas:0" data-name="Sumol de ananás" data-variant="330 ml" data-kz="3000" data-cat="bebidas-frias" aria-label="Juntar Sumol de ananás, 330 ml, 3.000 Kz, ao pedido"><span class="add__label">330 ml</span><span class="add__price">3.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="bebidas frias sumol de laranja  ">
+              <div class="dish__text"><h4 class="dish__t">Sumol de laranja</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="bebidas-frias:sumol-de-laranja:0" data-name="Sumol de laranja" data-variant="" data-kz="3000" data-cat="bebidas-frias" aria-label="Juntar Sumol de laranja, 3.000 Kz, ao pedido"><span class="add__price">3.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+            <li class="dish" data-dish data-search="bebidas frias red bull  200 ml">
+              <div class="dish__text"><h4 class="dish__t">Red Bull</h4></div>
+              <div class="dish__buy"><button type="button" class="add" data-add data-key="bebidas-frias:red-bull:0" data-name="Red Bull" data-variant="200 ml" data-kz="5000" data-cat="bebidas-frias" aria-label="Juntar Red Bull, 200 ml, 5.000 Kz, ao pedido"><span class="add__label">200 ml</span><span class="add__price">5.000 Kz</span><span class="add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg><b data-qty></b></span></button></div>
+            </li>
+          </ul>
+          <p class="page__no" aria-hidden="true"></p>
+        </div></div>
+        <div class="page page--cover page--back" data-density="hard"><div class="page__in">
+          <p class="cover__brand"><span class="brand__chef">Chef</span><span class="brand__burger">Burger</span></p>
+          <p class="cover__s">Quarteirão W17, Centralidade do Kilamba · +244 925 918 468 · @chefburgerao</p>
+        </div></div>
+        </div>
+      </div>
+      <div class="wrap book-ctl">
+        <button type="button" class="book-ctl__b" data-book-prev aria-label="Página anterior"><svg class="ic ic--back" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+        <p class="book-ctl__where" data-book-where aria-live="polite">Capa</p>
+        <button type="button" class="book-ctl__b" data-book-next aria-label="Página seguinte"><svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+      </div>
+    </section>
+
+    <p class="wrap book-review">
+      <a class="btn glass book-review__btn" href="https://search.google.com/local/writereview?placeid=ChIJNSxFp3YdUhoRfTZkvtmd5ts" target="_blank" rel="noopener">
+        <svg class="book-review__g" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Avaliar no Google
+      </a>
+    </p>
+  </main>
+
+  <footer class="closing">
+    <div class="band">
+      <div class="wrap band__in">
+        <h2 class="band__t">Para levantar no W17 ou para entrega em casa.</h2>
+        <div class="band__actions">
+          <a class="btn btn--bone" href="ementa.html">Abrir a ementa<svg class="ic ic--arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          <a class="link-arrow" href="https://wa.me/244925918468?text=Ol%C3%A1%2C%20Chef%20Burger." target="_blank" rel="noopener"><svg class="ic ic--brand" aria-hidden="true"><use href="#i-wa"/></svg>Escrever no WhatsApp</a>
+        </div>
+      </div>
+    </div>
+    <div class="wrap foot">
+      <div class="foot__brand"><span class="brand__chef">Chef</span><span class="brand__burger">Burger</span></div>
+      <div class="foot__col">
+        <h3>Morada</h3>
+        <p>Quarteirão W17<br>Centralidade do Kilamba, Luanda</p>
+        <a class="link" href="https://www.google.com/maps?cid=15845525897477371517" target="_blank" rel="noopener">Abrir no mapa</a>
+      </div>
+      <div class="foot__col">
+        <h3>Horário</h3>
+        <p>Segunda a quinta, 08h00–22h30<br>Sexta a domingo, 08h00–23h30<br>Matabicho, 08h00–14h00</p>
+      </div>
+      <div class="foot__col">
+        <h3>Contactos</h3>
+        <p><a class="link" href="tel:+244925918468">+244 925 918 468</a><br><a class="link" href="tel:+244925918462">+244 925 918 462</a><br><a class="link" href="tel:+244930877600">+244 930 877 600</a></p>
+      </div>
+      <div class="foot__col">
+        <h3>Redes</h3>
+        <ul class="social" role="list">
+          <li><a href="https://www.instagram.com/chefburgerao/" target="_blank" rel="noopener" aria-label="Instagram @chefburgerao"><svg class="ic ic--brand" aria-hidden="true"><use href="#i-ig"/></svg></a></li>
+          <li><a href="https://www.facebook.com/profile.php?id=100083841722074" target="_blank" rel="noopener" aria-label="Facebook do Chef Burger"><svg class="ic ic--brand" aria-hidden="true"><use href="#i-fb"/></svg></a></li>
+          <li><a href="https://www.tiktok.com/@chefburgerao" target="_blank" rel="noopener" aria-label="TikTok @chefburgerao"><svg class="ic ic--brand" aria-hidden="true"><use href="#i-tt"/></svg></a></li>
+          <li><a href="https://wa.me/244925918468" target="_blank" rel="noopener" aria-label="WhatsApp +244 925 918 468"><svg class="ic ic--brand" aria-hidden="true"><use href="#i-wa"/></svg></a></li>
+        </ul>
+      </div>
+      <p class="foot__fine">Proposta de site para o Chef Burger. Preços da carta de agosto de 2026. Fotografias de referência <a class="link" href="https://unsplash.com/license" target="_blank" rel="noopener">Unsplash</a> e vídeos <a class="link" href="https://www.pexels.com/license/" target="_blank" rel="noopener">Pexels</a>, a trocar pelos da casa. Pedidos e reservas só ficam confirmados quando a equipa responder no WhatsApp.</p>
+    </div>
+  </footer>
+
+
+  <nav class="dock glass" data-dock aria-label="Atalhos">
+    <a class="dock__b" href="ementa.html" aria-current="page"><svg class="ic" aria-hidden="true"><use href="#i-menu"/></svg><span>Ementa</span></a>
+    <a class="dock__b" href="./#reservar"><svg class="ic" aria-hidden="true"><use href="#i-cal"/></svg><span>Reservar</span></a>
+    <a class="dock__b" href="tel:+244925918468"><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg><span>Ligar</span></a>
+    <button type="button" class="dock__cart" data-open-cart data-dock-cart aria-label="Abrir o pedido">
+      <svg class="ic" aria-hidden="true"><use href="#i-bag"/></svg>
+      <span class="dock__cart-text" data-dock-text>Pedido</span>
+      <span class="count count--dock" data-count hidden>0</span>
+    </button>
+  </nav>
+
+  <div class="sheet" data-sheet hidden>
+    <div class="sheet__scrim" data-scrim data-close></div>
+    <div class="sheet__panel" data-panel role="dialog" aria-modal="true" aria-labelledby="pedido-t" tabindex="-1">
+      <div class="sheet__grab" data-grab aria-hidden="true"><span></span></div>
+      <div class="sheet__head">
+        <h2 id="pedido-t">O seu pedido</h2>
+        <button type="button" class="sheet__x" data-close aria-label="Fechar o pedido"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button>
+      </div>
+      <form class="sheet__form" data-order novalidate>
+        <div class="sheet__body" data-sheet-body>
+          <div class="cart-empty" data-cart-empty>
+            <p class="cart-empty__t">Ainda não juntou nada.</p>
+            <p>Toque no preço de um prato da ementa e ele aparece aqui.</p>
+            <a class="btn btn--ink" href="ementa.html" data-close>Ver a ementa</a>
+          </div>
+          <ul class="cart" role="list" data-cart-list></ul>
+          <div class="sheet__fields" data-cart-fields>
+            <div class="seg" role="radiogroup" aria-label="Como quer receber" data-seg>
+              <span class="seg__thumb" data-seg-thumb aria-hidden="true"></span>
+              <label class="seg__o"><input type="radio" name="modo" value="local" checked><span>No local</span></label>
+              <label class="seg__o"><input type="radio" name="modo" value="entrega"><span>Entrega</span></label>
+              <label class="seg__o"><input type="radio" name="modo" value="levantar"><span>Levantar no W17</span></label>
+            </div>
+            <label class="field" data-mesa><span class="field__label">Número da mesa</span><input name="mesa" type="number" inputmode="numeric" min="1" max="99" step="1" maxlength="2" placeholder="1 a 99"><span class="field__err" data-err="mesa"></span></label>
+            <label class="field" data-address><span class="field__label">Morada de entrega</span><input name="morada" autocomplete="street-address" maxlength="160" placeholder="Quarteirão, prédio, apartamento"><span class="field__err" data-err="morada"></span><small class="field__hint">A equipa diz se entrega na sua zona e quanto custa.</small></label>
+            <div class="form__row" data-cliente>
+              <label class="field"><span class="field__label">Nome</span><input name="nome" autocomplete="name" maxlength="80"><span class="field__err" data-err="nome"></span></label>
+              <label class="field"><span class="field__label">Telefone</span><input name="telefone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20"><span class="field__err" data-err="telefone"></span></label>
+            </div>
+            <label class="field"><span class="field__label">Nota <small>(opcional)</small></span><input name="nota" maxlength="200" placeholder="Sem cebola, tocar à campainha…"></label>
+            <details class="preview">
+              <summary>Ver o resumo do pedido</summary>
+              <pre data-preview></pre>
+            </details>
+          </div>
+          <div class="sheet__wait" data-order-wait hidden>
+            <p>A ligar à cozinha…</p>
+          </div>
+          <div class="sheet__ok" data-order-ok hidden>
+            <p class="ok-mark" aria-hidden="true"><svg viewBox="0 0 48 48" width="56" height="56"><circle cx="24" cy="24" r="22" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M14 24.5 21 31.5 34 16.5" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></p>
+            <p class="ok-t">Parabéns, pedido enviado!</p>
+            <p class="ok-n">Pedido n.º <strong data-order-num></strong></p>
+            <p class="ok-s">A cozinha já recebeu. Pode fechar esta folha.</p>
+            <button type="button" class="btn btn--ink" data-close>Fechar</button>
+          </div>
+          <div class="sheet__fail" data-order-fail hidden>
+            <p data-fail-msg>Não foi possível enviar à cozinha.</p>
+            <button type="button" class="btn btn--red btn--wide" data-wa-fallback><svg class="ic ic--brand" aria-hidden="true"><use href="#i-wa"/></svg>Enviar pelo WhatsApp</button>
+          </div>
+        </div>
+        <div class="sheet__foot" data-sheet-foot>
+          <p class="sheet__total"><span>Total</span><strong data-total>0 Kz</strong></p>
+          <button type="submit" class="btn btn--red btn--wide" data-send>Enviar pedido</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <p class="sr" data-live aria-live="polite"></p>
+  <noscript><p class="noscript">Para montar o pedido neste site é preciso JavaScript. Pode escrever na mesma para o WhatsApp +244 925 918 468.</p></noscript>
+  <script src="js/vendor/page-flip.browser.js" defer></script>
+  <script src="js/livro.js" defer></script>
+  <script src="js/site.js" defer></script>
+</body>
+</html>
