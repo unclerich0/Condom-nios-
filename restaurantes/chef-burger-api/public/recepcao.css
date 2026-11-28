@@ -35,12 +35,15 @@ h1, h2 { font-stretch: 118%; font-weight: 800; letter-spacing: -0.03em; line-hei
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   min-height: 44px; padding: 0 18px; border: 0; border-radius: 999px;
   font-weight: 650; text-decoration: none; color: var(--ink);
+  cursor: pointer;
   transition: transform 280ms var(--spring-bounce);
 }
 .btn:active { transform: scale(0.94); }
+.btn:disabled { opacity: 0.55; cursor: wait; transform: none; }
 .btn--red { background: var(--red); color: var(--on-red); }
 .btn--ink { background: var(--ink); color: var(--bg); }
 .btn--ghost { background: transparent; border: 1px solid var(--line); }
+.btn--sm { min-height: 36px; padding: 0 14px; font-size: 0.875rem; }
 .top__out { min-height: 36px; padding: 0 14px; font-size: 0.875rem; }
 
 .login {
@@ -57,12 +60,31 @@ h1, h2 { font-stretch: 118%; font-weight: 800; letter-spacing: -0.03em; line-hei
 }
 .field__err { color: var(--red); font-size: 0.875rem; min-height: 1em; }
 
+.board-wrap { padding: 16px 16px 48px; display: grid; gap: 16px; }
+.stats {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
+}
+@media (min-width: 720px) { .stats { grid-template-columns: repeat(5, 1fr); } }
+.stat {
+  background: var(--paper); border-radius: 18px; padding: 14px 16px;
+  box-shadow: 0 10px 24px -16px rgba(20,21,24,0.45);
+  display: grid; gap: 2px;
+}
+.stat__n {
+  font-size: 1.55rem; font-weight: 800; font-stretch: 118%; letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums; line-height: 1.1;
+  transform-origin: left center;
+}
+.stat__n[data-bump="true"] { animation: bump 520ms var(--spring-bounce); }
+@keyframes bump { 0% { transform: scale(1); } 35% { transform: scale(1.12); } 100% { transform: scale(1); } }
+.stat__l { font-size: 0.75rem; font-weight: 650; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.hint { margin: 0; color: var(--muted); font-size: 0.875rem; }
 .board {
   display: grid; grid-template-columns: 1fr; gap: 20px;
-  padding: 16px 16px 48px;
 }
 @media (min-width: 800px) { .board { grid-template-columns: 1.2fr 1fr 1fr; align-items: start; } }
-.col h2 { font-size: 1.35rem; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid var(--ink); }
+.col h2, .historico h2 { font-size: 1.35rem; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid var(--ink); }
 .col__list { display: grid; gap: 12px; }
 .col__empty { color: var(--muted); font-size: 0.9375rem; }
 .col__empty[hidden], [hidden] { display: none !important; }
@@ -77,9 +99,9 @@ h1, h2 { font-stretch: 118%; font-weight: 800; letter-spacing: -0.03em; line-hei
   animation: flash 1.2s var(--ease-out);
 }
 @keyframes flash { 0% { box-shadow: 0 0 0 4px rgba(196,30,42,0.35); } 100% { box-shadow: 0 10px 24px -16px rgba(20,21,24,0.45); } }
-.mesa__t { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+.mesa__t { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
 .mesa__t h3 { margin: 0; font-size: 1.35rem; font-stretch: 118%; font-weight: 800; }
-.mesa__sum { font-weight: 800; font-variant-numeric: tabular-nums; }
+.mesa__sum { font-weight: 800; font-variant-numeric: tabular-nums; margin: 0; }
 .ticket + .ticket, .mesa .ticket { margin-top: 10px; background: var(--surface); box-shadow: none; }
 .ticket__meta { display: flex; flex-wrap: wrap; gap: 8px 14px; font-size: 0.8125rem; color: var(--muted); margin-bottom: 8px; }
 .estado {
@@ -90,13 +112,49 @@ h1, h2 { font-stretch: 118%; font-weight: 800; letter-spacing: -0.03em; line-hei
 .estado[data-e="novo"] { background: var(--red); }
 .estado[data-e="em_preparo"] { background: #8a5a12; }
 .estado[data-e="servido"], .estado[data-e="entregue"], .estado[data-e="levantado"] { background: #1f6b3a; }
+.estado[data-e="fechado"] { background: var(--muted); }
 .ticket ul { list-style: none; margin: 0; padding: 0; }
 .ticket li { display: flex; justify-content: space-between; gap: 10px; padding: 4px 0; border-top: 1px solid var(--line); font-weight: 600; }
 .ticket li:first-child { border-top: 0; }
 .ticket li small { display: block; font-weight: 500; color: var(--muted); }
 .ticket__nota { margin: 8px 0 0; font-size: 0.875rem; color: var(--muted); }
-.ticket__act { margin-top: 12px; }
-.fechados { text-align: center; color: var(--muted); padding: 0 16px 32px; }
+.ticket__act { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
+.fechados { text-align: center; color: var(--muted); padding: 0; margin: 0; }
+.historico { padding-top: 8px; }
+
+.modal {
+  position: fixed; inset: 0; z-index: 40;
+  background: rgba(20,21,24,0.35);
+  display: grid; place-items: center; padding: 24px;
+}
+.modal__card {
+  width: min(100%, 420px); border-radius: 24px; padding: 24px;
+  display: grid; gap: 12px;
+}
+.modal__card p { margin: 0; color: var(--muted); }
+.modal__act { display: flex; justify-content: flex-end; gap: 8px; }
+
+.toasts {
+  position: fixed; z-index: 50; left: 50%; bottom: 20px; transform: translateX(-50%);
+  display: grid; gap: 8px; width: min(100% - 24px, 440px); pointer-events: none;
+}
+.toast {
+  pointer-events: auto;
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; border-radius: 16px;
+  background: var(--ink); color: var(--bg);
+  box-shadow: 0 16px 40px -16px rgba(20,21,24,0.6);
+  animation: toast-in 400ms var(--spring-bounce);
+}
+.toast--erro { background: var(--red); color: var(--on-red); }
+.toast p { margin: 0; flex: 1; font-weight: 650; font-size: 0.9375rem; }
+.toast button {
+  border: 0; background: transparent; color: inherit;
+  font: inherit; font-weight: 800; cursor: pointer; text-decoration: underline;
+  min-height: 36px;
+}
+@keyframes toast-in { from { transform: translateY(16px) scale(0.96); opacity: 0; } to { transform: none; opacity: 1; } }
+
 @media (prefers-reduced-motion: reduce) {
-  .btn, .top__live::before, .mesa, .ticket { animation: none; transition-duration: 1ms; }
+  .btn, .top__live::before, .mesa, .ticket, .stat__n, .toast { animation: none; transition-duration: 1ms; }
 }

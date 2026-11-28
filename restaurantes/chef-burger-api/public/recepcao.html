@@ -5,16 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Receção · Chef Burger</title>
   <meta name="robots" content="noindex">
-  <meta name="theme-color" content="#f4efe6">
-  <link rel="icon" href="https://chef-burger-kilamba.onrender.com/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#c41e2a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Receção">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon-192.png">
   <script src="config.js"></script>
   <script>
-  (function(){var o=(window.CB_STATIC||"https://chef-burger-kilamba.onrender.com").replace(/\/$/,"");
-    var s=document.createElement("style");
-    s.textContent='@font-face{font-family:"Archivo";src:url("'+o+'/fonts/archivo-latin.woff2") format("woff2");font-weight:100 900;font-stretch:62% 125%;font-style:normal;font-display:swap}';
-    document.head.appendChild(s);
+  (function(){
+    var local=document.createElement("style");
+    local.textContent='@font-face{font-family:"Archivo";src:url("fonts/archivo-latin.woff2") format("woff2");font-weight:100 900;font-stretch:62% 125%;font-style:normal;font-display:swap}';
+    document.head.appendChild(local);
   })();
-</script>
+  </script>
   <link rel="stylesheet" href="recepcao.css">
 </head>
 <body>
@@ -36,25 +42,60 @@
       <button type="submit" class="btn btn--red">Entrar</button>
     </form>
 
-    <section class="board" data-board hidden>
-      <div class="col" data-col="local">
-        <h2>Mesas</h2>
-        <div class="col__list" data-list="local"></div>
-        <p class="col__empty" data-empty="local">Nenhuma mesa com pedido aberto.</p>
+    <section class="board-wrap" data-board hidden>
+      <div class="stats" data-stats aria-label="Contadores de hoje">
+        <div class="stat"><span class="stat__n" data-stat="hoje">0</span><span class="stat__l">Pedidos hoje</span></div>
+        <div class="stat"><span class="stat__n" data-stat="abertos">0</span><span class="stat__l">Abertos agora</span></div>
+        <div class="stat"><span class="stat__n" data-stat="preparo">0</span><span class="stat__l">Em preparo</span></div>
+        <div class="stat"><span class="stat__n" data-stat="feitos">0</span><span class="stat__l">Concluídos hoje</span></div>
+        <div class="stat stat--kz"><span class="stat__n" data-stat="receita">0</span><span class="stat__l">Receita hoje</span></div>
       </div>
-      <div class="col" data-col="entrega">
-        <h2>Entregas</h2>
-        <div class="col__list" data-list="entrega"></div>
-        <p class="col__empty" data-empty="entrega">Nenhuma entrega aberta.</p>
+
+      <div class="toolbar">
+        <button type="button" class="btn btn--ghost" data-notify>Ativar notificações</button>
+        <button type="button" class="btn btn--ghost" data-historico>Histórico de hoje</button>
+        <button type="button" class="btn btn--ink" data-limpar-todos>Limpar concluídos</button>
       </div>
-      <div class="col" data-col="levantar">
-        <h2>Levantar no W17</h2>
-        <div class="col__list" data-list="levantar"></div>
-        <p class="col__empty" data-empty="levantar">Nenhum levantamento aberto.</p>
-      </div>
+      <p class="hint" data-notify-state hidden></p>
+
+      <section class="board">
+        <div class="col" data-col="local">
+          <h2>Mesas</h2>
+          <div class="col__list" data-list="local"></div>
+          <p class="col__empty" data-empty="local">Nenhuma mesa com pedido aberto.</p>
+        </div>
+        <div class="col" data-col="entrega">
+          <h2>Entregas</h2>
+          <div class="col__list" data-list="entrega"></div>
+          <p class="col__empty" data-empty="entrega">Nenhuma entrega aberta.</p>
+        </div>
+        <div class="col" data-col="levantar">
+          <h2>Levantar no W17</h2>
+          <div class="col__list" data-list="levantar"></div>
+          <p class="col__empty" data-empty="levantar">Nenhum levantamento aberto.</p>
+        </div>
+      </section>
+      <p class="fechados" data-fechados hidden></p>
+
+      <section class="historico" data-historico-painel hidden>
+        <h2>Histórico de hoje</h2>
+        <p class="col__empty" data-historico-vazio>Ainda não há pedidos concluídos ou arquivados hoje.</p>
+        <div class="col__list" data-historico-lista></div>
+      </section>
     </section>
-    <p class="fechados" data-fechados hidden></p>
   </main>
+
+  <div class="modal" data-confirm hidden>
+    <div class="modal__card glass" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+      <h2 id="confirm-title" data-confirm-title>Confirmar</h2>
+      <p data-confirm-msg></p>
+      <div class="modal__act">
+        <button type="button" class="btn btn--ghost" data-confirm-no>Cancelar</button>
+        <button type="button" class="btn btn--red" data-confirm-ok>Confirmar</button>
+      </div>
+    </div>
+  </div>
+  <div class="toasts" data-toasts></div>
   <script src="recepcao.js"></script>
 </body>
 </html>

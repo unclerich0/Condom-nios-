@@ -5,19 +5,37 @@ import { fileURLToPath } from "node:url";
 import crypto from "node:crypto";
 import express from "express";
 import cors from "cors";
-import { openStore, nextOf } from "./store.js";
+import { openStore, nextOf, normEstado, FEITOS, pushSubs } from "./store.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT) || 8787;
 const PIN = String(process.env.RECECAO_PIN || "1234");
 const STATIC_ORIGIN = process.env.STATIC_ORIGIN || "https://chef-burger-kilamba.onrender.com";
+const PUBLIC_ORIGIN = String(process.env.PUBLIC_ORIGIN || process.env.RENDER_EXTERNAL_URL || "")
+  .trim()
+  .replace(/\/$/, "");
+const EXTRA_ORIGINS = String(process.env.CORS_ORIGINS || "")
+  .split(",")
+  .map((s) => s.trim().replace(/\/$/, ""))
+  .filter(Boolean);
+
+const VAPID_PUBLIC = String(process.env.VAPID_PUBLIC_KEY || "").trim();
+const VAPID_PRIVATE = String(process.env.VAPID_PRIVATE_KEY || "").trim();
+const VAPID_SUBJECT = String(process.env.VAPID_SUBJECT || "mailto:rececao@chef-burger-pedidos.local").trim();
 
 const precos = JSON.parse(fs.readFileSync(path.join(here, "precos.json"), "utf8"));
 
-const allow = (origin) =>
-  !origin ||
-  origin === "https://chef-burger-kilamba.onrender.com" ||
-  /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+function allow(origin) {
+  if (!origin) return true;
+  const o = String(origin).replace(/\/$/, "");
+  if (o === "https://chef-burger-kilamba.onrender.com") return true;
+  if (o === "https://chef-burger-pedidos.onrender.com") return true;
+  if (o === STATIC_ORIGIN.replace(/\/$/, "")) return true;
+  if (PUBLIC_ORIGIN && o === PUBLIC_ORIGIN) return true;
+  if (/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(o)) return true;
+  if (EXTRA_ORIGINS.includes(o)) return true;
+  return false;
+}
 
 const app = express();
 app.disable("x-powered-by");
@@ -28,10 +46,22 @@ app.use(cors({
 }));
 
 const store = await openStore();
+const subs = pushSubs();
 const clients = new Set();
 
-function broadcast(ev, pedido) {
-  const line = `event: ${ev}\ndata: ${JSON.stringify(pedido)}\n\n`;
+let webpush = null;
+if (VAPID_PUBLIC && VAPID_PRIVATE) {
+  try {
+    webpush = (await import("web-push")).default;
+    webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC, VAPID_PRIVATE);
+  } catch (e) {
+    console.warn("web-push indisponível:", e && e.message);
+    webpush = null;
+  }
+}
+
+function broadcast(ev, payload) {
+  const line = `event: ${ev}\ndata: ${JSON.stringify(payload)}\n\n`;
   for (const res of clients) { try { res.write(line); } catch (e) { clients.delete(res); } }
 }
 
@@ -84,8 +114,53 @@ function validar(body) {
   return { ok: { tipo, mesa: null, nome, telefone, morada: "", nota, items, total } };
 }
 
+function kz(n) { return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " Kz"; }
+
+function textoNovo(p) {
+  const prato = (p.items && p.items[0] && p.items[0].nome) || "Pedido";
+  const mais = p.items && p.items.length > 1 ? " e mais" : "";
+  if (p.tipo === "local") return `Mesa ${p.mesa} · ${prato}${mais} · ${kz(p.total)}`;
+  if (p.tipo === "levantar") return `Levantar · ${p.nome || ""} · ${prato}${mais} · ${kz(p.total)}`;
+  return `Entrega · ${p.nome || ""} · ${prato}${mais} · ${kz(p.total)}`;
+}
+
+async function notificarPush(pedido) {
+  if (!webpush) return;
+  const payload = JSON.stringify({
+    title: "Novo pedido n.º " + pedido.numero,
+    body: textoNovo(pedido),
+    tag: "pedido-" + pedido.id,
+    url: "/recepcao/",
+  });
+  const lista = subs.listar();
+  await Promise.all(lista.map(async (s) => {
+    try {
+      await webpush.sendNotification(s, payload, { TTL: 60, urgency: "high" });
+    } catch (e) {
+      const code = e && (e.statusCode || e.status);
+      if (code === 404 || code === 410) {
+        console.warn("push: inscrição expirada (" + code + "), a remover.");
+        subs.remover(s.endpoint);
+      } else {
+        console.warn("push falhou:", code || (e && e.message));
+      }
+    }
+  }));
+}
+
+function idsDoBody(body, fallback) {
+  const raw = body && Array.isArray(body.ids) ? body.ids : fallback;
+  if (!Array.isArray(raw)) return [];
+  return raw.map(Number).filter((n) => Number.isInteger(n) && n > 0);
+}
+
 app.get("/health", (_req, res) => {
-  res.json({ ok: true, storage: store.kind, pratos: Object.keys(precos).length });
+  res.json({
+    ok: true,
+    storage: store.kind,
+    pratos: Object.keys(precos).length,
+    push: Boolean(webpush),
+  });
 });
 
 app.post("/api/pedidos", (req, res) => {
@@ -94,6 +169,7 @@ app.post("/api/pedidos", (req, res) => {
   const pedido = store.criar(v.ok);
   broadcast("novo", pedido);
   res.status(201).json({ id: pedido.id, numero: pedido.numero, total: pedido.total, estado: pedido.estado });
+  notificarPush(pedido).catch((e) => console.warn("push:", e && e.message));
 });
 
 app.get("/api/pedidos", exigePin, (_req, res) => {
@@ -103,7 +179,9 @@ app.get("/api/pedidos", exigePin, (_req, res) => {
 app.patch("/api/pedidos/:id", exigePin, (req, res) => {
   const id = Number(req.params.id);
   if (!Number.isInteger(id)) return res.status(400).json({ erro: "Pedido inválido." });
-  const want = req.body && req.body.estado;
+  const wantRaw = req.body && req.body.estado;
+  const want = wantRaw == null || wantRaw === "" ? null : normEstado(wantRaw);
+  if (wantRaw && !want) return res.status(400).json({ erro: "Estado não reconhecido." });
   const cur = store.obter(id);
   if (!cur) return res.status(404).json({ erro: "Este pedido já não está na lista." });
   const n = nextOf(cur.tipo, cur.estado);
@@ -113,6 +191,59 @@ app.patch("/api/pedidos/:id", exigePin, (req, res) => {
   if (r.erro) return res.status(409).json({ erro: "Não foi possível atualizar." });
   broadcast("atualizado", r.pedido);
   res.json({ pedido: r.pedido });
+});
+
+app.post("/api/pedidos/arquivar", exigePin, (req, res) => {
+  let ids = idsDoBody(req.body, null);
+  if (!ids.length) {
+    ids = store.listar()
+      .filter((p) => !p.arquivado && !p.cancelado && FEITOS.has(p.estado))
+      .map((p) => p.id);
+  }
+  const pedidos = store.arquivar(ids);
+  for (const p of pedidos) broadcast("atualizado", p);
+  res.json({ pedidos, ids: pedidos.map((p) => p.id) });
+});
+
+app.post("/api/pedidos/desarquivar", exigePin, (req, res) => {
+  const ids = idsDoBody(req.body, []);
+  if (!ids.length) return res.status(400).json({ erro: "Indique os pedidos a repor." });
+  const pedidos = store.desarquivar(ids);
+  for (const p of pedidos) broadcast("atualizado", p);
+  res.json({ pedidos, ids: pedidos.map((p) => p.id) });
+});
+
+app.post("/api/pedidos/mesa/:mesa/fechar", exigePin, (req, res) => {
+  const mesa = Number(req.params.mesa);
+  if (!Number.isInteger(mesa) || mesa < 1 || mesa > 99) return res.status(400).json({ erro: "Mesa inválida." });
+  const ids = store.listar()
+    .filter((p) => p.tipo === "local" && Number(p.mesa) === mesa && !p.arquivado && !p.cancelado && p.estado !== "fechado")
+    .map((p) => p.id);
+  const pedidos = store.fecharIds(ids);
+  for (const p of pedidos) broadcast("atualizado", p);
+  res.json({ pedidos, ids: pedidos.map((p) => p.id) });
+});
+
+app.get("/api/push/vapid", exigePin, (_req, res) => {
+  if (!webpush || !VAPID_PUBLIC) return res.status(404).json({ erro: "Notificações push não estão configuradas." });
+  res.json({ publicKey: VAPID_PUBLIC });
+});
+
+app.post("/api/push/subscribe", exigePin, (req, res) => {
+  const sub = req.body && req.body.subscription ? req.body.subscription : req.body;
+  if (!sub || !sub.endpoint || !sub.keys || !sub.keys.p256dh || !sub.keys.auth) {
+    return res.status(400).json({ erro: "Subscrição inválida." });
+  }
+  if (!subs.guardar(sub)) return res.status(400).json({ erro: "Não foi possível guardar a subscrição." });
+  res.status(201).json({ ok: true });
+});
+
+app.delete("/api/push/subscribe", exigePin, (req, res) => {
+  const sub = req.body && (req.body.subscription || req.body);
+  const endpoint = (sub && sub.endpoint) || (req.body && req.body.endpoint);
+  if (!endpoint) return res.status(400).json({ erro: "Endpoint em falta." });
+  subs.remover(String(endpoint));
+  res.json({ ok: true });
 });
 
 app.get("/api/pedidos/stream", exigePin, (req, res) => {
@@ -128,7 +259,19 @@ app.get("/api/pedidos/stream", exigePin, (req, res) => {
 app.get("/recepcao/config.js", (_req, res) => {
   res.type("js").send(`window.CB_STATIC=${JSON.stringify(STATIC_ORIGIN)};\n`);
 });
-app.use("/recepcao", express.static(path.join(here, "public"), { index: "recepcao.html", extensions: ["html"] }));
+app.use("/recepcao", express.static(path.join(here, "public"), {
+  index: "recepcao.html",
+  extensions: ["html"],
+  setHeaders(res, filePath) {
+    if (filePath.endsWith("sw.js") || filePath.endsWith("service-worker.js")) {
+      res.setHeader("Cache-Control", "no-cache");
+      res.setHeader("Service-Worker-Allowed", "/recepcao/");
+    }
+    if (filePath.endsWith(".webmanifest") || filePath.endsWith("manifest.json")) {
+      res.type("application/manifest+json");
+    }
+  },
+}));
 app.get("/recepcao", (_req, res) => res.sendFile(path.join(here, "public", "recepcao.html")));
 
 app.use((err, req, res, next) => {
@@ -138,5 +281,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Chef Burger pedidos em http://127.0.0.1:${PORT}  (armazenamento: ${store.kind})`);
+  console.log(`Chef Burger pedidos em http://127.0.0.1:${PORT}  (armazenamento: ${store.kind}${webpush ? ", push ligado" : ""})`);
 });

@@ -13,7 +13,8 @@
   },
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "web-push": "^3.6.7"
   },
   "optionalDependencies": {
     "better-sqlite3": "^11.8.1"
