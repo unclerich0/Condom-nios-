@@ -111,7 +111,7 @@ function livro() {
     if (cur.length) chunks.push(cur);
     chunks.forEach((ch, k) => {
       const head = k === 0
-        ? `<figure class="page__pic"><img src="${c.img}" alt="" width="800" height="800" loading="lazy" decoding="async"></figure><h3 class="page__t">${esc(c.title)}</h3>${c.intro ? `<p class="page__intro">${esc(c.intro)}</p>` : ''}`
+        ? `<figure class="page__pic"><img src="${c.img}" srcset="${c.img.replace(".webp", "-480.webp")} 480w, ${c.img} 800w" sizes="(max-width: 899px) calc(100vw - 24px), 450px" alt="" width="800" height="800" loading="lazy" decoding="async"></figure><h3 class="page__t">${esc(c.title)}</h3>${c.intro ? `<p class="page__intro">${esc(c.intro)}</p>` : ''}`
         : `<p class="page__run">${esc(c.title)} <span>${k + 1}/${chunks.length}</span></p>`;
       pages.push(`<div class="page" data-cat-id="${c.id}"${k === 0 ? ` data-cat-start="${ci + 1}"` : ''}><div class="page__in">
           ${head}
@@ -150,7 +150,7 @@ const out = {};
 
 /* ---------- Início ---------- */
 const cards = menu.map((c, i) => `        <li class="card"><a href="${bookHref(c)}" data-idx="0">
-          <figure class="card__pic"><img src="${c.img}" alt="${esc(c.alt)}" width="800" height="800" loading="lazy" decoding="async"></figure>
+          <figure class="card__pic"><img src="${c.img}" srcset="${c.img.replace(".webp", "-480.webp")} 480w, ${c.img} 800w" sizes="(max-width: 639px) 50vw, 280px" alt="${esc(c.alt)}" width="800" height="800" loading="lazy" decoding="async"></figure>
           <span class="card__t">${esc(c.title)}</span>
           <span class="card__m">${pratos(c.dishes.length)} · desde ${kz(minKz(c))}</span>
         </a></li>`).join('\n');

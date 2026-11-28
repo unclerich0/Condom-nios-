@@ -94,8 +94,21 @@
     });
     book.loadFromHTML(pages);
     var lastTurn = 0;
-    book.on("changeState", function (e) { if (e.data !== "read") lastTurn = Date.now(); });
-    book.on("flip", function (e) { cur = e.data; paint(cur); sync(cur); });
+    function warmPages(i) {
+      var from = Math.max(0, i - 2), to = Math.min(total - 1, i + 3);
+      for (var k = from; k <= to; k++) {
+        pages[k].querySelectorAll("img").forEach(function (im) {
+          if (im.loading === "lazy") im.loading = "eager";
+          if (im.decode) im.decode().catch(function () {});
+        });
+      }
+    }
+    book.on("changeState", function (e) {
+      if (e.data !== "read") lastTurn = Date.now();
+      el.classList.toggle("is-flipping", e.data !== "read");
+    });
+    book.on("flip", function (e) { cur = e.data; paint(cur); sync(cur); warmPages(cur); });
+    warmPages(pageFromHash());
     // Tocar na borda da página também vira (o resto da página fica livre para ler e tocar nos preços).
     el.addEventListener("click", function (e) {
       if (e.target.closest("a, button, input, select, label, [data-noflip]")) return;

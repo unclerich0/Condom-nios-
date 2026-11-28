@@ -3,7 +3,7 @@
 Todas as imagens desta pasta são **referências provisórias** do [Unsplash](https://unsplash.com/license). Não são fotografias do restaurante.
 Para pôr as fotos reais (Instagram @chefburgerao ou enviadas pela casa), grave um ficheiro **com o mesmo nome** por cima. Não é preciso mexer no HTML: o site corta com `object-fit: cover`.
 
-Formato: WebP, qualidade 80–85. Onde há versão `-phone`, é o recorte vertical que o telemóvel carrega (`<picture>`). Troque as duas.
+Formato: WebP, qualidade 80–85. Onde há versão `-phone`, é o recorte vertical que o telemóvel carrega (`<picture>`). Troque as duas. Onde há versão `-480`, é o mesmo recorte quadrado a 480×480 para o `srcset` da ementa (ecrãs 1×); troque-a junto com o ficheiro principal.
 
 | Ficheiro | Tamanho | Onde aparece | O que é agora (ID Unsplash) |
 | --- | --- | --- | --- |

@@ -743,10 +743,10 @@ html[data-enter="back"] main { animation: leaf-in-back 460ms var(--ease-out) bot
 .book-sec__head { display: grid; gap: 8px; margin-bottom: 20px; }
 .book-sec__head h2 { font-size: clamp(1.75rem, 1.2rem + 2.2vw, 3rem); }
 .book-sec__head p { color: var(--muted); max-width: 52ch; }
-.book-stage { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; display: flex; justify-content: center; padding: 8px 12px 0; overflow: hidden; touch-action: pan-y; }
+.book-stage { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; display: flex; justify-content: center; padding: 8px 12px 0; overflow: hidden; touch-action: pan-y; isolation: isolate; contain: layout paint; }
 .flipbook { margin: 0 auto; }
 /* O papel */
-.page { background: var(--paper); color: var(--ink); overflow: hidden; }
+.page { background: var(--paper); color: var(--ink); overflow: hidden; contain: layout paint; }
 .page__in { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 22px 20px 14px; overflow: hidden;
   background:
     linear-gradient(90deg, rgba(20, 21, 24, 0.07), rgba(20, 21, 24, 0) 7%),
@@ -799,6 +799,13 @@ html[data-enter="back"] main { animation: leaf-in-back 460ms var(--ease-out) bot
   .book-ctl__b { box-shadow: 0 10px 24px -10px rgba(20, 21, 24, 0.55); }
 }
 .book-stage .stf__block { touch-action: pan-y; }
+.stf__parent.is-flipping .stf__item,
+.stf__parent.is-flipping .stf__outerShadow,
+.stf__parent.is-flipping .stf__innerShadow,
+.stf__parent.is-flipping .stf__hardShadow,
+.stf__parent.is-flipping .stf__hardInnerShadow { will-change: transform; }
+/* A lista por baixo do livro não precisa de pintar enquanto se folheia */
+.menu--list { content-visibility: auto; contain-intrinsic-size: 800px 2400px; }
 .book-ctl { pointer-events: none; }
 .book-ctl > * { pointer-events: auto; }
 @media (max-width: 959px) { .book-ctl__where { white-space: nowrap; min-width: 0; font-size: 0.875rem; } }

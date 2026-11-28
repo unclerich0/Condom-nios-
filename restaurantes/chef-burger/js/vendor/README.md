@@ -12,3 +12,5 @@ Alterações locais (procure por `touchOnCtl`, `flingDir` e `isUserMove||` no fi
 4. A primeira dobra parte do ponto onde o dedo pousou. Antes partia do ponto já a meio do arrasto, e a folha podia virar para trás.
 5. Ao largar: em retrato, a folha completa se passou do meio da página ou se o gesto foi rápido (flick); se não, volta. Antes era preciso arrastar até fora da borda esquerda do ecrã.
 6. Um clique ou toque simples já não vira a página por dentro da biblioteca. `js/livro.js` trata os toques nas bordas da página, e o resto da página fica livre para ler e tocar nos preços.
+
+7. Desempenho (v12): o ciclo `requestAnimationFrame` só corre enquanto a folha se move; os estilos CSS das páginas e das sombras só se escrevem se mudaram; a sombra exterior (e as sombras «hard») usam um degradê pré-definido e `opacity` (visualmente igual); `touchstart` é passivo quando `mobileScrollSupport` está ligado.
