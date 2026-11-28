@@ -118,3 +118,9 @@ No vídeo do iPhone, o Voltar a partir de Meze foi parar ao início em vez de Es
   - o endereço `#livro-<capítulo>` muda com `replaceState`;
   - todos os botões e links da ementa abrem o livro;
   - o Safari fica sem transição entre documentos.
+
+## v9 — Pedidos reais, quadro da receção
+
+- A ementa e o livro da v8 não mudam. No folha do pedido há três modos: No local (número da mesa, pré-preenchido com `?mesa=N`), Entrega (nome, telefone, morada) e Levantar no W17 (nome, telefone). «Enviar pedido» vai à API; se falhar, fica o envio pelo WhatsApp com os mesmos dados.
+- Confirmação com «Parabéns, pedido enviado!», visto com mola e uma explosão curta de confetti nas cores da casa (vermelho, osso, carvão). Com movimento reduzido, só um esbater, sem confetti.
+- A API e o quadro estão em `../chef-burger-api/` (ver o README dessa pasta). O quadro agrupa os pedidos locais por mesa e tem colunas para Entregas e Levantar no W17.

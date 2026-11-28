@@ -20,7 +20,8 @@ Direção visual: **«Touro vermelho em osso»** (ver [DESIGN-NOTES.md](DESIGN-N
 - Barra inferior em vidro no telemóvel (Ementa, Reservar, Ligar, Pedido).
 - Safari sem transição entre documentos (o Voltar do Safari salta entradas com ela).
 
-Nada fica num servidor. O pedido vive no telemóvel (`localStorage`) até a pessoa o enviar.
+Nada fica num servidor do site estático. O pedido vive no telemóvel (`localStorage`) até ser enviado à API de pedidos (`restaurantes/chef-burger-api/`, serviço previsto em `https://chef-burger-pedidos.onrender.com`). Se a API não responder, o cliente pode ainda enviar o mesmo pedido pelo WhatsApp. O quadro da receção está em `/recepcao` (PIN de demonstração: `1234`).
+
 
 ## Como editar
 

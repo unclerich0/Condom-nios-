@@ -384,24 +384,40 @@
           <div class="sheet__fields" data-cart-fields>
             <div class="seg" role="radiogroup" aria-label="Como quer receber" data-seg>
               <span class="seg__thumb" data-seg-thumb aria-hidden="true"></span>
-              <label class="seg__o"><input type="radio" name="modo" value="entrega" checked><span>Entrega</span></label>
-              <label class="seg__o"><input type="radio" name="modo" value="levantamento"><span>Levantar no W17</span></label>
+              <label class="seg__o"><input type="radio" name="modo" value="local" checked><span>No local</span></label>
+              <label class="seg__o"><input type="radio" name="modo" value="entrega"><span>Entrega</span></label>
+              <label class="seg__o"><input type="radio" name="modo" value="levantar"><span>Levantar no W17</span></label>
             </div>
+            <label class="field" data-mesa><span class="field__label">Número da mesa</span><input name="mesa" type="number" inputmode="numeric" min="1" max="99" step="1" maxlength="2" placeholder="1 a 99"><span class="field__err" data-err="mesa"></span></label>
             <label class="field" data-address><span class="field__label">Morada de entrega</span><input name="morada" autocomplete="street-address" maxlength="160" placeholder="Quarteirão, prédio, apartamento"><span class="field__err" data-err="morada"></span><small class="field__hint">A equipa diz se entrega na sua zona e quanto custa.</small></label>
-            <div class="form__row">
+            <div class="form__row" data-cliente>
               <label class="field"><span class="field__label">Nome</span><input name="nome" autocomplete="name" maxlength="80"><span class="field__err" data-err="nome"></span></label>
               <label class="field"><span class="field__label">Telefone</span><input name="telefone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20"><span class="field__err" data-err="telefone"></span></label>
             </div>
             <label class="field"><span class="field__label">Nota <small>(opcional)</small></span><input name="nota" maxlength="200" placeholder="Sem cebola, tocar à campainha…"></label>
             <details class="preview">
-              <summary>Ver a mensagem que vai para o WhatsApp</summary>
+              <summary>Ver o resumo do pedido</summary>
               <pre data-preview></pre>
             </details>
+          </div>
+          <div class="sheet__wait" data-order-wait hidden>
+            <p>A ligar à cozinha…</p>
+          </div>
+          <div class="sheet__ok" data-order-ok hidden>
+            <p class="ok-mark" aria-hidden="true"><svg viewBox="0 0 48 48" width="56" height="56"><circle cx="24" cy="24" r="22" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M14 24.5 21 31.5 34 16.5" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></p>
+            <p class="ok-t">Parabéns, pedido enviado!</p>
+            <p class="ok-n">Pedido n.º <strong data-order-num></strong></p>
+            <p class="ok-s">A cozinha já recebeu. Pode fechar esta folha.</p>
+            <button type="button" class="btn btn--ink" data-close>Fechar</button>
+          </div>
+          <div class="sheet__fail" data-order-fail hidden>
+            <p data-fail-msg>Não foi possível enviar à cozinha.</p>
+            <button type="button" class="btn btn--red btn--wide" data-wa-fallback><svg class="ic ic--brand" aria-hidden="true"><use href="#i-wa"/></svg>Enviar pelo WhatsApp</button>
           </div>
         </div>
         <div class="sheet__foot" data-sheet-foot>
           <p class="sheet__total"><span>Total</span><strong data-total>0 Kz</strong></p>
-          <button type="submit" class="btn btn--red btn--wide"><svg class="ic ic--brand" aria-hidden="true"><use href="#i-wa"/></svg>Enviar pelo WhatsApp</button>
+          <button type="submit" class="btn btn--red btn--wide" data-send>Enviar pedido</button>
         </div>
       </form>
     </div>

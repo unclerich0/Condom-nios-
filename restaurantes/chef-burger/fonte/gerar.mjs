@@ -203,5 +203,16 @@ const stub = (c) => `<!DOCTYPE html>
 `;
 menu.forEach((c) => { out[file(c)] = stub(c); });
 
+const precos = {};
+menu.forEach((c) => {
+  c.dishes.forEach((d) => {
+    const id = slug(d.name);
+    d.prices.forEach((pr, pi) => { precos[`${c.id}:${id}:${pi}`] = { nome: d.name, variante: pr.v || '', kz: pr.kz }; });
+  });
+});
+const apiDir = path.resolve(root, '..', 'chef-burger-api');
+fs.mkdirSync(apiDir, { recursive: true });
+fs.writeFileSync(path.join(apiDir, 'precos.json'), JSON.stringify(precos, null, 2) + '\n');
+
 for (const [f, html] of Object.entries(out)) fs.writeFileSync(path.join(root, f), html);
 console.log(`${Object.keys(out).length} ficheiros: ${Object.keys(out).join(', ')} · ${total} pratos em ${menu.length} categorias`);

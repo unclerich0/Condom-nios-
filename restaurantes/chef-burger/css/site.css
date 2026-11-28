@@ -544,12 +544,13 @@ p { text-wrap: pretty; }
 .qty button:active { transform: scale(0.9); background: rgba(20, 21, 24, 0.08); }
 .qty .ic { width: 18px; height: 18px; stroke-width: 2; }
 .qty output { min-width: 2ch; text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; }
-.seg { position: relative; display: grid; grid-template-columns: 1fr 1fr; padding: 4px; border-radius: 999px; background: rgba(20, 21, 24, 0.07); }
-.seg__thumb { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 4px); border-radius: 999px; background: var(--paper); box-shadow: 0 1px 2px rgba(20, 21, 24, 0.12), 0 6px 16px -8px rgba(20, 21, 24, 0.3); transition: transform 320ms var(--ease-drawer); }
-.seg[data-value="levantamento"] .seg__thumb { transform: translateX(100%); }
+.seg { position: relative; display: grid; grid-template-columns: 1fr 1fr 1fr; padding: 4px; border-radius: 999px; background: rgba(20, 21, 24, 0.07); }
+.seg__thumb { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc((100% - 8px) / 3); border-radius: 999px; background: var(--paper); box-shadow: 0 1px 2px rgba(20, 21, 24, 0.12), 0 6px 16px -8px rgba(20, 21, 24, 0.3); transition: transform 320ms var(--ease-drawer); }
+.seg[data-value="entrega"] .seg__thumb { transform: translateX(100%); }
+.seg[data-value="levantar"] .seg__thumb { transform: translateX(200%); }
 .seg__o { position: relative; z-index: 1; }
 .seg__o input { position: absolute; opacity: 0; pointer-events: none; }
-.seg__o span { display: grid; place-items: center; height: 44px; font-weight: 600; font-size: 0.9375rem; cursor: pointer; color: var(--muted); transition: color 200ms ease; }
+.seg__o span { display: grid; place-items: center; min-height: 44px; padding: 6px 4px; font-weight: 600; font-size: 0.8125rem; text-align: center; cursor: pointer; color: var(--muted); transition: color 200ms ease; }
 .seg__o input:checked + span { color: var(--ink); }
 .seg__o input:focus-visible + span { outline: 2.5px solid var(--red); outline-offset: -2px; border-radius: 999px; }
 [data-address][hidden] { display: none; }
@@ -813,3 +814,22 @@ html[data-enter="back"] main { animation: leaf-in-back 460ms var(--ease-out) bot
   .book-review__btn { transition-duration: 1ms; }
 }
 .book-review__g { flex: none; }
+
+[data-mesa][hidden], [data-cliente][hidden] { display: none; }
+.sheet[data-phase="ok"] [data-cart-empty],
+.sheet[data-phase="ok"] [data-cart-list],
+.sheet[data-phase="ok"] .sheet__fields,
+.sheet[data-phase="ok"] .sheet__foot { display: none; }
+.sheet[data-phase="fail"] .sheet__foot { display: none; }
+.sheet__wait, .sheet__ok, .sheet__fail { display: grid; gap: 12px; justify-items: center; text-align: center; padding: 20px 8px 8px; }
+.sheet__wait[hidden], .sheet__ok[hidden], .sheet__fail[hidden] { display: none; }
+.sheet__wait p { margin: 0; font-weight: 650; color: var(--muted); }
+.ok-mark { margin: 8px 0 0; color: var(--red); transform-origin: 50% 50%; }
+.ok-t { margin: 0; font-size: 1.5rem; font-weight: 800; font-stretch: 115%; letter-spacing: -0.03em; }
+.ok-n { margin: 0; font-size: 1.125rem; font-weight: 650; }
+.ok-s { margin: 0 0 8px; color: var(--muted); }
+.confetti { position: fixed; inset: 0; z-index: 80; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) {
+  .ok-mark { animation: none; }
+  .confetti { display: none; }
+}

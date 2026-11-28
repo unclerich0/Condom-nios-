@@ -3,6 +3,11 @@
   "use strict";
 
   var WA = "244925918468";
+  // Um só sítio para o endereço da API. Em 127.0.0.1 / localhost usa-se a API local (:8787).
+  var PEDIDOS_API = "https://chef-burger-pedidos.onrender.com";
+  if (location.hostname === "127.0.0.1" || location.hostname === "localhost") {
+    PEDIDOS_API = location.protocol + "//" + location.hostname + ":8787";
+  }
   var OPEN = 8 * 60;
   var BREAKFAST_END = 14 * 60;
   var BOOK_LAST = 21 * 60 + 30;
@@ -425,13 +430,28 @@
     });
     totalEl.textContent = kz(t.kz);
     updatePreview();
+    if (t.n && sheet && sheet.dataset.phase === "ok") phase("form");
   }
 
   var seg = $("[data-seg]");
   var addressField = $("[data-address]");
-  function mode() { var r = order.querySelector('input[name="modo"]:checked'); return r ? r.value : "entrega"; }
-  function paintMode() { seg.dataset.value = mode(); addressField.hidden = mode() !== "entrega"; updatePreview(); }
-  $$('input[name="modo"]', order).forEach(function (r) { r.addEventListener("change", paintMode); });
+  var mesaField = $("[data-mesa]");
+  var clienteFields = $("[data-cliente]");
+  function mode() { var r = order.querySelector('input[name="modo"]:checked'); return r ? r.value : "local"; }
+  function paintMode() {
+    var m = mode();
+    if (seg) seg.dataset.value = m;
+    if (mesaField) mesaField.hidden = m !== "local";
+    if (addressField) addressField.hidden = m !== "entrega";
+    if (clienteFields) clienteFields.hidden = m === "local";
+    updatePreview();
+  }
+  if (order) $$('input[name="modo"]', order).forEach(function (r) { r.addEventListener("change", paintMode); });
+  var mesaQ = Number(new URLSearchParams(location.search).get("mesa"));
+  if (order && Number.isInteger(mesaQ) && mesaQ >= 1 && mesaQ <= 99) {
+    var localR = order.querySelector('input[name="modo"][value="local"]');
+    if (localR) { localR.checked = true; order.elements.mesa.value = String(mesaQ); }
+  }
 
   function orderMessage() {
     var f = order.elements;
@@ -441,9 +461,10 @@
     if (cart.some(function (i) { return i.cat === "pizzas"; })) lines.push("As pizzas levam o preço escolhido na carta; confirmem o tamanho, por favor.");
     lines.push("");
     if (mode() === "entrega") lines.push("Entrega em: " + (f.morada.value.trim() || "…"));
-    else lines.push("Vou levantar no Quarteirão W17.");
-    if (f.nome.value.trim()) lines.push("Nome: " + f.nome.value.trim());
-    if (f.telefone.value.trim()) lines.push("Telefone: " + f.telefone.value.trim());
+    else if (mode() === "levantar") lines.push("Vou levantar no Quarteirão W17.");
+    else lines.push("No local, mesa " + (f.mesa.value || "…") + ".");
+    if (mode() !== "local" && f.nome.value.trim()) lines.push("Nome: " + f.nome.value.trim());
+    if (mode() !== "local" && f.telefone.value.trim()) lines.push("Telefone: " + f.telefone.value.trim());
     if (f.nota.value.trim()) lines.push("Nota: " + f.nota.value.trim());
     return lines.join("\n");
   }
@@ -465,16 +486,115 @@
     if (!w) window.location.href = url;
   }
 
-  order.addEventListener("submit", function (e) {
+  var waitEl = $("[data-order-wait]");
+  var okEl = $("[data-order-ok]");
+  var failEl = $("[data-order-fail]");
+  var sendBtn = $("[data-send]");
+  var waFallback = $("[data-wa-fallback]");
+  function phase(name) {
+    if (sheet) sheet.dataset.phase = name || "form";
+    if (waitEl) waitEl.hidden = name !== "wait";
+    if (okEl) okEl.hidden = name !== "ok";
+    if (failEl) failEl.hidden = name !== "fail";
+    if (sendBtn) sendBtn.disabled = name === "wait";
+  }
+  function celebrate() {
+    if (reduced() || !document.body) return;
+    var c = document.createElement("canvas");
+    c.className = "confetti";
+    c.setAttribute("aria-hidden", "true");
+    document.body.appendChild(c);
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    c.width = innerWidth * dpr; c.height = innerHeight * dpr;
+    c.style.width = innerWidth + "px"; c.style.height = innerHeight + "px";
+    var ctx = c.getContext("2d");
+    ctx.scale(dpr, dpr);
+    var colors = ["#c41e2a", "#f4efe6", "#141518", "#a51722", "#ebe3d6"];
+    var cx = innerWidth / 2, cy = Math.min(innerHeight * 0.42, 360);
+    var bits = [];
+    for (var i = 0; i < 52; i++) {
+      var a = Math.random() * Math.PI * 2, sp = 4 + Math.random() * 9;
+      bits.push({ x: cx, y: cy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 4, w: 5 + Math.random() * 5, h: 3 + Math.random() * 4, r: Math.random() * 6, vr: (Math.random() - 0.5) * 0.4, color: colors[i % colors.length], life: 1 });
+    }
+    var t0 = performance.now();
+    function frame(now) {
+      var dt = Math.min(32, now - t0) / 16.6; t0 = now;
+      ctx.clearRect(0, 0, innerWidth, innerHeight);
+      var alive = false;
+      bits.forEach(function (b) {
+        b.vy += 0.22 * dt; b.x += b.vx * dt; b.y += b.vy * dt; b.r += b.vr * dt; b.life -= 0.018 * dt;
+        if (b.life <= 0) return;
+        alive = true;
+        ctx.save(); ctx.globalAlpha = Math.max(0, b.life); ctx.translate(b.x, b.y); ctx.rotate(b.r);
+        ctx.fillStyle = b.color; ctx.fillRect(-b.w / 2, -b.h / 2, b.w, b.h); ctx.restore();
+      });
+      if (alive) requestAnimationFrame(frame);
+      else c.remove();
+    }
+    requestAnimationFrame(frame);
+    setTimeout(function () { if (c.parentNode) c.remove(); }, 1400);
+  }
+  function showOk(numero) {
+    phase("ok");
+    var n = $("[data-order-num]");
+    if (n) n.textContent = String(numero);
+    if (!reduced()) {
+      var mark = okEl && okEl.querySelector(".ok-mark");
+      if (mark && mark.animate) mark.animate(
+        [{ transform: "scale(0.4)", opacity: 0 }, { transform: "scale(1.08)", opacity: 1, offset: 0.7 }, { transform: "scale(1)", opacity: 1 }],
+        { duration: 640, easing: "linear", fill: "forwards" }
+      );
+    }
+    celebrate();
+  }
+  if (waFallback) waFallback.addEventListener("click", function () { sendWA(orderMessage()); say("Abrimos o WhatsApp com o pedido. Só fica confirmado quando a equipa responder."); });
+  if (order) order.addEventListener("submit", function (e) {
     e.preventDefault();
+    if (sheet && sheet.dataset.phase === "ok") return;
     var f = order.elements, ok = true, first = null;
     function check(name, msg) { var good = setErr(order, name, msg); if (!good) { ok = false; first = first || f[name]; } }
-    check("morada", mode() === "entrega" && !f.morada.value.trim() ? "Escreva a morada de entrega." : "");
-    check("nome", !f.nome.value.trim() ? "Escreva o seu nome." : "");
-    check("telefone", !phoneOk(f.telefone.value) ? "Escreva um telefone com pelo menos 9 algarismos." : "");
-    if (!ok) { first.focus(); return; }
-    sendWA(orderMessage());
-    say("Abrimos o WhatsApp com o pedido. Só fica confirmado quando a equipa responder.");
+    var m = mode();
+    check("mesa", m === "local" && !(Number(f.mesa.value) >= 1 && Number(f.mesa.value) <= 99) ? "Indique o número da mesa (1 a 99)." : "");
+    check("morada", m === "entrega" && !f.morada.value.trim() ? "Escreva a morada de entrega." : "");
+    check("nome", m !== "local" && !f.nome.value.trim() ? "Escreva o seu nome." : "");
+    check("telefone", m !== "local" && !phoneOk(f.telefone.value) ? "Escreva um telefone com pelo menos 9 algarismos." : "");
+    if (!ok) { phase("form"); first.focus(); return; }
+    var body = {
+      items: cart.map(function (i) { return { id: i.key, nome: i.name, qtd: i.qty, preco: i.kz }; }),
+      tipo: m,
+      mesa: m === "local" ? Number(f.mesa.value) : undefined,
+      nome: f.nome.value.trim(),
+      telefone: f.telefone.value.trim(),
+      morada: f.morada.value.trim(),
+      nota: f.nota.value.trim()
+    };
+    var waiting = setTimeout(function () { phase("wait"); }, 800);
+    if (sendBtn) { sendBtn.disabled = true; sendBtn.textContent = "A enviar…"; }
+    var ctrl = new AbortController();
+    var kill = setTimeout(function () { ctrl.abort(); }, 55000);
+    fetch(PEDIDOS_API + "/api/pedidos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      signal: ctrl.signal
+    }).then(function (r) {
+      return r.json().then(function (d) { return { ok: r.ok, d: d }; });
+    }).then(function (res) {
+      clearTimeout(waiting); clearTimeout(kill);
+      if (!res.ok) throw new Error((res.d && res.d.erro) || "Não foi possível enviar à cozinha.");
+      cart = [];
+      save(); paintButtons(); paintCounts(); renderCart();
+      showOk(res.d.numero);
+      say("Pedido n.º " + res.d.numero + " enviado à cozinha.");
+    }).catch(function (err) {
+      clearTimeout(waiting); clearTimeout(kill);
+      phase("fail");
+      var msg = $("[data-fail-msg]");
+      if (msg) msg.textContent = (err && err.message ? err.message : "Não foi possível enviar à cozinha.") + " Pode enviar o mesmo pedido pelo WhatsApp.";
+      say("Não foi possível enviar à cozinha. Pode usar o WhatsApp.");
+    }).finally(function () {
+      if (sendBtn) { sendBtn.disabled = false; sendBtn.textContent = "Enviar pedido"; }
+    });
   });
 
   /* ---------- Folha: abrir, fechar, arrastar ---------- */
@@ -487,6 +607,7 @@
     panel.style.transform = wideQ.matches ? "translateX(" + d + "px)" : "translateY(" + d + "px)";
     scrim.style.opacity = String(clamp(1 - p, 0, 1));
   });
+  function resetPhase() { if (okEl && !okEl.hidden) { phase("form"); } else if (failEl && !failEl.hidden) { phase("form"); } }
   function openSheet() {
     if (sheetOpen) return;
     sheetOpen = true;

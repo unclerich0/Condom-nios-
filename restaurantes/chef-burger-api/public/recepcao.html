@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-AO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Receção · Chef Burger</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#f4efe6">
+  <link rel="icon" href="https://chef-burger-kilamba.onrender.com/favicon.svg" type="image/svg+xml">
+  <script src="config.js"></script>
+  <script>
+  (function(){var o=(window.CB_STATIC||"https://chef-burger-kilamba.onrender.com").replace(/\/$/,"");
+    var s=document.createElement("style");
+    s.textContent='@font-face{font-family:"Archivo";src:url("'+o+'/fonts/archivo-latin.woff2") format("woff2");font-weight:100 900;font-stretch:62% 125%;font-style:normal;font-display:swap}';
+    document.head.appendChild(s);
+  })();
+</script>
+  <link rel="stylesheet" href="recepcao.css">
+</head>
+<body>
+  <header class="top glass">
+    <p class="brand"><span class="brand__chef">Chef</span><span class="brand__burger">Burger</span></p>
+    <h1>Receção</h1>
+    <p class="top__live" data-live hidden>Ao vivo</p>
+    <button type="button" class="btn glass top__out" data-sair hidden>Sair</button>
+  </header>
+
+  <main id="app">
+    <form class="login" data-login>
+      <h2>Quadro da receção</h2>
+      <p>Escreva o PIN para ver os pedidos das mesas, as entregas e os levantamentos.</p>
+      <label class="field"><span class="field__label">PIN</span>
+        <input name="pin" type="password" inputmode="numeric" autocomplete="current-password" maxlength="12" required>
+        <span class="field__err" data-err></span>
+      </label>
+      <button type="submit" class="btn btn--red">Entrar</button>
+    </form>
+
+    <section class="board" data-board hidden>
+      <div class="col" data-col="local">
+        <h2>Mesas</h2>
+        <div class="col__list" data-list="local"></div>
+        <p class="col__empty" data-empty="local">Nenhuma mesa com pedido aberto.</p>
+      </div>
+      <div class="col" data-col="entrega">
+        <h2>Entregas</h2>
+        <div class="col__list" data-list="entrega"></div>
+        <p class="col__empty" data-empty="entrega">Nenhuma entrega aberta.</p>
+      </div>
+      <div class="col" data-col="levantar">
+        <h2>Levantar no W17</h2>
+        <div class="col__list" data-list="levantar"></div>
+        <p class="col__empty" data-empty="levantar">Nenhum levantamento aberto.</p>
+      </div>
+    </section>
+    <p class="fechados" data-fechados hidden></p>
+  </main>
+  <script src="recepcao.js"></script>
+</body>
+</html>
