@@ -801,3 +801,15 @@ html[data-enter="back"] main { animation: leaf-in-back 460ms var(--ease-out) bot
 .book-ctl { pointer-events: none; }
 .book-ctl > * { pointer-events: auto; }
 @media (max-width: 959px) { .book-ctl__where { white-space: nowrap; min-width: 0; font-size: 0.875rem; } }
+/* Botão «Avaliar no Google», por baixo do livro (ementa.html) */
+.book-review { display: flex; justify-content: center; margin: 8px auto 0; padding: 20px 12px 8px; }
+.book-review__btn { color: var(--ink); min-height: 48px; padding: 0 22px; font-size: 0.9375rem; transition: transform 320ms var(--spring-bounce), box-shadow 200ms ease; }
+.book-review__btn:active { transform: scale(0.94); }
+@media (hover: hover) and (pointer: fine) {
+  .book-review__btn:hover { transform: translateY(-1px); }
+  .book-review__btn:active { transform: scale(0.94); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .book-review__btn { transition-duration: 1ms; }
+}
+.book-review__g { flex: none; }
